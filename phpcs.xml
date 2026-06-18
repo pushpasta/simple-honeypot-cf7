@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<ruleset name="pushpasta/simple-honeypot-cf7 Coding Standards">
+
+    <description>
+        Coding standards for https://github.com/pushpasta/simple-honeypot-cf7/
+    </description>
+
+    <file>.</file>
+
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>.github/scripts/*</exclude-pattern>
+
+    <!-- WordPress standards -->
+    <rule ref="WordPress-Core">
+        <exclude name="Squiz.Commenting.FileComment"/>
+    </rule>
+    <rule ref="WordPress-Extra"/>
+    <rule ref="WordPress-Docs"/>
+
+    <!-- Project settings -->
+    <arg name="basepath" value="."/>
+    <arg value="sp"/>
+
+</ruleset>

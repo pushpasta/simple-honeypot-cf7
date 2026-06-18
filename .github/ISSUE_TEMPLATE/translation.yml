@@ -1,0 +1,193 @@
+name: "🌐 Translation"
+description: Add, update, or report issues with translations.
+title: "[Translation]: "
+labels:
+  - translation
+
+body:
+  - type: dropdown
+    id: request_type
+    attributes:
+      label: Translation Request Type
+      options:
+        - Add new locale
+        - Update existing locale
+        - Report translation issue
+    validations:
+      required: true
+
+  - type: dropdown
+    id: locale
+    attributes:
+      label: Affected Locale
+      description: Select the locale that is affected by this translation request.
+      options:
+        - af (Afrikaans)
+        - am (Amharic)
+        - ar (Arabic)
+        - arg (Aragonese)
+        - ary (Moroccan Arabic)
+        - as (Assamese)
+        - az (Azerbaijani)
+        - azb (South Azerbaijani)
+        - bel (Belarusian)
+        - bg_BG (Bulgarian)
+        - bn_BD (Bengali (Bangladesh))
+        - bo (Tibetan)
+        - bs_BA (Bosnian)
+        - ca (Catalan)
+        - ceb (Cebuano)
+        - ckb (Kurdish (Sorani))
+        - cs_CZ (Czech)
+        - cy (Welsh)
+        - da_DK (Danish)
+        - de_AT (German (Austria))
+        - de_CH (German (Switzerland))
+        - de_CH_informal (German (Switzerland, Informal))
+        - de_DE (German)
+        - de_DE_formal (German (Formal))
+        - dsb (Lower Sorbian)
+        - dzo (Dzongkha)
+        - el (Greek)
+        - en_AU (English (Australia))
+        - en_CA (English (Canada))
+        - en_GB (English (UK))
+        - en_NZ (English (New Zealand))
+        - en_US (English (United States))
+        - en_ZA (English (South Africa))
+        - eo (Esperanto)
+        - es_AR (Spanish (Argentina))
+        - es_CL (Spanish (Chile))
+        - es_CO (Spanish (Colombia))
+        - es_CR (Spanish (Costa Rica))
+        - es_DO (Spanish (Dominican Republic))
+        - es_EC (Spanish (Ecuador))
+        - es_ES (Spanish (Spain))
+        - es_GT (Spanish (Guatemala))
+        - es_MX (Spanish (Mexico))
+        - es_PE (Spanish (Peru))
+        - es_PR (Spanish (Puerto Rico))
+        - es_UY (Spanish (Uruguay))
+        - es_VE (Spanish (Venezuela))
+        - et (Estonian)
+        - eu (Basque)
+        - fa_AF (Persian (Afghanistan))
+        - fa_IR (Persian)
+        - fi (Finnish)
+        - fr_BE (French (Belgium))
+        - fr_CA (French (Canada))
+        - fr_FR (French (France))
+        - fur (Friulian)
+        - fy (Frisian)
+        - gd (Scottish Gaelic)
+        - gl_ES (Galician)
+        - gu (Gujarati)
+        - haz (Hazaragi)
+        - he_IL (Hebrew)
+        - hi_IN (Hindi)
+        - hr (Croatian)
+        - hsb (Upper Sorbian)
+        - hu_HU (Hungarian)
+        - hy (Armenian)
+        - id_ID (Indonesian)
+        - is_IS (Icelandic)
+        - it_IT (Italian)
+        - ja (Japanese)
+        - jv_ID (Javanese)
+        - kab (Kabyle)
+        - ka_GE (Georgian)
+        - kir (Kyrgyz)
+        - kk (Kazakh)
+        - km (Khmer)
+        - kn (Kannada)
+        - ko_KR (Korean)
+        - lo (Lao)
+        - lt_LT (Lithuanian)
+        - lv (Latvian)
+        - mk_MK (Macedonian)
+        - ml_IN (Malayalam)
+        - mn (Mongolian)
+        - mr (Marathi)
+        - ms_MY (Malay)
+        - my_MM (Myanmar (Burmese))
+        - nb_NO (Norwegian (Bokmål))
+        - ne_NP (Nepali)
+        - nl_BE (Dutch (Belgium))
+        - nl_NL (Dutch)
+        - nl_NL_formal (Dutch (Formal))
+        - nn_NO (Norwegian (Nynorsk))
+        - oci (Occitan)
+        - pa_IN (Panjabi (India))
+        - pl_PL (Polish)
+        - ps (Pashto)
+        - pt_AO (Portuguese (Angola))
+        - pt_BR (Portuguese (Brazil))
+        - pt_PT (Portuguese (Portugal))
+        - pt_PT_ao90 (Portuguese (Portugal, AO90))
+        - rhg (Rohingya)
+        - ro_RO (Romanian)
+        - ru_RU (Russian)
+        - sah (Sakha)
+        - si_LK (Sinhala)
+        - skr (Saraiki)
+        - sk_SK (Slovak)
+        - sl_SI (Slovenian)
+        - snd (Sindhi)
+        - sq (Albanian)
+        - sr_RS (Serbian)
+        - sv_SE (Swedish)
+        - sw (Swahili)
+        - szl (Silesian)
+        - tah (Tahitian)
+        - ta_IN (Tamil)
+        - ta_LK (Tamil (Sri Lanka))
+        - te (Telugu)
+        - th (Thai)
+        - tl (Tagalog)
+        - tr_TR (Turkish)
+        - tt_RU (Tatar)
+        - ug_CN (Uighur)
+        - uk (Ukrainian)
+        - ur (Urdu)
+        - uz_UZ (Uzbek)
+        - vi (Vietnamese)
+        - yor (Yoruba)
+        - zh_CN (Chinese (China))
+        - zh_HK (Chinese (Hong Kong))
+        - zh_TW (Chinese (Taiwan))
+    validations:
+      required: true
+
+  - type: textarea
+    id: translation_files
+    attributes:
+      label: Translation Files
+      description: |
+        For new or updated locales, attach your translation files (.po, .mo, .json, etc.) by dragging and dropping them into this field.
+
+  - type: textarea
+    id: current_translation
+    attributes:
+      label: Current Translation
+      description: |
+        For translation issues, provide the current translation text.
+
+  - type: textarea
+    id: suggested_translation
+    attributes:
+      label: Suggested Translation
+      description: |
+        For translation issues, provide the corrected translation.
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Verification
+      options:
+        - label: I searched existing translation issues.
+          required: true

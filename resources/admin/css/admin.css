@@ -1,0 +1,643 @@
+/* ==========================================================================
+	Simple Honeypot for CF7 - Admin Styles
+	========================================================================== */
+
+/* Tab Navigation
+	========================================================================== */
+
+.nav-tab-wrapper.simple-honeypot-cf7-nav-tabs--settings,
+.nav-tab-wrapper.simple-honeypot-cf7-nav-tabs--rules {
+	border-bottom: none;
+}
+
+.simple-honeypot-cf7-nav-tabs .nav-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 14px;
+	font-size: 15px;
+	transition: all 0.2s ease;
+}
+
+.simple-honeypot-cf7-nav-tabs .nav-tab .dashicons {
+	width: 16px;
+	height: 16px;
+	line-height: 1;
+	opacity: 0.7;
+	transition: opacity 0.2s ease;
+}
+
+.simple-honeypot-cf7-nav-tabs .nav-tab:hover .dashicons,
+.simple-honeypot-cf7-nav-tabs .nav-tab-active .dashicons {
+	opacity: 1;
+}
+
+.simple-honeypot-cf7-nav-tabs .nav-tab-active {
+	background: #fff;
+	border-bottom-color: #fff;
+	margin-bottom: -1px;
+	box-shadow: 0 1px 0 #fff;
+}
+
+.simple-honeypot-cf7-nav-tabs .nav-tab-active .dashicons {
+	color: #2271b1;
+}
+
+/* Rules Group
+	========================================================================== */
+
+.simple-honeypot-cf7-custom-rules-toggle {
+	display: inline-block;
+	margin-bottom: 6px;
+}
+
+/* Breakdown wrapper (50% width on desktop)
+	========================================================================== */
+
+.simple-honeypot-cf7-breakdown-wrapper {
+	max-width: 25%;
+}
+
+@media screen and (max-width: 782px) {
+	.simple-honeypot-cf7-breakdown-wrapper {
+		max-width: 100%;
+	}
+}
+
+/* Stats Cards
+	========================================================================== */
+
+.simple-honeypot-cf7-report-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 20px;
+	margin: 24px 0;
+}
+
+.simple-honeypot-cf7-stat {
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	border-left: 4px solid #2271b1;
+	padding: 20px 24px;
+	border-radius: 4px;
+	transition: all 0.25s ease;
+	position: relative;
+}
+
+.simple-honeypot-cf7-stat:hover {
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	transform: translateY(-1px);
+}
+
+.simple-honeypot-cf7-stat strong {
+	display: block;
+	font-weight: 600;
+	font-size: 28px;
+	line-height: 1.2;
+	color: #1d2327;
+	margin-bottom: 4px;
+}
+
+.simple-honeypot-cf7-stat span {
+	color: #646970;
+}
+
+.simple-honeypot-cf7-stat-icon {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	width: 40px;
+	height: 40px;
+	background: #f0f6fc;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.simple-honeypot-cf7-stat-icon .dashicons {
+	color: #2271b1;
+	width: 20px;
+	height: 20px;
+}
+
+/* Postbox / Card Styling
+	========================================================================== */
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-card {
+	margin-bottom: 24px;
+	border-radius: 4px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+	transition: box-shadow 0.2s ease;
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-card:hover {
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .inside {
+	padding: 0 16px 16px;
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .hndle {
+	padding: 14px 16px;
+	border-bottom: 1px solid #f0f0f1;
+	cursor: default;
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .hndle span {
+	font-weight: 600;
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-card h2.hndle {
+	font-size: 20px;
+	margin: 0;
+	padding: 14px 16px;
+	border-bottom: 1px solid #f0f0f1;
+	cursor: default;
+	line-height: 1.4;
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .form-table th {
+	width: 220px;
+	padding: 16px 10px 16px 0;
+	font-weight: 500;
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .form-table td {
+	padding: 12px 0;
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .description {
+	margin-top: 6px;
+	color: #646970;
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .inside > .description {
+	margin: 0 0 12px;
+	padding: 0;
+}
+
+/* Form Section Grouping
+	========================================================================== */
+
+.simple-honeypot-cf7-admin .form-table tr {
+	transition: background-color 0.15s ease;
+}
+
+.simple-honeypot-cf7-admin .form-table tr:hover {
+	background-color: #f9f9f9;
+}
+
+.simple-honeypot-cf7-admin .form-table label {
+	cursor: pointer;
+}
+
+.simple-honeypot-cf7-admin input[type="checkbox"] {
+	margin-right: 6px;
+}
+
+.simple-honeypot-cf7-admin .form-table input[type="number"],
+.simple-honeypot-cf7-admin .form-table input[type="text"] {
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.simple-honeypot-cf7-admin .form-table input[type="number"]:focus,
+.simple-honeypot-cf7-admin .form-table input[type="text"]:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+/* Focus row highlighting - pure CSS */
+.simple-honeypot-cf7-admin .form-table tr:has(input[type="text"]:focus),
+.simple-honeypot-cf7-admin .form-table tr:has(input[type="number"]:focus),
+.simple-honeypot-cf7-admin .form-table tr:has(textarea:focus) {
+	background-color: #f0f6fc;
+}
+
+/* Textarea Styling
+	========================================================================== */
+
+.simple-honeypot-cf7-rules {
+	font-family: monospace;
+	line-height: 1.6;
+	border-radius: 4px;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.simple-honeypot-cf7-rules:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+.simple-honeypot-cf7-rules-disabled {
+	opacity: 0.5;
+	filter: grayscale(0.5);
+	cursor: not-allowed;
+}
+
+.simple-honeypot-cf7-rules-disabled:focus {
+	border-color: #c3c4c7;
+	box-shadow: none;
+}
+
+.simple-honeypot-cf7-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 3px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	vertical-align: middle;
+	margin-right: 6px;
+}
+.simple-honeypot-cf7-badge--active {
+	background: #d5f4e6;
+	color: #006b3f;
+}
+.simple-honeypot-cf7-badge--inactive {
+	background: #f0f0f1;
+	color: #646970;
+}
+/* Table Styling
+	========================================================================== */
+
+.simple-honeypot-cf7-table {
+	margin-bottom: 24px;
+	border-collapse: collapse;
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-report-grid ~ .simple-honeypot-cf7-table,
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-report-grid ~ h2 + .simple-honeypot-cf7-table,
+.simple-honeypot-cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) + .simple-honeypot-cf7-empty-state,
+.simple-honeypot-cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) + .simple-honeypot-cf7-table {
+	max-width: none;
+}
+
+.simple-honeypot-cf7-table thead tr th {
+	font-weight: 600;
+	font-size: 16px;
+	background: #f9f9f9;
+	border-bottom: 2px solid #e0e0e0;
+	padding: 12px 10px;
+	text-align: left;
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
+
+.simple-honeypot-cf7-table tbody tr {
+	transition: background-color 0.15s ease;
+}
+
+.simple-honeypot-cf7-table tbody tr:hover {
+	background-color: #f0f6fc;
+}
+
+.simple-honeypot-cf7-table tbody td {
+	padding: 10px;
+	border-bottom: 1px solid #f0f0f1;
+	vertical-align: top;
+}
+
+.simple-honeypot-cf7-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+/* Breakdown Tables
+	========================================================================== */
+
+.simple-honeypot-cf7-breakdown {
+	table-layout: fixed;
+	width: 100%;
+	max-width: none;
+}
+
+.simple-honeypot-cf7-breakdown thead tr th:first-child,
+.simple-honeypot-cf7-breakdown tbody tr td:first-child {
+	width: 60%;
+}
+
+.simple-honeypot-cf7-breakdown thead tr th:last-child,
+.simple-honeypot-cf7-breakdown tbody tr td:last-child {
+	width: 40%;
+	text-align: left;
+	font-variant-numeric: tabular-nums;
+}
+
+/* Events Table
+	========================================================================== */
+
+.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) {
+	table-layout: fixed;
+	width: 100%;
+}
+
+.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) thead tr th:nth-child(1),
+.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) tbody tr td:nth-child(1) {
+	width: 16%;
+}
+
+.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) thead tr th:nth-child(2),
+.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) tbody tr td:nth-child(2) {
+	width: 14%;
+}
+
+.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) thead tr th:nth-child(3),
+.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) tbody tr td:nth-child(3) {
+	width: 12%;
+	font-family: monospace;
+	word-break: break-word;
+}
+
+.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) thead tr th:nth-child(4),
+.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) tbody tr td:nth-child(4) {
+	width: 34%;
+	word-break: break-word;
+}
+
+.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) thead tr th:nth-child(5),
+.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) tbody tr td:nth-child(5) {
+	width: 24%;
+}
+
+/* Reasons List in Events Table
+	========================================================================== */
+
+.simple-honeypot-cf7-reasons-list {
+	margin: 0;
+	padding-left: 16px;
+	list-style: disc;
+}
+
+.simple-honeypot-cf7-reasons-list li {
+	margin: 2px 0;
+	line-height: 1.4;
+}
+
+/* Empty State
+	========================================================================== */
+
+.simple-honeypot-cf7-empty-state {
+	text-align: left;
+	padding: 20px;
+	color: #646970;
+	background: #f9f9f9;
+	border: 1px dashed #c3c4c7;
+	border-radius: 4px;
+	margin-bottom: 24px;
+}
+
+.simple-honeypot-cf7-empty-state .dashicons {
+	width: 24px;
+	height: 24px;
+	color: #8c8f94;
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+.simple-honeypot-cf7-empty-state p {
+	margin: 0;
+	display: inline;
+}
+
+/* CF7 Form Panel
+	========================================================================== */
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-form-panel-box {
+	margin-top: 20px;
+	background: #f9f9f9;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	padding: 16px;
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-form-panel-box .form-table th {
+	width: 200px;
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-form-panel-box .description {
+	margin-top: 6px;
+}
+
+/* Button Styling
+	========================================================================== */
+
+.simple-honeypot-cf7-admin .button {
+	transition: all 0.2s ease;
+}
+
+.simple-honeypot-cf7-admin .button:hover {
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.simple-honeypot-cf7-admin .button-primary {
+	box-shadow: 0 1px 0 #2271b1;
+}
+
+.simple-honeypot-cf7-admin .button-primary:hover {
+	box-shadow: 0 1px 4px rgba(34, 113, 177, 0.3);
+}
+
+.simple-honeypot-cf7-admin .button-delete {
+	background: #dc3232;
+	border-color: #a00;
+	color: #fff;
+	box-shadow: 0 1px 0 #a00;
+}
+
+.simple-honeypot-cf7-admin .button-delete:hover,
+.simple-honeypot-cf7-admin .button-delete:focus,
+.simple-honeypot-cf7-admin .button-delete:active {
+	background: #fff;
+	color: #dc3232;
+	border-color: #dc3232;
+	box-shadow: 0 1px 4px rgba(220, 50, 50, 0.3);
+}
+
+/* Section Headings
+	========================================================================== */
+
+.simple-honeypot-cf7-admin h2 {
+	font-size: 24px;
+	font-weight: 600;
+	margin: 24px 0 12px;
+	color: #1d2327;
+	line-height: 1.3;
+}
+
+/* Notice Styling
+	========================================================================== */
+
+.simple-honeypot-cf7-admin .notice {
+	margin: 16px 0;
+}
+
+/* Report Section Headings with Icon
+	========================================================================== */
+
+.simple-honeypot-cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.simple-honeypot-cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) .dashicons {
+	color: #2271b1;
+	width: 24px;
+	height: 24px;
+}
+
+/* Card Header with Icon
+	========================================================================== */
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .hndle {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .hndle .dashicons {
+	color: #2271b1;
+	opacity: 0.8;
+}
+
+/* Stats Animation
+	========================================================================== */
+
+@keyframes simple-honeypot-fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.simple-honeypot-cf7-stat {
+	animation: simple-honeypot-fadeIn 0.4s ease forwards;
+}
+
+.simple-honeypot-cf7-stat:nth-child(2) {
+	animation-delay: 0.1s;
+}
+
+.simple-honeypot-cf7-stat:nth-child(3) {
+	animation-delay: 0.2s;
+}
+
+/* Responsive
+	========================================================================== */
+
+@media screen and (max-width: 782px) {
+	.simple-honeypot-cf7-report-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .form-table th {
+		width: auto;
+		display: block;
+		padding-bottom: 4px;
+	}
+
+	.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .form-table td {
+		display: block;
+		padding-left: 0;
+	}
+
+	.simple-honeypot-cf7-admin .simple-honeypot-cf7-form-panel-box .form-table th {
+		width: auto;
+	}
+
+
+
+	.simple-honeypot-cf7-nav-tabs .nav-tab .dashicons {
+		display: none;
+	}
+
+	.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) {
+		table-layout: auto;
+	}
+
+	.simple-honeypot-cf7-empty-state {
+		padding: 16px;
+	}
+}
+
+.simple-honeypot-cf7-nav-tabs {
+	border-bottom: none;
+}
+
+.simple-honeypot-cf7-nav-tabs .nav-tab {
+	padding: 6px 10px;
+}
+
+/* Danger Zone Card
+========================================================================== */
+
+.simple-honeypot-cf7-card--danger {
+	border: 2px solid #dc3232 !important;
+	border-radius: 4px;
+}
+
+.simple-honeypot-cf7-card--danger .hndle {
+	border-bottom-color: #f5c6c6 !important;
+}
+
+.simple-honeypot-cf7-card--danger .hndle .dashicons {
+	color: #dc3232 !important;
+}
+
+.simple-honeypot-cf7-card--danger .button-delete {
+	background: #dc3232 !important;
+	border-color: #b71c1c !important;
+	color: #fff !important;
+	box-shadow: 0 1px 0 #b71c1c !important;
+}
+
+.simple-honeypot-cf7-card--danger .button-delete:hover,
+.simple-honeypot-cf7-card--danger .button-delete:focus,
+.simple-honeypot-cf7-card--danger .button-delete:active {
+	background: #fff !important;
+	color: #dc3232 !important;
+	border-color: #dc3232 !important;
+	box-shadow: 0 1px 4px rgba(220, 50, 50, 0.3) !important;
+}
+
+/* Subtle Page Background Enhancement
+	========================================================================== */
+
+.simple-honeypot-cf7-admin {
+	padding-top: 12px;
+}
+
+.simple-honeypot-cf7-admin > h1 {
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.simple-honeypot-cf7-admin > .description {
+	color: #646970;
+	margin-bottom: 16px;
+}
+
+/* Code / Monospace Fields
+	========================================================================== */
+
+.simple-honeypot-cf7-admin code {
+	background: #f0f0f1;
+	padding: 2px 6px;
+	border-radius: 3px;
+}
+
+/* Inline Help
+	========================================================================== */
+
+.simple-honeypot-cf7-admin .form-table .description code {
+	background: transparent;
+	padding: 0;
+}

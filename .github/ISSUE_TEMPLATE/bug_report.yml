@@ -1,0 +1,98 @@
+name: "🐛 Bug Report"
+description: Report unexpected behavior or a defect.
+title: "[Bug]: "
+labels:
+  - bug
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting this issue.
+
+        Please provide enough information to reproduce the problem.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened?
+      placeholder: Briefly describe the issue.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      placeholder: |
+        1. Go to ...
+        2. Configure ...
+        3. Submit ...
+        4. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+    validations:
+      required: true
+
+  - type: input
+    id: wp_version
+    attributes:
+      label: WordPress Version
+      placeholder: "6.7"
+    validations:
+      required: true
+
+  - type: input
+    id: plugin_version
+    attributes:
+      label: Plugin Version
+      placeholder: "1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: php_version
+    attributes:
+      label: PHP Version
+      placeholder: "7.4"
+    validations:
+      required: true
+
+  - type: textarea
+    id: active_plugins
+    attributes:
+      label: Relevant Plugins
+      description: List plugins that may interact with this plugin and their versions.
+      placeholder: |
+        Contact Form 7 6.1
+        Flamingo 2.5
+        WP Rocket 3.18
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Screenshots / Logs
+      description: Drag and drop images or logs here.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Verification
+      options:
+        - label: I searched existing issues.
+          required: true
+        - label: I can reproduce this issue consistently.
+          required: true

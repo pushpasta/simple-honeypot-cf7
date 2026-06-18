@@ -1,0 +1,10 @@
+/.distignore
+/.editorconfig
+/.git
+/.gitattributes
+/.github
+/.gitignore
+/assets
+/composer.*
+/phpcs.xml
+/README.md

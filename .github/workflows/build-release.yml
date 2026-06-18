@@ -1,0 +1,51 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set plugin variables
+        run: |
+          echo "PLUGIN_SLUG=${GITHUB_REPOSITORY#*/}" >> "$GITHUB_ENV"
+          echo "VERSION=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
+
+      - name: Build distribution
+        run: |
+          mkdir -p "build/${{ env.PLUGIN_SLUG }}"
+
+          RSYNC_ARGS="-av --exclude=.git --exclude=build"
+
+          if [ -f .distignore ]; then
+            RSYNC_ARGS="${RSYNC_ARGS} --exclude-from=.distignore"
+          fi
+
+          rsync ${RSYNC_ARGS} ./ "build/${{ env.PLUGIN_SLUG }}/"
+
+      - name: Create ZIP
+        run: |
+          cd build
+          zip -r "${{ env.PLUGIN_SLUG }}_${{ env.VERSION }}.zip" "${{ env.PLUGIN_SLUG }}"
+
+      - name: Verify ZIP contents
+        run: |
+          unzip -l "build/${{ env.PLUGIN_SLUG }}_${{ env.VERSION }}.zip"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: build/${{ env.PLUGIN_SLUG }}_${{ env.VERSION }}.zip
+          generate_release_notes: true
