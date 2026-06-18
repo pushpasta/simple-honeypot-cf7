@@ -46,6 +46,7 @@ final class Settings {
 		delete_site_transient( 'shcf7_github_release' );
 
 		self::delete_form_meta_settings();
+		self::remove_auto_update_opt_in();
 	}
 
 	/**
@@ -248,6 +249,22 @@ final class Settings {
 
 		foreach ( $forms as $form_id ) {
 			delete_post_meta( $form_id, self::FORM_META );
+		}
+	}
+
+	/**
+	 * Remove plugin from the auto_update_plugins option.
+	 *
+	 * @return void
+	 */
+	private static function remove_auto_update_opt_in() {
+		$auto_updates = get_site_option( 'auto_update_plugins', array() );
+
+		if ( in_array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, $auto_updates, true ) ) {
+			update_site_option(
+				'auto_update_plugins',
+				array_diff( $auto_updates, array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ) )
+			);
 		}
 	}
 }
