@@ -22,7 +22,7 @@ When submitting a pull request, please:
 
 Translation contributions are always welcome.
 
-Please see [the languages directory](../languages/) for information about available translations, translation guidelines, and how to contribute.
+Please see [the languages directory](https://github.com/pushpasta/simple-honeypot-cf7/tree/main/languages) for information about available translations, translation guidelines, and how to contribute.
 
 ## Development
 
