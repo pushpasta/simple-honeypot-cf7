@@ -58,6 +58,22 @@ final class GitHub_Updater {
 		add_filter( 'site_transient_update_plugins', array( $this, 'check_update' ) );
 		add_filter( 'plugins_api', array( $this, 'plugin_info' ), 10, 3 );
 		add_filter( 'upgrader_source_selection', array( $this, 'fix_source_name' ), 10, 4 );
+		add_filter( 'auto_update_plugin', array( $this, 'auto_update' ), 10, 2 );
+	}
+
+	/**
+	 * Enable auto-updates for this plugin.
+	 *
+	 * @param bool   $update Whether to auto-update.
+	 * @param object $item   Plugin update object.
+	 * @return bool
+	 */
+	public function auto_update( $update, $item ) {
+		if ( isset( $item->plugin ) && SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME === $item->plugin ) {
+			return true;
+		}
+
+		return $update;
 	}
 
 	/**
