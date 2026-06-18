@@ -39,6 +39,7 @@ final class Admin {
 
 		add_filter( 'plugin_action_links_' . SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, array( $settings_page, 'settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'row_meta' ), 10, 2 );
+		add_filter( 'plugin_auto_update_setting_html', array( $this, 'auto_update_toggle' ), 10, 3 );
 
 		if ( Contact_Form_7::is_active() ) {
 			add_filter( 'wpcf7_editor_panels', array( $form_panel, 'register_panel' ) );
@@ -64,5 +65,55 @@ final class Admin {
 		}
 
 		return $links;
+	}
+
+	/**
+	 * Render the auto-update toggle for this plugin.
+	 *
+	 * Third-party plugins don't get the toggle from WordPress core.
+	 * This filter provides it by checking the auto_update_plugins option.
+	 *
+	 * @param string $html        Default HTML.
+	 * @param string $plugin_file Plugin basename.
+	 * @param array  $plugin_data Plugin data.
+	 * @return string
+	 */
+	public function auto_update_toggle( $html, $plugin_file, $plugin_data ) {
+		if ( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME !== $plugin_file ) {
+			return $html;
+		}
+
+		if ( ! current_user_can( 'update_plugins' ) ) {
+			return $html;
+		}
+
+		$auto_updates = get_site_option( 'auto_update_plugins', array() );
+		$enabled      = in_array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, $auto_updates, true );
+
+		if ( $enabled ) {
+			$action  = 'disable-auto-update';
+			$label   = __( 'Disable auto-updates' );
+		} else {
+			$action  = 'enable-auto-update';
+			$label   = __( 'Enable auto-updates' );
+		}
+
+		$url = wp_nonce_url(
+			add_query_arg(
+				array(
+					'action' => $action,
+					'plugin' => SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME,
+				),
+				self_admin_url( 'plugins.php' )
+			),
+			$action . '-plugin_' . SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME
+		);
+
+		return sprintf(
+			'<a href="%s" class="toggle-auto-update" data-wp-action="%s"><span class="dashicons dashicons-update spin hidden" aria-hidden="true"></span><span class="label">%s</span></a>',
+			esc_url( $url ),
+			esc_attr( $enabled ? 'disable' : 'enable' ),
+			esc_html( $label )
+		);
 	}
 }
