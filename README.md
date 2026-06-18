@@ -4,7 +4,7 @@
 
 Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
 
-![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-1.0.0-blueviolet) ![License](https://img.shields.io/badge/License-GPLv2%20or%20later-green)
+![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-1.0.1-blueviolet) ![License](https://img.shields.io/badge/License-GPLv2%20or%20later-green)
 
 | Property | Value |
 |----------|-------|
@@ -13,7 +13,7 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 | Tags | contact form 7, cf7, honeypot, antispam, spam protection, bot protection, proof of work, hashcash |
 | Requires at least | 6.7 |
 | Tested up to | 7.0 |
-| Stable tag | 1.0.0 |
+| Stable tag | 1.0.1 |
 | Requires PHP | 7.4 |
 | Requires Plugins | contact-form-7 |
 | License | GPLv2 or later |
@@ -137,10 +137,17 @@ Review detailed records of each blocked submission, including reason, IP, and us
 
 ## Changelog
 
+### 1.0.1
+* Fix: updater error when installing updates from GitHub.
+* Add: automatic plugin updates via WordPress auto-update feature.
+
 ### 1.0.0
 * Initial release.
 
 ## Upgrade Notice
+
+### 1.0.1
+* Recommended update — fixes the plugin updater and enables auto-updates.
 
 ### 1.0.0
 * Initial release.
