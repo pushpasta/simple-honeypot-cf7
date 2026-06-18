@@ -418,9 +418,9 @@ final class GitHub_Updater {
 	}
 
 	/**
-	 * Convert WordPress readme-format text to basic HTML.
+	 * Convert WordPress readme-format and basic markdown text to HTML.
 	 *
-	 * Handles `= heading =`, `* list items`, and paragraph spacing.
+	 * Handles `= heading =`, `* list items`, bold, italic, inline code, and links.
 	 *
 	 * @param string $text Raw readme text.
 	 * @return string HTML.
@@ -459,7 +459,7 @@ final class GitHub_Updater {
 					$in_list = true;
 				}
 
-				$html .= '<li>' . esc_html( $m[1] ) . "</li>\n";
+				$html .= '<li>' . $this->format_inline( $m[1] ) . "</li>\n";
 
 				continue;
 			}
@@ -469,7 +469,7 @@ final class GitHub_Updater {
 				$in_list = false;
 			}
 
-			$html .= '<p>' . esc_html( $trimmed ) . "</p>\n";
+			$html .= '<p>' . $this->format_inline( $trimmed ) . "</p>\n";
 		}
 
 		if ( $in_list ) {
@@ -477,6 +477,32 @@ final class GitHub_Updater {
 		}
 
 		return $html;
+	}
+
+	/**
+	 * Format inline markdown elements to HTML.
+	 *
+	 * Handles bold, italic, inline code, and links.
+	 *
+	 * @param string $text Raw inline text.
+	 * @return string HTML.
+	 */
+	private function format_inline( $text ) {
+		$text = esc_html( $text );
+
+		// Inline code.
+		$text = preg_replace( '/`([^`]+)`/', '<code>$1</code>', $text );
+
+		// Bold.
+		$text = preg_replace( '/\*\*([^*]+)\*\*/', '<strong>$1</strong>', $text );
+
+		// Italic.
+		$text = preg_replace( '/\*([^*]+)\*/', '<em>$1</em>', $text );
+
+		// Links.
+		$text = preg_replace( '/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>', $text );
+
+		return $text;
 	}
 
 	/**
