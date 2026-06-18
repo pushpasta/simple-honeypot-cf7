@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.0
 Requires Plugins: contact-form-7
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -82,10 +82,17 @@ All plugin data is removed from the database, including settings, statistics, an
 
 == Changelog ==
 
+= 1.0.1 =
+* Fix: updater error when installing updates from GitHub.
+* Add: automatic plugin updates via WordPress auto-update feature.
+
 = 1.0.0 =
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+* Recommended update — fixes the plugin updater and enables auto-updates.
 
 = 1.0.0 =
 * Initial release.
