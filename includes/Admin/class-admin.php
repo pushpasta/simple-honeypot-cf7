@@ -75,10 +75,9 @@ final class Admin {
 	 *
 	 * @param string $html        Default HTML.
 	 * @param string $plugin_file Plugin basename.
-	 * @param array  $plugin_data Plugin data.
 	 * @return string
 	 */
-	public function auto_update_toggle( $html, $plugin_file, $plugin_data ) {
+	public function auto_update_toggle( $html, $plugin_file ) {
 		if ( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME !== $plugin_file ) {
 			return $html;
 		}
@@ -91,11 +90,11 @@ final class Admin {
 		$enabled      = in_array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, $auto_updates, true );
 
 		if ( $enabled ) {
-			$action  = 'disable-auto-update';
-			$label   = __( 'Disable auto-updates' );
+			$action = 'disable-auto-update';
+			$label  = __( 'Disable auto-updates' );
 		} else {
-			$action  = 'enable-auto-update';
-			$label   = __( 'Enable auto-updates' );
+			$action = 'enable-auto-update';
+			$label  = __( 'Enable auto-updates' );
 		}
 
 		$url = wp_nonce_url(
