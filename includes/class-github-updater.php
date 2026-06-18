@@ -191,6 +191,10 @@ final class GitHub_Updater {
 			'sections'       => $sections,
 			'upgrade_notice' => $upgrade_notice,
 			'download_link'  => $asset ? $asset->browser_download_url : '',
+			'banners'        => array(
+				'low'  => 'https://raw.githubusercontent.com/' . $this->owner . '/' . $this->repo . '/refs/heads/main/assets/banner-772x250.jpg',
+				'high' => 'https://raw.githubusercontent.com/' . $this->owner . '/' . $this->repo . '/refs/heads/main/assets/banner-1544x500.jpg',
+			),
 		);
 	}
 
