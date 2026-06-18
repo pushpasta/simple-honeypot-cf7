@@ -138,8 +138,17 @@ Review detailed records of each blocked submission, including reason, IP, and us
 ## Changelog
 
 ### 1.0.1
-* Fix: updater error when installing updates from GitHub.
-* Add: automatic plugin updates via WordPress auto-update feature.
+
+### Added
+* Auto-update support for the plugin.
+* Auto-update toggle in the third-party plugin interface.
+* Plugin banner display in the update details modal.
+* Basic Markdown formatting support in the plugin details modal.
+
+### Fixed
+* Resolved filesystem errors that could occur during plugin updates.
+* Improved handling of WordPress auto-update preferences.
+* Cleaned up auto-update settings during plugin uninstall.
 
 ### 1.0.0
 * Initial release.
@@ -147,7 +156,7 @@ Review detailed records of each blocked submission, including reason, IP, and us
 ## Upgrade Notice
 
 ### 1.0.1
-* Recommended update — fixes the plugin updater and enables auto-updates.
+* Adds auto-update support, plugin banners in the update modal, and fixes updater errors. Recommended update for all users.
 
 ### 1.0.0
 * Initial release.
