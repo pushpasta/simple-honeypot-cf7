@@ -23,5 +23,25 @@ final class Activator {
 	 */
 	public static function activate() {
 		Settings::activate();
+		self::opt_in_auto_updates();
+	}
+
+	/**
+	 * Enable auto-updates by default for this plugin.
+	 *
+	 * Adds the plugin to the auto_update_plugins option so the WordPress
+	 * UI shows it as enabled while still letting users toggle it off.
+	 *
+	 * @return void
+	 */
+	private static function opt_in_auto_updates() {
+		$auto_updates = get_site_option( 'auto_update_plugins', array() );
+
+		if ( in_array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, $auto_updates, true ) ) {
+			return;
+		}
+
+		$auto_updates[] = SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME;
+		update_site_option( 'auto_update_plugins', $auto_updates );
 	}
 }
