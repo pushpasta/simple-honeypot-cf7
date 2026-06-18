@@ -192,30 +192,46 @@ final class GitHub_Updater {
 			return $source;
 		}
 
-		$correct = trailingslashit( WP_PLUGIN_DIR ) . $this->slug;
+		$extracted_name = basename( rtrim( $source, '/\\' ) );
 
-		if ( rtrim( $source, '/\\' ) === rtrim( $correct, '/\\' ) ) {
+		if ( $this->slug === $extracted_name ) {
 			return $source;
 		}
 
 		global $wp_filesystem;
 
 		if ( ! $wp_filesystem ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-			\WP_Filesystem();
+			if ( ! function_exists( '\\WP_Filesystem' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+			}
+			if ( ! \WP_Filesystem() ) {
+				return new \WP_Error(
+					'shcf7_filesystem_init',
+					__( 'Could not initialize filesystem.', 'simple-honeypot-cf7' )
+				);
+			}
 		}
 
-		$temp = dirname( $source ) . '/' . $this->slug . '-tmp';
+		$parent = dirname( $source );
+		$target = trailingslashit( $parent ) . $this->slug;
 
-		if ( ! $wp_filesystem->move( $source, $temp ) ) {
-			return $source;
+		if ( $wp_filesystem->is_dir( $target ) ) {
+			$wp_filesystem->delete( $target, true );
 		}
 
-		if ( ! $wp_filesystem->move( $temp, $correct ) ) {
-			return $source;
+		if ( ! $wp_filesystem->move( $source, $target ) ) {
+			return new \WP_Error(
+				'shcf7_filesystem_move',
+				sprintf(
+					/* translators: 1: source directory, 2: destination directory */
+					__( 'Could not move %1$s to %2$s', 'simple-honeypot-cf7' ),
+					$source,
+					$target
+				)
+			);
 		}
 
-		return $correct;
+		return $target;
 	}
 
 	/**
