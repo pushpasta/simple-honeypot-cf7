@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.0
 Requires Plugins: contact-form-7
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -82,6 +82,22 @@ All plugin data is removed from the database, including settings, statistics, an
 
 == Changelog ==
 
+= 1.2.0 =
+
+= Added =
+* Link IP addresses to AbuseIPDB in the reports table for quick threat lookups.
+
+= Fixed =
+* Prevent duplicate tokens from bypassing honeypot validation.
+* Reject malformed CIDR rules that could match all IPs.
+* Preserve IP and email prefixes in rule sanitization.
+* Improve Markdown rendering and sanitize link protocols in plugin details.
+* Cache token validation to avoid duplicate HMAC computation.
+* Include max_age in Token::validate() return array.
+* Use byte count for str_pad in CIDR mask padding.
+* Add return after redirect() calls for defensive coding.
+* Check submission time once per form, not per token.
+
 = 1.1.1 =
 
 = Fixed =
@@ -104,6 +120,9 @@ All plugin data is removed from the database, including settings, statistics, an
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+* Security and reliability fixes for token validation and CIDR rule handling. Adds AbuseIPDB links in reports. Recommended for all users.
 
 = 1.1.1 =
 * Fixes a bug where the update notice would persist after a successful update. Recommended for all users.
