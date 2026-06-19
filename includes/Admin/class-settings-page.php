@@ -118,11 +118,13 @@ final class Settings_Page {
 		if ( 'reset_stats' === sanitize_key( $post['simple_honeypot_cf7_action'] ) ) {
 			Settings::reset_stats();
 			$this->redirect( 'settings', 'stats-reset' );
+			return;
 		}
 
 		if ( 'reset_settings' === sanitize_key( $post['simple_honeypot_cf7_action'] ) ) {
 			Settings::reset_settings();
 			$this->redirect( 'settings', 'settings-reset' );
+			return;
 		}
 
 		if ( 'import_settings' === sanitize_key( $post['simple_honeypot_cf7_action'] ) ) {
@@ -135,9 +137,11 @@ final class Settings_Page {
 					$args['import_error'] = $result['error'];
 				}
 				$this->redirect( 'settings', 'import-failed', $args );
+				return;
 			}
 
 			$this->redirect( 'settings', 'import-success' );
+			return;
 		}
 
 		$tab      = isset( $post['tab'] ) ? sanitize_key( $post['tab'] ) : 'settings';
