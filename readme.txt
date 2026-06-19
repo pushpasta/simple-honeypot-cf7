@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.0
 Requires Plugins: contact-form-7
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -82,7 +82,7 @@ All plugin data is removed from the database, including settings, statistics, an
 
 == Changelog ==
 
-= 1.0.1 =
+= 1.1.0 =
 
 = Added =
 * Auto-update support for the plugin.
@@ -100,7 +100,7 @@ All plugin data is removed from the database, including settings, statistics, an
 
 == Upgrade Notice ==
 
-= 1.0.1 =
+= 1.1.0 =
 * Adds auto-update support, plugin banners in the update modal, and fixes updater errors. Recommended update for all users.
 
 = 1.0.0 =
