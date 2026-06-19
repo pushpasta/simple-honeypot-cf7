@@ -116,6 +116,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			'form_id'      => $form_id,
 			'field_name'   => $field_name,
 			'dynamic_name' => $dynamic_name,
+			'max_age'      => $max_age,
 		);
 
 		self::$validate_cache[ $cache_key ] = $result;
