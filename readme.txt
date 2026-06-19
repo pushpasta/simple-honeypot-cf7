@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.0
 Requires Plugins: contact-form-7
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -82,6 +82,11 @@ All plugin data is removed from the database, including settings, statistics, an
 
 == Changelog ==
 
+= 1.2.2 =
+
+= Fixed =
+* Prevent http prefix on AbuseIPDB IP links in admin UI.
+
 = 1.2.1 =
 
 = Fixed =
@@ -125,6 +130,9 @@ All plugin data is removed from the database, including settings, statistics, an
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.2.2 =
+* Recommended update. Fixes IP address links in the reports table.
 
 = 1.2.1 =
 * Fixes compatibility fields in the update transient for WordPress core version checks. Recommended for all users.
