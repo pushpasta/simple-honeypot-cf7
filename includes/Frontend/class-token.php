@@ -17,21 +17,21 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Tokens encode timestamp, form ID, field name, dynamic name, and max age,
  * signed with wp_hash(). Validation recomputes the HMAC — no database storage needed.
  */
-	final class Token {
+final class Token {
 
-		/**
-		 * Validation cache to avoid recomputing HMAC for the same token.
-		 *
-		 * @var array<string, array>
-		 */
-		private static $validate_cache = array();
+	/**
+	 * Validation cache to avoid recomputing HMAC for the same token.
+	 *
+	 * @var array<string, array>
+	 */
+	private static $validate_cache = array();
 
-		const SIGN_PREFIX     = 'shcf7|token|sign|';
-		const NAME_PREFIX     = 'shcf7|token|dname|';
-		const TICK_SECONDS    = HOUR_IN_SECONDS;
-		const FIELD_TYPES     = array( 'text', 'email', 'tel', 'url', 'number', 'date', 'textarea' );
-		const POW_TICK        = 300; // 5-minute PoW challenge window.
-		const POW_SIGN_PREFIX = 'shcf7|pow|sign|';
+	const SIGN_PREFIX     = 'shcf7|token|sign|';
+	const NAME_PREFIX     = 'shcf7|token|dname|';
+	const TICK_SECONDS    = HOUR_IN_SECONDS;
+	const FIELD_TYPES     = array( 'text', 'email', 'tel', 'url', 'number', 'date', 'textarea' );
+	const POW_TICK        = 300; // 5-minute PoW challenge window.
+	const POW_SIGN_PREFIX = 'shcf7|pow|sign|';
 
 	const HIDING_STYLES = array(
 		'position:absolute!important;left:-10000px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important;',
