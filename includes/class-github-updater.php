@@ -71,10 +71,6 @@ final class GitHub_Updater {
 			$transient = new \stdClass();
 		}
 
-		if ( ! empty( $transient->response[ SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ] ) ) {
-			return $transient;
-		}
-
 		$release = $this->fetch_latest_release();
 
 		if ( ! $release || empty( $release->assets ) ) {
@@ -90,6 +86,7 @@ final class GitHub_Updater {
 		$version = $this->version_from_tag( $release->tag_name );
 
 		if ( ! $version || version_compare( $version, SIMPLE_HONEYPOT_CF7_VERSION, '<=' ) ) {
+			unset( $transient->response[ SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ] );
 			return $transient;
 		}
 
