@@ -60,6 +60,8 @@ final class Spam_Checker {
 				$reasons[] = $this->reason( 'missing_token', __( 'Honeypot validation token was missing.', 'simple-honeypot-cf7' ) );
 			}
 
+			$time_checked = false;
+
 			foreach ( $tokens as $token ) {
 				$data = Token::validate( $token, $form_id );
 
@@ -68,7 +70,11 @@ final class Spam_Checker {
 					continue;
 				}
 
-				$this->check_submission_time( $reasons, $form_id, $data, $settings );
+				if ( ! $time_checked ) {
+					$this->check_submission_time( $reasons, $form_id, $data, $settings );
+					$time_checked = true;
+				}
+
 				$this->check_honeypot_value( $reasons, $data );
 			}
 		}
