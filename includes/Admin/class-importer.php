@@ -94,14 +94,7 @@ final class Importer {
 	private function sanitize_rules( $rules ) {
 		$lines = preg_split( '/\r\n|\r|\n/', (string) $rules );
 		$lines = array_map( 'sanitize_text_field', $lines );
-
-		$lines = array_map(
-			static function ( $line ) {
-				$line = preg_replace( '/^(ip|email):/i', '', $line );
-				return trim( $line );
-			},
-			$lines
-		);
+		$lines = array_map( 'trim', $lines );
 
 		return implode( "\n", $lines );
 	}

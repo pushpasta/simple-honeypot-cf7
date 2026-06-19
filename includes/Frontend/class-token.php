@@ -19,6 +19,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Token {
 
+	/**
+	 * Validation cache to avoid recomputing HMAC for the same token.
+	 *
+	 * @var array<string, array>
+	 */
+	private static $validate_cache = array();
+
 	const SIGN_PREFIX     = 'shcf7|token|sign|';
 	const NAME_PREFIX     = 'shcf7|token|dname|';
 	const TICK_SECONDS    = HOUR_IN_SECONDS;
@@ -65,9 +72,16 @@ final class Token {
 	 * @return array Empty array on failure, or data array on success.
 	 */
 	public static function validate( $token, $current_form_id = 0 ) {
+		$cache_key = $token . '|' . (int) $current_form_id;
+
+		if ( array_key_exists( $cache_key, self::$validate_cache ) ) {
+			return self::$validate_cache[ $cache_key ];
+		}
+
 		$parts = explode( '.', $token );
 
 		if ( count( $parts ) !== 6 ) {
+			self::$validate_cache[ $cache_key ] = array();
 			return array();
 		}
 
@@ -77,6 +91,7 @@ final class Token {
 		$expected = wp_hash( self::SIGN_PREFIX . $payload );
 
 		if ( ! hash_equals( $expected, $signature ) ) {
+			self::$validate_cache[ $cache_key ] = array();
 			return array();
 		}
 
@@ -87,19 +102,26 @@ final class Token {
 		$now = time();
 
 		if ( $created_at > $now + 60 || $now - $created_at > $max_age ) {
+			self::$validate_cache[ $cache_key ] = array();
 			return array();
 		}
 
 		if ( $current_form_id && $form_id && $form_id !== $current_form_id ) {
+			self::$validate_cache[ $cache_key ] = array();
 			return array();
 		}
 
-		return array(
+		$result = array(
 			'created_at'   => $created_at,
 			'form_id'      => $form_id,
 			'field_name'   => $field_name,
 			'dynamic_name' => $dynamic_name,
+			'max_age'      => $max_age,
 		);
+
+		self::$validate_cache[ $cache_key ] = $result;
+
+		return $result;
 	}
 
 	/**

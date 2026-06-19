@@ -118,11 +118,13 @@ final class Settings_Page {
 		if ( 'reset_stats' === sanitize_key( $post['simple_honeypot_cf7_action'] ) ) {
 			Settings::reset_stats();
 			$this->redirect( 'settings', 'stats-reset' );
+			return;
 		}
 
 		if ( 'reset_settings' === sanitize_key( $post['simple_honeypot_cf7_action'] ) ) {
 			Settings::reset_settings();
 			$this->redirect( 'settings', 'settings-reset' );
+			return;
 		}
 
 		if ( 'import_settings' === sanitize_key( $post['simple_honeypot_cf7_action'] ) ) {
@@ -135,9 +137,11 @@ final class Settings_Page {
 					$args['import_error'] = $result['error'];
 				}
 				$this->redirect( 'settings', 'import-failed', $args );
+				return;
 			}
 
 			$this->redirect( 'settings', 'import-success' );
+			return;
 		}
 
 		$tab      = isset( $post['tab'] ) ? sanitize_key( $post['tab'] ) : 'settings';
@@ -271,14 +275,7 @@ final class Settings_Page {
 	private function sanitize_rules( $rules ) {
 		$lines = preg_split( '/\r\n|\r|\n/', (string) $rules );
 		$lines = array_map( 'sanitize_text_field', $lines );
-
-		$lines = array_map(
-			static function ( $line ) {
-				$line = preg_replace( '/^(ip|email):/i', '', $line );
-				return trim( $line );
-			},
-			$lines
-		);
+		$lines = array_map( 'trim', $lines );
 
 		return implode( "\n", $lines );
 	}
