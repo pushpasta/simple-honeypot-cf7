@@ -43,7 +43,20 @@ endif;
 				}
 				?>
 				</td>
-				<td><?php echo esc_html( isset( $event['ip'] ) ? $event['ip'] : '' ); ?></td>
+				<td>
+				<?php
+				$ip = isset( $event['ip'] ) ? $event['ip'] : '';
+				if ( '' !== $ip && filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+					printf(
+						'<a href="https://www.abuseipdb.com/check/%s" target="_blank" rel="noopener noreferrer">%s</a>',
+						esc_url( $ip ),
+						esc_html( $ip )
+					);
+				} else {
+					echo esc_html( $ip );
+				}
+				?>
+			</td>
 				<td><?php echo esc_html( isset( $event['user_agent'] ) ? $event['user_agent'] : '' ); ?></td>
 				<td>
 					<?php
