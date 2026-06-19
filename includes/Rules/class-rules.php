@@ -234,7 +234,7 @@ final class Rules {
 			$mask .= chr( 0xff << ( 8 - $bits % 8 ) );
 		}
 
-		$mask = str_pad( $mask, $size, "\0" );
+		$mask = str_pad( $mask, $size / 8, "\0" );
 
 		return substr( $ip_packed & $mask, 0, strlen( $mask ) ) === substr( $network_packed & $mask, 0, strlen( $mask ) );
 	}
