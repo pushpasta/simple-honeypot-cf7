@@ -49,7 +49,7 @@ endif;
 				if ( '' !== $ip && filter_var( $ip, FILTER_VALIDATE_IP ) ) {
 					printf(
 						'<a href="https://www.abuseipdb.com/check/%s" target="_blank" rel="noopener noreferrer">%s</a>',
-						esc_url( $ip ),
+						esc_attr( $ip ),
 						esc_html( $ip )
 					);
 				} else {
