@@ -6,7 +6,7 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 
 ![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-1.0.1-blueviolet) ![License](https://img.shields.io/badge/License-GPLv2%20or%20later-green)
 
-![Stars](https://img.shields.io/github/stars/pushpasta/simple-honeypot-cf7?style=social) ![Forks](https://img.shields.io/github/forks/pushpasta/simple-honeypot-cf7?style=social) ![Watchers](https://img.shields.io/github/watchers/pushpasta/simple-honeypot-cf7?style=social) ![Last Commit](https://img.shields.io/github/last-commit/pushpasta/simple-honeypot-cf7?style=social) ![Downloads](https://img.shields.io/wordpress/plugin/downloads/pushpasta?color=orange&style=social)
+![Stars](https://img.shields.io/github/stars/pushpasta/simple-honeypot-cf7?style=social) ![Forks](https://img.shields.io/github/forks/pushpasta/simple-honeypot-cf7?style=social) ![Watchers](https://img.shields.io/github/watchers/pushpasta/simple-honeypot-cf7?style=social) ![Last Commit](https://img.shields.io/github/last-commit/pushpasta/simple-honeypot-cf7?style=social) ![Downloads](https://img.shields.io/github/downloads/pushpasta/simple-honeypot-cf7/total?style=social)
 
 | Property | Value |
 |----------|-------|
