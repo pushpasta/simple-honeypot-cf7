@@ -4,7 +4,7 @@
 
 Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
 
-![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-1.2.1-blueviolet) ![License](https://img.shields.io/badge/License-GPLv2%20or%20later-green)
+![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-1.2.2-blueviolet) ![License](https://img.shields.io/badge/License-GPLv2%20or%20later-green)
 
 ![Stars](https://img.shields.io/github/stars/pushpasta/simple-honeypot-cf7?style=social) ![Forks](https://img.shields.io/github/forks/pushpasta/simple-honeypot-cf7?style=social) ![Watchers](https://img.shields.io/github/watchers/pushpasta/simple-honeypot-cf7?style=social) ![Last Commit](https://img.shields.io/github/last-commit/pushpasta/simple-honeypot-cf7?style=social) ![Downloads](https://img.shields.io/github/downloads/pushpasta/simple-honeypot-cf7/total?style=social)
 
@@ -15,7 +15,7 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 | Tags | contact form 7, cf7, honeypot, antispam, spam protection, bot protection, proof of work, hashcash |
 | Requires at least | 6.7 |
 | Tested up to | 7.0 |
-| Stable tag | 1.2.1 |
+| Stable tag | 1.2.2 |
 | Requires PHP | 7.4 |
 | Requires Plugins | contact-form-7 |
 | License | GPLv2 or later |
@@ -139,6 +139,11 @@ Review detailed records of each blocked submission, including reason, IP, and us
 
 ## Changelog
 
+### 1.2.2
+
+### Fixed
+* Prevent http prefix on AbuseIPDB IP links in admin UI.
+
 ### 1.2.1
 
 ### Fixed
@@ -182,6 +187,9 @@ Review detailed records of each blocked submission, including reason, IP, and us
 * Initial release.
 
 ## Upgrade Notice
+
+### 1.2.2
+* Recommended update. Fixes IP address links in the reports table.
 
 ### 1.2.1
 * Fixes compatibility fields in the update transient for WordPress core version checks. Recommended for all users.
