@@ -90,13 +90,18 @@ final class GitHub_Updater {
 			return $transient;
 		}
 
+		$readme = $this->release_readme( $release->tag_name );
+
 		$transient->response[ SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ] = (object) array(
-			'slug'        => $this->slug,
-			'plugin'      => SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME,
-			'new_version' => $version,
-			'url'         => $release->html_url ?? '',
-			'package'     => $asset->browser_download_url ?? '',
-			'icons'       => array(
+			'slug'         => $this->slug,
+			'plugin'       => SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME,
+			'new_version'  => $version,
+			'url'          => $release->html_url ?? '',
+			'package'      => $asset->browser_download_url ?? '',
+			'tested'       => $readme['tested_up_to'] ?? '',
+			'requires'     => $readme['requires_wp'] ?? '',
+			'requires_php' => $readme['requires_php'] ?? '',
+			'icons'        => array(
 				'1x' => 'https://raw.githubusercontent.com/' . $this->owner . '/' . $this->repo . '/refs/heads/main/assets/icon-128x128.jpg',
 				'2x' => 'https://raw.githubusercontent.com/' . $this->owner . '/' . $this->repo . '/refs/heads/main/assets/icon-256x256.jpg',
 			),
