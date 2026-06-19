@@ -497,14 +497,21 @@ final class GitHub_Updater {
 		// Inline code.
 		$text = preg_replace( '/`([^`]+)`/', '<code>$1</code>', $text );
 
+		// Bold + italic.
+		$text = preg_replace( '/\*\*\*(.+?)\*\*\*/', '<strong><em>$1</em></strong>', $text );
+
 		// Bold.
-		$text = preg_replace( '/\*\*([^*]+)\*\*/', '<strong>$1</strong>', $text );
+		$text = preg_replace( '/\*\*(.+?)\*\*/', '<strong>$1</strong>', $text );
 
 		// Italic.
-		$text = preg_replace( '/\*([^*]+)\*/', '<em>$1</em>', $text );
+		$text = preg_replace( '/\*(.+?)\*/', '<em>$1</em>', $text );
 
 		// Links.
-		$text = preg_replace( '/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>', $text );
+		$text = preg_replace(
+			'/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/',
+			'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
+			$text
+		);
 
 		return $text;
 	}
