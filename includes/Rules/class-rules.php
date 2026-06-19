@@ -72,7 +72,14 @@ final class Rules {
 				continue;
 			}
 
-			$type = self::detect_type( $line );
+			$prefix_type = '';
+
+			if ( preg_match( '/^(ip|email):/i', $line, $m ) ) {
+				$prefix_type = strtolower( $m[1] );
+				$line        = substr( $line, strlen( $m[0] ) );
+			}
+
+			$type = '' !== $prefix_type ? $prefix_type : self::detect_type( $line );
 
 			if ( '' === $type ) {
 				continue;
@@ -196,7 +203,7 @@ final class Rules {
 	 * @return bool
 	 */
 	private static function matches_cidr( $cidr, $ip ) {
-		list( $network, $bits ) = array_pad( explode( '/', $cidr, 2 ), 2, null );
+		list( $network, $bits ) = array_pad( explode( '/', $cidr, 2 ), 2, '' );
 
 		if ( '' === $network || '' === $ip ) {
 			return false;
@@ -209,15 +216,16 @@ final class Rules {
 			return false;
 		}
 
-		$bits = absint( $bits );
 		$size = strlen( $network_packed ) * 8;
 
-		if ( $bits < 0 || $bits > $size ) {
+		if ( '' === $bits || ! preg_match( '/^\d+$/', $bits ) ) {
 			return false;
 		}
 
-		if ( 0 === $bits ) {
-			return true;
+		$bits = (int) $bits;
+
+		if ( $bits < 1 || $bits > $size ) {
+			return false;
 		}
 
 		$mask = str_repeat( "\xff", (int) ( $bits / 8 ) );
