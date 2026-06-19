@@ -99,6 +99,10 @@ final class GitHub_Updater {
 			'new_version' => $version,
 			'url'         => $release->html_url ?? '',
 			'package'     => $asset->browser_download_url ?? '',
+			'icons'       => array(
+				'1x' => 'https://raw.githubusercontent.com/' . $this->owner . '/' . $this->repo . '/refs/heads/main/assets/icon-128x128.jpg',
+				'2x' => 'https://raw.githubusercontent.com/' . $this->owner . '/' . $this->repo . '/refs/heads/main/assets/icon-256x256.jpg',
+			),
 		);
 
 		return $transient;
