@@ -125,6 +125,13 @@ final class Token {
 	}
 
 	/**
+	 * Memoized form prefix cache.
+	 *
+	 * @var array<int, string>
+	 */
+	private static $prefix_cache = array();
+
+	/**
 	 * Get the form-specific field prefix.
 	 *
 	 * A fully random-looking alphanumeric string derived from the site salt
@@ -135,13 +142,21 @@ final class Token {
 	 * @return string
 	 */
 	public static function form_prefix( $form_id ) {
-		$hash  = wp_hash( 'shcf7|fprefix|' . (int) $form_id );
+		$form_id = (int) $form_id;
+
+		if ( isset( self::$prefix_cache[ $form_id ] ) ) {
+			return self::$prefix_cache[ $form_id ];
+		}
+
+		$hash  = wp_hash( 'shcf7|fprefix|' . $form_id );
 		$chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
 		$name  = '';
 
 		for ( $i = 0; $i < 10; $i++ ) {
 			$name .= $chars[ hexdec( substr( $hash, $i * 2, 2 ) ) % 36 ];
 		}
+
+		self::$prefix_cache[ $form_id ] = $name;
 
 		return $name;
 	}
