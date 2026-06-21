@@ -48,9 +48,9 @@
 	}
 
 	async function solvePow( challenge, bits ) {
-		var nonce = 0, buffer, hash;
+		var nonce = 0, buffer, hash, MAX_NONCE = 10000000;
 
-		while ( true ) {
+		while ( nonce < MAX_NONCE ) {
 			buffer = await sha256( challenge + '.' + nonce );
 			hash   = hexFromBuffer( buffer );
 
@@ -60,24 +60,35 @@
 
 			nonce++;
 		}
+
+		return -1;
 	}
 
 	async function fillPowInputs() {
 		var inputs, i, len, challenge, parts, nonce;
 
-		inputs = document.querySelectorAll( 'input[type="hidden"][name$="_pow"]' );
-		len    = inputs.length;
+		try {
+			inputs = document.querySelectorAll( 'input[type="hidden"][name$="_pow"]' );
+			len    = inputs.length;
 
-		for ( i = 0; i < len; i++ ) {
-			challenge = inputs[ i ].value;
-			parts     = challenge.split( '.' );
+			for ( i = 0; i < len; i++ ) {
+				challenge = inputs[ i ].value;
+				parts     = challenge.split( '.' );
 
-			if ( parts.length !== 5 ) {
-				continue;
+				if ( parts.length !== 5 ) {
+					continue;
+				}
+
+				nonce = await solvePow( challenge, parseInt( parts[ 1 ], 10 ) );
+
+				if ( nonce < 0 ) {
+					continue;
+				}
+
+				inputs[ i ].value = challenge + '.' + nonce;
 			}
-
-			nonce             = await solvePow( challenge, parseInt( parts[ 1 ], 10 ) );
-			inputs[ i ].value = challenge + '.' + nonce;
+		} catch ( e ) {
+			// Crypto failed silently — server-side validation will reject the submission.
 		}
 
 		powReady = true;

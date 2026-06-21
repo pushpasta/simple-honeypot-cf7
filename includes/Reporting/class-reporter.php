@@ -8,6 +8,7 @@
 namespace SimpleHoneypotCF7\Reporting;
 
 use SimpleHoneypotCF7\Settings;
+use SimpleHoneypotCF7\Support\Request;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -64,8 +65,8 @@ final class Reporter {
 				'time'       => time(),
 				'form_id'    => $form_id,
 				'form_title' => $form_title,
-				'ip'         => $this->remote_ip(),
-				'user_agent' => $this->user_agent(),
+				'ip'         => Request::remote_ip(),
+				'user_agent' => Request::user_agent(),
 				'reasons'    => array_map( array( $this, 'sanitize_reason' ), $reasons ),
 			)
 		);
@@ -88,25 +89,5 @@ final class Reporter {
 			'field'   => sanitize_key( isset( $reason['field'] ) ? $reason['field'] : '' ),
 			'value'   => sanitize_text_field( isset( $reason['value'] ) ? $reason['value'] : '' ),
 		);
-	}
-
-	/**
-	 * Get the remote IP address.
-	 *
-	 * @return string
-	 */
-	private function remote_ip() {
-		return empty( $_SERVER['REMOTE_ADDR'] ) ? '' : sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
-	}
-
-	/**
-	 * Get the current user agent.
-	 *
-	 * @return string
-	 */
-	private function user_agent() {
-		$ua = empty( $_SERVER['HTTP_USER_AGENT'] ) ? '' : sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
-
-		return mb_substr( $ua, 0, 256 );
 	}
 }

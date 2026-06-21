@@ -10,6 +10,7 @@ namespace SimpleHoneypotCF7\Frontend;
 use SimpleHoneypotCF7\Reporting\Reporter;
 use SimpleHoneypotCF7\Rules\Rules;
 use SimpleHoneypotCF7\Settings;
+use SimpleHoneypotCF7\Support\Request;
 use SimpleHoneypotCF7\Support\String_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,15 +43,25 @@ final class Spam_Checker {
 			return $spam;
 		}
 
-		$honeypot_tags = $this->honeypot_tags( $contact_form );
+		$form_id = method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
+		$tags    = $this->scan_form_tags_cached( $contact_form, $form_id );
+
+		$honeypot_tags = array_values(
+			array_filter(
+				$tags,
+				static function ( $tag ) {
+					return isset( $tag->type ) && 'honeypot' === $tag->type;
+				}
+			)
+		);
+
 		if ( empty( $honeypot_tags ) ) {
 			return $spam;
 		}
 
 		$settings     = Settings::get_settings();
-		$form_id      = method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
 		$posted_data  = $this->submission_posted_data( $submission );
-		$email_fields = $this->email_type_fields( $contact_form );
+		$email_fields = $this->email_type_fields_from_tags( $tags );
 		$reasons      = array();
 
 		if ( ! $spam ) {
@@ -94,7 +105,7 @@ final class Spam_Checker {
 			$reasons[] = $this->reason( 'pow_failed', __( 'Proof-of-Work validation failed.', 'simple-honeypot-cf7' ) );
 		}
 
-		foreach ( Rules::check( $settings, $posted_data, $this->remote_ip(), $email_fields ) as $rule_reason ) {
+		foreach ( Rules::check( $settings, $posted_data, Request::remote_ip(), $email_fields ) as $rule_reason ) {
 			$reasons[] = $rule_reason;
 		}
 
@@ -169,6 +180,54 @@ final class Spam_Checker {
 				$data
 			);
 		}
+	}
+
+	/**
+	 * Cache for scan_form_tags() results within a request.
+	 *
+	 * @var array<int, array>
+	 */
+	private static $tags_cache = array();
+
+	/**
+	 * Get and cache scan_form_tags() results for a form.
+	 *
+	 * @param mixed $contact_form Contact Form 7 form.
+	 * @param int   $form_id      Form ID.
+	 * @return array
+	 */
+	private function scan_form_tags_cached( $contact_form, $form_id ) {
+		if ( isset( self::$tags_cache[ $form_id ] ) ) {
+			return self::$tags_cache[ $form_id ];
+		}
+
+		$tags = array();
+
+		if ( $contact_form && method_exists( $contact_form, 'scan_form_tags' ) ) {
+			$tags = $contact_form->scan_form_tags();
+		}
+
+		self::$tags_cache[ $form_id ] = $tags;
+
+		return $tags;
+	}
+
+	/**
+	 * Get email-type field names from pre-scanned tags.
+	 *
+	 * @param array $tags Scanned form tags.
+	 * @return array
+	 */
+	private function email_type_fields_from_tags( array $tags ) {
+		$fields = array();
+
+		foreach ( $tags as $tag ) {
+			if ( isset( $tag->type ) && 0 === strpos( $tag->type, 'email' ) ) {
+				$fields[] = $tag->name;
+			}
+		}
+
+		return $fields;
 	}
 
 	/**
@@ -261,50 +320,6 @@ final class Spam_Checker {
 	}
 
 	/**
-	 * Get honeypot tags for a Contact Form 7 form.
-	 *
-	 * @param mixed $contact_form Contact Form 7 form.
-	 * @return array
-	 */
-	private function honeypot_tags( $contact_form ) {
-		if ( ! $contact_form || ! method_exists( $contact_form, 'scan_form_tags' ) ) {
-			return array();
-		}
-
-		return array_values(
-			array_filter(
-				$contact_form->scan_form_tags(),
-				static function ( $tag ) {
-					return isset( $tag->type ) && 'honeypot' === $tag->type;
-				}
-			)
-		);
-	}
-
-	/**
-	 * Get email-type field names from a Contact Form 7 form.
-	 *
-	 * @param mixed $contact_form Contact Form 7 form.
-	 * @return array
-	 */
-	private function email_type_fields( $contact_form ) {
-		if ( ! $contact_form || ! method_exists( $contact_form, 'scan_form_tags' ) ) {
-			return array();
-		}
-
-		$tags   = $contact_form->scan_form_tags();
-		$fields = array();
-
-		foreach ( $tags as $tag ) {
-			if ( isset( $tag->type ) && 0 === strpos( $tag->type, 'email' ) ) {
-				$fields[] = $tag->name;
-			}
-		}
-
-		return $fields;
-	}
-
-	/**
 	 * Get posted data from a submission object.
 	 *
 	 * @param mixed $submission Contact Form 7 submission.
@@ -333,14 +348,5 @@ final class Spam_Checker {
 	 */
 	private function check_pow( $form_id ) {
 		return Token::check_pow( $form_id );
-	}
-
-	/**
-	 * Get the remote IP address.
-	 *
-	 * @return string
-	 */
-	private function remote_ip() {
-		return empty( $_SERVER['REMOTE_ADDR'] ) ? '' : sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
 	}
 }
