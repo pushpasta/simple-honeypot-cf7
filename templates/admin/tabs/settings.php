@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<th scope="row"><label for="min_time_seconds"><?php esc_html_e( 'Minimum time', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
 						<input type="number" class="small-text" id="min_time_seconds" name="min_time_seconds" min="0" step="1" value="<?php echo esc_attr( $settings['min_time_seconds'] ); ?>" placeholder="4" />
-						<?php esc_html_e( 'seconds' ); ?>
+						<?php esc_html_e( 'seconds', 'simple-honeypot-cf7' ); ?>
 						<p class="description"><?php esc_html_e( 'Minimum time required between form submissions.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
@@ -49,7 +49,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<th scope="row"><label for="max_age_minutes"><?php esc_html_e( 'Token lifetime', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
 						<input type="number" class="small-text" id="max_age_minutes" name="max_age_minutes" min="10" step="1" value="<?php echo esc_attr( $settings['max_age_minutes'] ); ?>" placeholder="120" />
-						<?php esc_html_e( 'minutes' ); ?>
+						<?php esc_html_e( 'minutes', 'simple-honeypot-cf7' ); ?>
 					</td>
 				</tr>
 			</table>
@@ -118,7 +118,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 
-	<?php submit_button( __( 'Save', 'default' ) ); ?>
+	<?php submit_button( __( 'Save', 'simple-honeypot-cf7' ) ); ?>
 
 	<div class="postbox simple-honeypot-cf7-card">
 		<h2 class="hndle"><span class="dashicons dashicons-upload"></span><span><?php esc_html_e( 'Import &amp; Export', 'simple-honeypot-cf7' ); ?></span></h2>

@@ -70,6 +70,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 
 	<p class="submit">
-		<?php submit_button( __( 'Save', 'default' ), 'primary', 'submit', false ); ?>
+		<?php submit_button( __( 'Save', 'simple-honeypot-cf7' ), 'primary', 'submit', false ); ?>
 	</p>
 </form>

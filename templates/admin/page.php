@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $version_tooltip = sprintf(
 	/* translators: %s: date */
 	'%s ' . wp_date( get_option( 'date_format' ), filemtime( SIMPLE_HONEYPOT_CF7_PLUGIN_FILE ) ),
-	__( 'Last updated:', 'default' )
+	__( 'Last updated:', 'simple-honeypot-cf7' )
 );
 ?>
 <div class="wrap simple-honeypot-cf7-admin">
@@ -72,8 +72,8 @@ $version_tooltip = sprintf(
 		<div class="simple-honeypot-cf7-dialog-inner">
 			<p class="simple-honeypot-cf7-confirm-message"></p>
 			<div class="simple-honeypot-cf7-dialog-actions">
-				<button type="button" class="button simple-honeypot-cf7-confirm-yes"><?php esc_html_e( 'Yes', 'default' ); ?></button>
-				<button type="button" class="button simple-honeypot-cf7-confirm-no"><?php esc_html_e( 'No', 'default' ); ?></button>
+				<button type="button" class="button simple-honeypot-cf7-confirm-yes"><?php esc_html_e( 'Yes', 'simple-honeypot-cf7' ); ?></button>
+				<button type="button" class="button simple-honeypot-cf7-confirm-no"><?php esc_html_e( 'No', 'simple-honeypot-cf7' ); ?></button>
 			</div>
 		</div>
 	</dialog>

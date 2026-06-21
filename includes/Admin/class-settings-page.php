@@ -57,7 +57,7 @@ final class Settings_Page {
 	 * @return array
 	 */
 	public function settings_link( $links ) {
-		$links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=simple-honeypot-cf7' ) ) . '">' . esc_html__( 'Settings', 'default' ) . '</a>';
+		$links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=simple-honeypot-cf7' ) ) . '">' . esc_html__( 'Settings', 'simple-honeypot-cf7' ) . '</a>';
 
 		return $links;
 	}
@@ -75,10 +75,10 @@ final class Settings_Page {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only tab navigation.
 		$current_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'settings';
 		$tabs        = array(
-			'settings' => __( 'Settings', 'default' ),
-			'rules'    => __( 'Rules' ),
-			'forms'    => __( 'Forms' ),
-			'reports'  => __( 'Reports' ),
+			'settings' => __( 'Settings', 'simple-honeypot-cf7' ),
+			'rules'    => __( 'Rules', 'simple-honeypot-cf7' ),
+			'forms'    => __( 'Forms', 'simple-honeypot-cf7' ),
+			'reports'  => __( 'Reports', 'simple-honeypot-cf7' ),
 		);
 
 		if ( ! isset( $tabs[ $current_tab ] ) ) {

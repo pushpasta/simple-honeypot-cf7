@@ -23,7 +23,7 @@ endif;
 	<thead>
 		<tr>
 			<?php /* translators: table column header */ ?>
-			<th><?php esc_html_e( 'Date', 'default' ); ?></th>
+			<th><?php esc_html_e( 'Date', 'simple-honeypot-cf7' ); ?></th>
 			<?php /* translators: table column header for contact form name */ ?>
 			<th><?php esc_html_e( 'Form', 'simple-honeypot-cf7' ); ?></th>
 			<?php /* translators: table column header for visitor IP address */ ?>

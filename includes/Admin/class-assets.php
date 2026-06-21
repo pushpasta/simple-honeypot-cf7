@@ -48,9 +48,9 @@ final class Assets {
 			'simpleHoneypotCf7',
 			array(
 				'unsavedChanges' => __( 'You have unsaved changes.', 'simple-honeypot-cf7' ),
-				'confirmTitle'   => __( 'Are you sure?', 'default' ),
-				'confirmYes'     => __( 'Yes', 'default' ),
-				'confirmNo'      => __( 'No', 'default' ),
+				'confirmTitle'   => __( 'Are you sure?', 'simple-honeypot-cf7' ),
+				'confirmYes'     => __( 'Yes', 'simple-honeypot-cf7' ),
+				'confirmNo'      => __( 'No', 'simple-honeypot-cf7' ),
 				/* translators: %s: minimum allowed value */
 				'valueTooLow'    => __( 'Value must be at least %s.', 'simple-honeypot-cf7' ),
 				/* translators: %s: maximum allowed value */

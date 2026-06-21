@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-21T02:08:36+02:00\n"
+"POT-Creation-Date: 2026-06-21T02:34:19+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-honeypot-cf7\n"
@@ -45,8 +45,30 @@ msgstr ""
 msgid "Donate"
 msgstr ""
 
+#: includes/Admin/class-admin.php:94
+msgid "Disable auto-updates"
+msgstr ""
+
+#: includes/Admin/class-admin.php:97
+msgid "Enable auto-updates"
+msgstr ""
+
 #: includes/Admin/class-assets.php:50
 msgid "You have unsaved changes."
+msgstr ""
+
+#: includes/Admin/class-assets.php:51
+msgid "Are you sure?"
+msgstr ""
+
+#: includes/Admin/class-assets.php:52
+#: templates/admin/page.php:75
+msgid "Yes"
+msgstr ""
+
+#: includes/Admin/class-assets.php:53
+#: templates/admin/page.php:76
+msgid "No"
 msgstr ""
 
 #. translators: %s: minimum allowed value
@@ -102,6 +124,25 @@ msgstr ""
 
 #: includes/Admin/class-notices.php:59
 msgid "Proof of Work requires HTTPS. It is currently enabled but this site does not appear to be served over a secure connection. PoW checks will be skipped for all submissions."
+msgstr ""
+
+#: includes/Admin/class-settings-page.php:60
+#: includes/Admin/class-settings-page.php:78
+msgid "Settings"
+msgstr ""
+
+#: includes/Admin/class-settings-page.php:79
+#: templates/admin/tabs/reports.php:47
+#: templates/admin/tabs/rules.php:22
+msgid "Rules"
+msgstr ""
+
+#: includes/Admin/class-settings-page.php:80
+msgid "Forms"
+msgstr ""
+
+#: includes/Admin/class-settings-page.php:81
+msgid "Reports"
 msgstr ""
 
 #: includes/Admin/class-settings-page.php:275
@@ -237,8 +278,25 @@ msgstr ""
 msgid "Minimum submission time"
 msgstr ""
 
+#: templates/admin/cf7-form-panel.php:29
+#: templates/admin/tabs/settings.php:35
+msgid "seconds"
+msgstr ""
+
 #: templates/admin/cf7-form-panel.php:30
 msgid "Leave empty or set to 0 to use the global minimum time. Only applies when the timing check is enabled (either globally or per form)."
+msgstr ""
+
+#: templates/admin/cf7-tag-generator.php:34
+msgid "Name"
+msgstr ""
+
+#: templates/admin/cf7-tag-generator.php:45
+msgid "Insert Tag"
+msgstr ""
+
+#: templates/admin/page.php:15
+msgid "Last updated:"
 msgstr ""
 
 #: templates/admin/page.php:19
@@ -255,6 +313,11 @@ msgstr ""
 
 #: templates/admin/tables/events-table.php:16
 msgid "No events recorded yet. Recent spam attempts will be listed here."
+msgstr ""
+
+#. translators: table column header
+#: templates/admin/tables/events-table.php:26
+msgid "Date"
 msgstr ""
 
 #. translators: table column header for contact form name
@@ -276,6 +339,7 @@ msgstr ""
 
 #. translators: table column header for spam detection reason
 #: templates/admin/tables/events-table.php:34
+#: templates/admin/tabs/reports.php:59
 msgid "Reason"
 msgstr ""
 
@@ -293,6 +357,18 @@ msgstr ""
 #: templates/admin/tables/forms-overview-table.php:34
 #, php-format
 msgid "Uses global (%s)"
+msgstr ""
+
+#. translators: %s: resolved mode (Enabled or Disabled) inherited from global settings
+#: templates/admin/tables/forms-overview-table.php:34
+#: templates/admin/tables/forms-overview-table.php:38
+msgid "Enabled"
+msgstr ""
+
+#. translators: %s: resolved mode (Enabled or Disabled) inherited from global settings
+#: templates/admin/tables/forms-overview-table.php:34
+#: templates/admin/tables/forms-overview-table.php:40
+msgid "Disabled"
 msgstr ""
 
 #. translators: %d: number of seconds inherited from global settings
@@ -350,11 +426,6 @@ msgstr ""
 msgid "Unique Reasons"
 msgstr ""
 
-#: templates/admin/tabs/reports.php:47
-#: templates/admin/tabs/rules.php:22
-msgid "Rules"
-msgstr ""
-
 #: templates/admin/tabs/reports.php:49
 msgid "Active"
 msgstr ""
@@ -401,6 +472,11 @@ msgstr ""
 msgid "Need to block specific words or patterns? Use the <a href=\"%1$s\">WordPress Disallowed Comment Keys</a> setting instead &mdash; Contact Form 7 checks it automatically."
 msgstr ""
 
+#: templates/admin/tabs/rules.php:73
+#: templates/admin/tabs/settings.php:121
+msgid "Save"
+msgstr ""
+
 #: templates/admin/tabs/settings.php:18
 msgid "Time Check"
 msgstr ""
@@ -435,6 +511,10 @@ msgstr ""
 
 #: templates/admin/tabs/settings.php:49
 msgid "Token lifetime"
+msgstr ""
+
+#: templates/admin/tabs/settings.php:52
+msgid "minutes"
 msgstr ""
 
 #: templates/admin/tabs/settings.php:60

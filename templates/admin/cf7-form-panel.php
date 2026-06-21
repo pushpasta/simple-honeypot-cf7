@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<th scope="row"><label for="simple_honeypot_cf7_form_min_time"><?php esc_html_e( 'Minimum submission time', 'simple-honeypot-cf7' ); ?></label></th>
 			<td>
 				<input type="number" class="small-text" id="simple_honeypot_cf7_form_min_time" name="simple_honeypot_cf7_form[min_time_seconds]" min="0" step="1" value="<?php echo esc_attr( $form_settings['min_time_seconds'] ); ?>" placeholder="0" />
-				<?php esc_html_e( 'seconds' ); ?>
+				<?php esc_html_e( 'seconds', 'simple-honeypot-cf7' ); ?>
 				<p class="description"><?php esc_html_e( 'Leave empty or set to 0 to use the global minimum time. Only applies when the timing check is enabled (either globally or per form).', 'simple-honeypot-cf7' ); ?></p>
 			</td>
 		</tr>

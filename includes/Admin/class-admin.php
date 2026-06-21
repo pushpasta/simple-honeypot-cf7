@@ -91,10 +91,10 @@ final class Admin {
 
 		if ( $enabled ) {
 			$action = 'disable-auto-update';
-			$label  = __( 'Disable auto-updates', 'default' );
+			$label  = __( 'Disable auto-updates', 'simple-honeypot-cf7' );
 		} else {
 			$action = 'enable-auto-update';
-			$label  = __( 'Enable auto-updates', 'default' );
+			$label  = __( 'Enable auto-updates', 'simple-honeypot-cf7' );
 		}
 
 		$url = wp_nonce_url(

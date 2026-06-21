@@ -56,7 +56,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="simple-honeypot-cf7-breakdown-wrapper">
 <?php
 $items = $stats['reasons'];
-$label = __( 'Reason' );
+$label = __( 'Reason', 'simple-honeypot-cf7' );
 require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/tables/key-value-table.php';
 ?>
 </div>

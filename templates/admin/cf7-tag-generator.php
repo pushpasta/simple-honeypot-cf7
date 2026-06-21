@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<table class="form-table">
 				<tbody>
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-name' ); ?>"><?php esc_html_e( 'Name', 'default' ); ?></label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-name' ); ?>"><?php esc_html_e( 'Name', 'simple-honeypot-cf7' ); ?></label></th>
 						<td><input type="text" name="name" class="tg-name oneline" id="<?php echo esc_attr( $args['content'] . '-name' ); ?>" /></td>
 					</tr>
 				</tbody>
@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="insert-box">
 		<input type="text" name="honeypot" class="tag code" readonly="readonly" onfocus="this.select()" />
 		<div class="submitbox">
-			<input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr__( 'Insert Tag', 'contact-form-7' ); ?>" />
+			<input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr__( 'Insert Tag', 'simple-honeypot-cf7' ); ?>" />
 		</div>
 	</div>
 <?php endif; ?>
