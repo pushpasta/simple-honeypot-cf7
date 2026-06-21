@@ -22,8 +22,10 @@ endif;
 <table class="widefat striped simple-honeypot-cf7-table simple-honeypot-cf7-breakdown">
 	<thead>
 		<tr>
-			<th><?php esc_html_e( 'Form' ); ?></th>
-			<th><?php esc_html_e( 'Count' ); ?></th>
+			<?php /* translators: table column header for contact form name */ ?>
+			<th><?php esc_html_e( 'Form', 'simple-honeypot-cf7' ); ?></th>
+			<?php /* translators: table column header for number of spam attempts */ ?>
+			<th><?php esc_html_e( 'Count', 'simple-honeypot-cf7' ); ?></th>
 		</tr>
 	</thead>
 	<tbody>

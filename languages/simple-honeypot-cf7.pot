@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-19T22:25:57+02:00\n"
+"POT-Creation-Date: 2026-06-21T01:50:18+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-honeypot-cf7\n"
@@ -41,8 +41,30 @@ msgid "https://github.com/pushpasta/"
 msgstr ""
 
 #: includes/Admin/class-admin.php:63
-#: templates/admin/page.php:61
+#: templates/admin/page.php:68
 msgid "Donate"
+msgstr ""
+
+#: includes/Admin/class-assets.php:50
+msgid "You have unsaved changes."
+msgstr ""
+
+#. translators: %s: minimum allowed value
+#: includes/Admin/class-assets.php:55
+#, php-format
+msgid "Value must be at least %s."
+msgstr ""
+
+#. translators: %s: maximum allowed value
+#: includes/Admin/class-assets.php:57
+#, php-format
+msgid "Value must be at most %s."
+msgstr ""
+
+#. translators: %s: comma-separated list of unrecognized rule patterns
+#: includes/Admin/class-assets.php:59
+#, php-format
+msgid "Unrecognized rule pattern: %s"
 msgstr ""
 
 #: includes/Admin/class-form-panel.php:44
@@ -50,11 +72,21 @@ msgstr ""
 msgid "Simple Honeypot"
 msgstr ""
 
-#: includes/Admin/class-importer.php:46
+#. translators: %s: maximum file size in MB.
+#: includes/Admin/class-importer.php:43
+#, php-format
+msgid "File is too large. Maximum size is %s MB."
+msgstr ""
+
+#: includes/Admin/class-importer.php:53
+msgid "Only JSON files are supported."
+msgstr ""
+
+#: includes/Admin/class-importer.php:68
 msgid "Invalid file format."
 msgstr ""
 
-#: includes/Admin/class-importer.php:54
+#: includes/Admin/class-importer.php:76
 msgid "The file format is not supported by this version of the plugin."
 msgstr ""
 
@@ -72,35 +104,35 @@ msgstr ""
 msgid "Proof of Work requires HTTPS. It is currently enabled but this site does not appear to be served over a secure connection. PoW checks will be skipped for all submissions."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:207
+#: includes/Admin/class-settings-page.php:275
 msgid "Report data has been cleared."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:212
+#: includes/Admin/class-settings-page.php:280
 msgid "Global settings have been restored to defaults."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:217
+#: includes/Admin/class-settings-page.php:285
 msgid "Settings imported successfully."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:222
+#: includes/Admin/class-settings-page.php:290
 msgid "Import failed. Please check the file and try again."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:228
+#: includes/Admin/class-settings-page.php:296
 msgid "Rules have been saved."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:232
+#: includes/Admin/class-settings-page.php:300
 msgid "Plugin settings have been saved."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:290
+#: includes/Admin/class-settings-page.php:344
 msgid "You do not have permission to export settings."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:331
+#: includes/Admin/class-settings-page.php:384
 msgid "Failed to encode settings."
 msgstr ""
 
@@ -120,58 +152,58 @@ msgstr ""
 msgid "Could not move %1$s to %2$s"
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:60
+#: includes/Frontend/class-spam-checker.php:71
 msgid "Honeypot validation token was missing."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:70
+#: includes/Frontend/class-spam-checker.php:81
 msgid "Honeypot validation token was invalid or expired."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:94
+#: includes/Frontend/class-spam-checker.php:105
 msgid "Proof-of-Work validation failed."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:133
+#: includes/Frontend/class-spam-checker.php:144
 msgid "Honeypot timing data was missing."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:143
+#: includes/Frontend/class-spam-checker.php:154
 msgid "Honeypot timing data was in the future."
 msgstr ""
 
 #. translators: %d: elapsed seconds.
-#: includes/Frontend/class-spam-checker.php:152
+#: includes/Frontend/class-spam-checker.php:163
 #, php-format
 msgid "Form was submitted with stale honeypot timing data after %d seconds."
 msgstr ""
 
 #. translators: 1: elapsed seconds, 2: required seconds.
-#: includes/Frontend/class-spam-checker.php:165
+#: includes/Frontend/class-spam-checker.php:176
 #, php-format
 msgid "Form was submitted too quickly: %1$d seconds elapsed, %2$d seconds required."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:183
+#: includes/Frontend/class-spam-checker.php:242
 msgid "unknown field"
 msgstr ""
 
 #. translators: %s: honeypot field name.
-#: includes/Frontend/class-spam-checker.php:191
+#: includes/Frontend/class-spam-checker.php:250
 #, php-format
 msgid "Expected honeypot field was missing for \"%s\"."
 msgstr ""
 
 #. translators: 1: field name, 2: submitted value.
-#: includes/Frontend/class-spam-checker.php:213
+#: includes/Frontend/class-spam-checker.php:272
 #, php-format
 msgid "Honeypot field \"%1$s\" was filled with \"%2$s\"."
 msgstr ""
 
-#: includes/Reporting/class-reporter.php:32
-#: templates/admin/tables/events-table.php:40
-#: templates/admin/tables/events-table.php:42
-#: templates/admin/tables/forms-table.php:34
+#: includes/Reporting/class-reporter.php:33
+#: templates/admin/tables/events-table.php:45
+#: templates/admin/tables/events-table.php:47
+#: templates/admin/tables/forms-table.php:36
 msgid "Unknown form"
 msgstr ""
 
@@ -209,19 +241,15 @@ msgstr ""
 msgid "Leave empty or set to 0 to use the global minimum time. Only applies when the timing check is enabled (either globally or per form)."
 msgstr ""
 
-#: templates/admin/cf7-tag-generator.php:45
-msgid "Insert Tag"
-msgstr ""
-
-#: templates/admin/page.php:13
+#: templates/admin/page.php:19
 msgid "for Contact Form 7"
 msgstr ""
 
-#: templates/admin/page.php:14
+#: templates/admin/page.php:20
 msgid "Configure honeypot fields, timing checks, proof-of-work, custom rules, and spam reporting."
 msgstr ""
 
-#: templates/admin/page.php:60
+#: templates/admin/page.php:67
 msgid "If Simple Honeypot helps protect your site, please support its development."
 msgstr ""
 
@@ -229,12 +257,81 @@ msgstr ""
 msgid "No events recorded yet. Recent spam attempts will be listed here."
 msgstr ""
 
+#. translators: table column header for contact form name
+#: templates/admin/tables/events-table.php:28
+#: templates/admin/tables/forms-overview-table.php:16
+#: templates/admin/tables/forms-table.php:26
+msgid "Form"
+msgstr ""
+
+#. translators: table column header for visitor IP address
+#: templates/admin/tables/events-table.php:30
+msgid "IP Address"
+msgstr ""
+
+#. translators: table column header for browser user agent string
+#: templates/admin/tables/events-table.php:32
+msgid "User Agent"
+msgstr ""
+
+#. translators: table column header for spam detection reason
+#: templates/admin/tables/events-table.php:34
+msgid "Reason"
+msgstr ""
+
+#. translators: table column header for timing check mode (enabled/disabled/uses global)
+#: templates/admin/tables/forms-overview-table.php:18
+msgid "Timing"
+msgstr ""
+
+#. translators: table column header for minimum submission time in seconds
+#: templates/admin/tables/forms-overview-table.php:20
+msgid "Min. Time"
+msgstr ""
+
+#. translators: %s: resolved mode (Enabled or Disabled) inherited from global settings
+#: templates/admin/tables/forms-overview-table.php:34
+#, php-format
+msgid "Uses global (%s)"
+msgstr ""
+
+#. translators: %d: number of seconds inherited from global settings
+#: templates/admin/tables/forms-overview-table.php:48
+#, php-format
+msgid "Uses global (%d)"
+msgstr ""
+
+#. translators: %d: number of seconds
+#: templates/admin/tables/forms-overview-table.php:55
+#, php-format
+msgid "%d seconds"
+msgstr ""
+
 #: templates/admin/tables/forms-table.php:16
 msgid "No form data yet. Per-form statistics will appear here."
 msgstr ""
 
+#. translators: table column header for number of spam attempts
+#. translators: table column header for number of occurrences
+#: templates/admin/tables/forms-table.php:28
+#: templates/admin/tables/key-value-table.php:29
+msgid "Count"
+msgstr ""
+
 #: templates/admin/tables/key-value-table.php:16
 msgid "No data yet. Spam attempts will appear here once they are blocked."
+msgstr ""
+
+#: templates/admin/tabs/forms.php:13
+msgid "Forms Overview"
+msgstr ""
+
+#: templates/admin/tabs/forms.php:15
+msgid "Contact Form 7 forms with custom settings. Forms using only global defaults are not shown."
+msgstr ""
+
+#: templates/admin/tabs/forms.php:21
+msgid "No forms with custom settings yet. Per-form overrides will appear here once saved."
 msgstr ""
 
 #: templates/admin/tabs/reports.php:18
@@ -289,11 +386,17 @@ msgstr ""
 
 #. translators: * characters are literal wildcard symbols and must not be translated.
 #: templates/admin/tabs/rules.php:33
-msgid "One rule per line. Each line is auto-detected as either an IP or email based on format. Supported: IPv4, IPv6, wildcard *, and CIDR for IP; wildcard * for email. Unrecognized lines are ignored."
+msgid "One rule per line. Lines starting with # are treated as comments. Each line is auto-detected as either an IP or email based on format. Supported: IPv4, IPv6, wildcard *, and CIDR for IP; wildcard * for email. Unrecognized lines are ignored."
+msgstr ""
+
+#. translators: %s: number of active rules
+#: templates/admin/tabs/rules.php:49
+#, php-format
+msgid "You have %s active rules. A large number of rules may slow down form submissions."
 msgstr ""
 
 #. translators: 1: URL to Discussion settings page.
-#: templates/admin/tabs/rules.php:49
+#: templates/admin/tabs/rules.php:63
 #, php-format
 msgid "Need to block specific words or patterns? Use the <a href=\"%1$s\">WordPress Disallowed Comment Keys</a> setting instead &mdash; Contact Form 7 checks it automatically."
 msgstr ""
@@ -359,7 +462,7 @@ msgid "leading zero bits (4 = fast, 20 = slow)"
 msgstr ""
 
 #: templates/admin/tabs/settings.php:78
-msgid "Each additional bit doubles the work required. Default (8) takes ~50&ndash;100ms in a modern browser. Values above 14 may take several seconds."
+msgid "Each additional bit doubles the work required. Default (8) takes ~50&#8211;100ms in a modern browser. Values above 14 may take several seconds."
 msgstr ""
 
 #: templates/admin/tabs/settings.php:86
@@ -386,74 +489,78 @@ msgstr ""
 msgid "recent events"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:121
+#: templates/admin/tabs/settings.php:113
+msgid "Warning: High values may slow down the admin dashboard and increase database usage."
+msgstr ""
+
+#: templates/admin/tabs/settings.php:124
 msgid "Import &amp; Export"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:123
+#: templates/admin/tabs/settings.php:126
 msgid "Export and import all plugin settings as a JSON file."
 msgstr ""
 
-#: templates/admin/tabs/settings.php:126
+#: templates/admin/tabs/settings.php:129
 msgid "Export settings"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:128
+#: templates/admin/tabs/settings.php:131
 msgid "Export Settings"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:129
+#: templates/admin/tabs/settings.php:132
 msgid "Downloads a JSON file with all global and per-form settings."
 msgstr ""
 
-#: templates/admin/tabs/settings.php:133
+#: templates/admin/tabs/settings.php:136
 msgid "Import settings"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:136
+#: templates/admin/tabs/settings.php:139
 msgid "Import Settings"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:137
+#: templates/admin/tabs/settings.php:140
 msgid "Upload a previously exported JSON file to restore all settings."
 msgstr ""
 
-#: templates/admin/tabs/settings.php:145
+#: templates/admin/tabs/settings.php:148
 msgid "Danger Zone"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:147
+#: templates/admin/tabs/settings.php:150
 msgid "Destructive actions that cannot be undone. Use with caution."
 msgstr ""
 
-#: templates/admin/tabs/settings.php:150
+#: templates/admin/tabs/settings.php:153
 msgid "Clear reporting data"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:152
+#: templates/admin/tabs/settings.php:155
 msgid "Are you sure you want to clear reporting data? This cannot be undone."
 msgstr ""
 
-#: templates/admin/tabs/settings.php:152
+#: templates/admin/tabs/settings.php:155
 msgid "Clear Reporting Data"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:153
+#: templates/admin/tabs/settings.php:156
 msgid "Removes all recorded spam stats, breakdowns, and event logs."
 msgstr ""
 
-#: templates/admin/tabs/settings.php:157
+#: templates/admin/tabs/settings.php:160
 msgid "Reset all settings"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:159
+#: templates/admin/tabs/settings.php:162
 msgid "Are you sure you want to reset all settings to defaults? Reporting data and per-form settings will not be affected."
 msgstr ""
 
-#: templates/admin/tabs/settings.php:159
+#: templates/admin/tabs/settings.php:162
 msgid "Reset All Settings"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:160
+#: templates/admin/tabs/settings.php:163
 msgid "Restores every global setting to its original default value. Your report data and individual form overrides remain untouched."
 msgstr ""

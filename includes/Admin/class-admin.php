@@ -91,10 +91,10 @@ final class Admin {
 
 		if ( $enabled ) {
 			$action = 'disable-auto-update';
-			$label  = __( 'Disable auto-updates' );
+			$label  = __( 'Disable auto-updates', 'default' );
 		} else {
 			$action = 'enable-auto-update';
-			$label  = __( 'Enable auto-updates' );
+			$label  = __( 'Enable auto-updates', 'default' );
 		}
 
 		$url = wp_nonce_url(

@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="simple-honeypot-cf7-stat-icon">
 			<span class="dashicons dashicons-shield-alt"></span>
 		</div>
-		<strong><?php echo empty( $parsed_rules ) ? '—' : esc_html( count( $parsed_rules ) ); ?></strong>
+		<strong><?php echo empty( $parsed_rules ) ? '—' : esc_html( number_format_i18n( count( $parsed_rules ) ) ); ?></strong>
 		<span>
 			<?php esc_html_e( 'Rules', 'simple-honeypot-cf7' ); ?>
 			<?php if ( ! empty( $parsed_rules ) ) : ?>

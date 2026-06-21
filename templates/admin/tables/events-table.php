@@ -22,11 +22,16 @@ endif;
 <table class="widefat striped simple-honeypot-cf7-table">
 	<thead>
 		<tr>
-			<th><?php esc_html_e( 'Date' ); ?></th>
-			<th><?php esc_html_e( 'Form' ); ?></th>
-			<th><?php esc_html_e( 'IP Address' ); ?></th>
-			<th><?php esc_html_e( 'User Agent' ); ?></th>
-			<th><?php esc_html_e( 'Reason' ); ?></th>
+			<?php /* translators: table column header */ ?>
+			<th><?php esc_html_e( 'Date', 'default' ); ?></th>
+			<?php /* translators: table column header for contact form name */ ?>
+			<th><?php esc_html_e( 'Form', 'simple-honeypot-cf7' ); ?></th>
+			<?php /* translators: table column header for visitor IP address */ ?>
+			<th><?php esc_html_e( 'IP Address', 'simple-honeypot-cf7' ); ?></th>
+			<?php /* translators: table column header for browser user agent string */ ?>
+			<th><?php esc_html_e( 'User Agent', 'simple-honeypot-cf7' ); ?></th>
+			<?php /* translators: table column header for spam detection reason */ ?>
+			<th><?php esc_html_e( 'Reason', 'simple-honeypot-cf7' ); ?></th>
 		</tr>
 	</thead>
 	<tbody>
