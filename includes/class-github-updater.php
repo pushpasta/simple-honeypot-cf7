@@ -476,7 +476,7 @@ final class GitHub_Updater {
 	/**
 	 * Format inline markdown elements to HTML.
 	 *
-	 * Handles bold, italic, inline code, and links.
+	 * Handles bold, italic, inline code, markdown links, and bare URL auto-detection.
 	 *
 	 * @param string $text Raw inline text.
 	 * @return string HTML.
@@ -496,10 +496,17 @@ final class GitHub_Updater {
 		// Italic.
 		$text = preg_replace( '/\*(.+?)\*/', '<em>$1</em>', $text );
 
-		// Links.
+		// Markdown links.
 		$text = preg_replace(
 			'/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/',
 			'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
+			$text
+		);
+
+		// Auto-link bare URLs.
+		$text = preg_replace(
+			'/(?<!["\'=])(https?:\/\/[^\s<>"\')\]]+)/',
+			'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',
 			$text
 		);
 
