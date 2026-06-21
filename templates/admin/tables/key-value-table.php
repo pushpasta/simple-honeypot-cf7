@@ -25,7 +25,7 @@ arsort( $items );
 	<thead>
 		<tr>
 			<th><?php echo esc_html( $label ); ?></th>
-			<?php /* translators: table column header for number of occurrences */ ?>
+			<?php /* translators: table column header for count of items */ ?>
 			<th><?php esc_html_e( 'Count', 'simple-honeypot-cf7' ); ?></th>
 		</tr>
 	</thead>
