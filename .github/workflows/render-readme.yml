@@ -30,8 +30,8 @@ jobs:
       - name: Commit and Push Changes
         run: |
           # Configure Git identity
-          git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Stage generated file
           git add README.md
