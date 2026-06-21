@@ -57,7 +57,7 @@ final class Settings_Page {
 	 * @return array
 	 */
 	public function settings_link( $links ) {
-		$links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=simple-honeypot-cf7' ) ) . '">' . esc_html__( 'Settings' ) . '</a>';
+		$links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=simple-honeypot-cf7' ) ) . '">' . esc_html__( 'Settings', 'default' ) . '</a>';
 
 		return $links;
 	}
@@ -75,8 +75,9 @@ final class Settings_Page {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only tab navigation.
 		$current_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'settings';
 		$tabs        = array(
-			'settings' => __( 'Settings' ),
+			'settings' => __( 'Settings', 'default' ),
 			'rules'    => __( 'Rules' ),
+			'forms'    => __( 'Forms' ),
 			'reports'  => __( 'Reports' ),
 		);
 
@@ -174,13 +175,80 @@ final class Settings_Page {
 		}
 
 		if ( 'rules' === $tab ) {
-			return array( 'settings' => Settings::get_settings() );
+			$settings = Settings::get_settings();
+			return array(
+				'settings'     => $settings,
+				'parsed_rules' => \SimpleHoneypotCF7\Rules\Rules::parse( $settings['custom_rules'] ),
+			);
+		}
+
+		if ( 'forms' === $tab ) {
+			return array( 'forms_with_overrides' => $this->get_forms_with_overrides() );
 		}
 
 		return array(
 			'settings'   => Settings::get_settings(),
 			'export_url' => wp_nonce_url( admin_url( 'admin-post.php?action=simple_honeypot_cf7_export_settings' ), 'simple_honeypot_cf7_export_settings' ),
 		);
+	}
+
+	/**
+	 * Get all CF7 forms that have per-form settings saved.
+	 *
+	 * @return array
+	 */
+	private function get_forms_with_overrides() {
+		$forms = get_posts(
+			array(
+				'post_type'      => 'wpcf7_contact_form',
+				'posts_per_page' => -1,
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+				'post_status'    => 'any',
+			)
+		);
+
+		$global = Settings::get_settings();
+		$result = array();
+
+		foreach ( $forms as $form ) {
+			$raw = get_post_meta( $form->ID, Settings::FORM_META, true );
+
+			if ( ! is_array( $raw ) || empty( $raw ) ) {
+				continue;
+			}
+
+			$settings = Settings::get_form_settings( $form->ID );
+
+			$time_mode_custom = ( 'inherit' !== $settings['time_mode'] );
+			$min_time_custom  = ( $settings['min_time_seconds'] > 0 );
+
+			if ( ! $time_mode_custom && ! $min_time_custom ) {
+				continue;
+			}
+
+			$resolved_mode = $time_mode_custom
+				? $settings['time_mode']
+				: ( $global['time_check_enabled'] ? 'enabled' : 'disabled' );
+
+			$resolved_min = $min_time_custom
+				? $settings['min_time_seconds']
+				: $global['min_time_seconds'];
+
+			$result[] = array(
+				'id'               => $form->ID,
+				'title'            => $form->post_title,
+				'edit_url'         => admin_url( 'admin.php?page=wpcf7&post=' . $form->ID . '&action=edit' ),
+				'time_mode'        => $settings['time_mode'],
+				'time_mode_custom' => $time_mode_custom,
+				'resolved_mode'    => $resolved_mode,
+				'min_time_seconds' => $settings['min_time_seconds'],
+				'min_time_custom'  => $min_time_custom,
+				'resolved_min'     => $resolved_min,
+			);
+		}
+
+		return $result;
 	}
 
 	/**
@@ -261,23 +329,9 @@ final class Settings_Page {
 	 */
 	private function rules_from_post( array $settings, array $post ) {
 		$settings['custom_rules_enabled'] = empty( $post['custom_rules_enabled'] ) ? 0 : 1;
-		$settings['custom_rules']         = $this->sanitize_rules( isset( $post['custom_rules'] ) ? $post['custom_rules'] : $settings['custom_rules'] );
+		$settings['custom_rules']         = Settings::sanitize_rules( isset( $post['custom_rules'] ) ? $post['custom_rules'] : $settings['custom_rules'] );
 
 		return $settings;
-	}
-
-	/**
-	 * Sanitize textarea rules line by line.
-	 *
-	 * @param string $rules Rules text.
-	 * @return string
-	 */
-	private function sanitize_rules( $rules ) {
-		$lines = preg_split( '/\r\n|\r|\n/', (string) $rules );
-		$lines = array_map( 'sanitize_text_field', $lines );
-		$lines = array_map( 'trim', $lines );
-
-		return implode( "\n", $lines );
 	}
 
 	/**
@@ -307,7 +361,6 @@ final class Settings_Page {
 
 			foreach ( $posts as $form_id ) {
 				$form_settings = Settings::get_form_settings( $form_id );
-				$defaults      = Settings::default_settings();
 
 				if ( 'inherit' !== $form_settings['time_mode'] || $form_settings['min_time_seconds'] > 0 ) {
 					$forms[ $form_id ] = $form_settings;
