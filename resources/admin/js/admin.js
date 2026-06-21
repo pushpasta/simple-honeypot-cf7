@@ -12,6 +12,63 @@
 		return $form.serialize();
 	}
 
+	function validateRules( value ) {
+		var lines  = value.split( /\r?\n/ );
+		var errors = [];
+
+		$.each(
+			lines,
+			function ( i, line ) {
+				line = $.trim( line );
+
+				if ( '' === line || 0 === line.indexOf( '#' ) ) {
+					return;
+				}
+
+				var typed = line;
+				if ( /^(ip|email):/i.test( typed ) ) {
+					typed = typed.replace( /^(ip|email):/i, '' );
+				}
+
+				if ( '' === typed ) {
+					return;
+				}
+
+				var isEmail = false;
+				var isIp    = false;
+
+				if ( typed.indexOf( '@' ) !== -1 ) {
+					isEmail = true;
+				} else if ( /^\d[\d.\*\/]+$/.test( typed ) && typed.indexOf( '.' ) !== -1 ) {
+					isIp = true;
+				} else if ( /^[0-9a-fA-F:\*\/]+$/.test( typed ) && ( typed.split( ':' ).length - 1 ) >= 2 ) {
+					isIp = true;
+				}
+
+				if ( ! isEmail && ! isIp ) {
+					errors.push( line );
+				}
+			}
+		);
+
+		return errors;
+	}
+
+	function showFieldError( $field, message ) {
+		var $err = $field.siblings( '.simple-honeypot-cf7-field-error' );
+		if ( ! $err.length ) {
+			$err = $( '<p class="simple-honeypot-cf7-field-error"></p>' );
+			$field.after( $err );
+		}
+		$err.text( message ).addClass( 'is-visible' );
+		$field.addClass( 'simple-honeypot-cf7-field-invalid' );
+	}
+
+	function clearFieldError( $field ) {
+		$field.siblings( '.simple-honeypot-cf7-field-error' ).removeClass( 'is-visible' );
+		$field.removeClass( 'simple-honeypot-cf7-field-invalid' );
+	}
+
 	$(
 		function () {
 			var $form = $( '.simple-honeypot-cf7-admin form' );
@@ -30,10 +87,64 @@
 				}
 			);
 
+			// Clear errors on input.
+			$form.on(
+				'input change',
+				'input[type="number"], input[type="text"], textarea',
+				function () {
+					clearFieldError( $( this ) );
+				}
+			);
+
 			$form.on(
 				'submit',
-				function () {
-					formDirty = false;
+				function ( e ) {
+					var valid = true;
+
+					$form.find( 'input[type="number"]' ).each(
+						function () {
+							var $input = $( this );
+							var val    = $input.val();
+
+							if ( '' === val ) {
+									return;
+							}
+
+							var num   = parseInt( val, 10 );
+							var min   = $input.attr( 'min' );
+							var max   = $input.attr( 'max' );
+							var label = $input.closest( 'tr' ).find( 'label' ).text();
+
+							if ( min !== undefined && num < parseInt( min, 10 ) ) {
+								showFieldError( $input, label + ': ' + simpleHoneypotCf7.valueTooLow.replace( '%s', min ) );
+								valid = false;
+							} else if ( max !== undefined && num > parseInt( max, 10 ) ) {
+								showFieldError( $input, label + ': ' + simpleHoneypotCf7.valueTooHigh.replace( '%s', max ) );
+								valid = false;
+							}
+						}
+					);
+
+					// Validate rules textarea.
+					var $rules = $form.find( '.simple-honeypot-cf7-rules' );
+					if ( $rules.length && ! $rules.prop( 'disabled' ) ) {
+						var errors = validateRules( $rules.val() );
+						if ( errors.length ) {
+							showFieldError( $rules, simpleHoneypotCf7.invalidRules.replace( '%s', errors.join( ', ' ) ) );
+							valid = false;
+						}
+					}
+
+					if ( ! valid ) {
+						e.preventDefault();
+						formDirty = false;
+					} else {
+						formDirty      = false;
+						var $submitter = $( document.activeElement );
+						if ( $submitter.is( 'input[type="submit"], button[type="submit"]' ) ) {
+							$submitter.prop( 'disabled', true );
+						}
+					}
 				}
 			);
 
@@ -50,6 +161,56 @@
 
 			// Apply initial disabled state on page load.
 			$form.find( '.simple-honeypot-cf7-custom-rules-toggle input:not(:checked)' ).trigger( 'change' );
+
+			// Confirm modal for destructive actions.
+			var $pendingButton = null;
+
+			$form.on(
+				'click',
+				'[data-confirm]',
+				function ( e ) {
+					e.preventDefault();
+					$pendingButton = $( this );
+					var $dialog    = $( '#simple-honeypot-cf7-confirm-dialog' );
+					$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( $pendingButton.data( 'confirm' ) );
+					$dialog[ 0 ].showModal();
+				}
+			);
+
+			$( document ).on(
+				'click',
+				'.simple-honeypot-cf7-confirm-yes',
+				function () {
+					var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
+					$dialog[ 0 ].close();
+					if ( $pendingButton ) {
+						var name  = $pendingButton.attr( 'name' );
+						var value = $pendingButton.attr( 'value' );
+						$form.append( $( '<input>', { type: 'hidden', name: name, value: value } ) );
+						HTMLFormElement.prototype.submit.call( $form[0] );
+						$pendingButton = null;
+					}
+				}
+			);
+
+			$( document ).on(
+				'click',
+				'.simple-honeypot-cf7-confirm-no',
+				function () {
+					$( '#simple-honeypot-cf7-confirm-dialog' )[ 0 ].close();
+					$pendingButton = null;
+				}
+			);
+
+			// Close on backdrop click.
+			$( document ).on(
+				'click',
+				'.simple-honeypot-cf7-dialog-backdrop',
+				function () {
+					$( '#simple-honeypot-cf7-confirm-dialog' )[ 0 ].close();
+					$pendingButton = null;
+				}
+			);
 		}
 	);
 
@@ -57,7 +218,7 @@
 		'beforeunload',
 		function () {
 			if ( formDirty ) {
-				return 'You have unsaved changes.';
+				return simpleHoneypotCf7.unsavedChanges;
 			}
 		}
 	);

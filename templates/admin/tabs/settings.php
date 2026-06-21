@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="min_time_seconds"><?php esc_html_e( 'Minimum time', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="number" class="small-text" id="min_time_seconds" name="min_time_seconds" min="0" step="1" value="<?php echo esc_attr( $settings['min_time_seconds'] ); ?>" />
+						<input type="number" class="small-text" id="min_time_seconds" name="min_time_seconds" min="0" step="1" value="<?php echo esc_attr( $settings['min_time_seconds'] ); ?>" placeholder="4" />
 						<?php esc_html_e( 'seconds' ); ?>
 						<p class="description"><?php esc_html_e( 'Minimum time required between form submissions.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="max_age_minutes"><?php esc_html_e( 'Token lifetime', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="number" class="small-text" id="max_age_minutes" name="max_age_minutes" min="10" step="1" value="<?php echo esc_attr( $settings['max_age_minutes'] ); ?>" />
+						<input type="number" class="small-text" id="max_age_minutes" name="max_age_minutes" min="10" step="1" value="<?php echo esc_attr( $settings['max_age_minutes'] ); ?>" placeholder="120" />
 						<?php esc_html_e( 'minutes' ); ?>
 					</td>
 				</tr>
@@ -73,9 +73,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="pow_complexity"><?php esc_html_e( 'Puzzle complexity', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="number" class="small-text" id="pow_complexity" name="pow_complexity" min="4" max="20" step="1" value="<?php echo esc_attr( $settings['pow_complexity'] ); ?>" />
+						<input type="number" class="small-text" id="pow_complexity" name="pow_complexity" min="4" max="20" step="1" value="<?php echo esc_attr( $settings['pow_complexity'] ); ?>" placeholder="8" />
 						<?php esc_html_e( 'leading zero bits (4 = fast, 20 = slow)', 'simple-honeypot-cf7' ); ?>
-						<p class="description"><?php esc_html_e( 'Each additional bit doubles the work required. Default (8) takes ~50&ndash;100ms in a modern browser. Values above 14 may take several seconds.', 'simple-honeypot-cf7' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Each additional bit doubles the work required. Default (8) takes ~50&#8211;100ms in a modern browser. Values above 14 may take several seconds.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
 			</table>
@@ -107,15 +107,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="keep_recent_events"><?php esc_html_e( 'Events to keep', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="number" class="small-text" id="keep_recent_events" name="keep_recent_events" min="10" step="1" value="<?php echo esc_attr( $settings['keep_recent_events'] ); ?>" />
+						<input type="number" class="small-text" id="keep_recent_events" name="keep_recent_events" min="10" step="1" value="<?php echo esc_attr( $settings['keep_recent_events'] ); ?>" placeholder="100" />
 						<?php esc_html_e( 'recent events', 'simple-honeypot-cf7' ); ?>
+						<?php if ( $settings['keep_recent_events'] > 1000 ) : ?>
+							<p class="description" style="color: #d63638;"><strong><?php esc_html_e( 'Warning: High values may slow down the admin dashboard and increase database usage.', 'simple-honeypot-cf7' ); ?></strong></p>
+						<?php endif; ?>
 					</td>
 				</tr>
 			</table>
 		</div>
 	</div>
 
-	<?php submit_button( __( 'Save' ) ); ?>
+	<?php submit_button( __( 'Save', 'default' ) ); ?>
 
 	<div class="postbox simple-honeypot-cf7-card">
 		<h2 class="hndle"><span class="dashicons dashicons-upload"></span><span><?php esc_html_e( 'Import &amp; Export', 'simple-honeypot-cf7' ); ?></span></h2>
@@ -149,14 +152,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Clear reporting data', 'simple-honeypot-cf7' ); ?></th>
 					<td>
-						<button type="submit" name="simple_honeypot_cf7_action" value="reset_stats" class="button button-delete" onclick="return confirm('<?php echo esc_js( __( 'Are you sure you want to clear reporting data? This cannot be undone.', 'simple-honeypot-cf7' ) ); ?>');"><?php esc_html_e( 'Clear Reporting Data', 'simple-honeypot-cf7' ); ?></button>
+						<button type="submit" name="simple_honeypot_cf7_action" value="reset_stats" class="button button-delete" data-confirm="<?php echo esc_attr( __( 'Are you sure you want to clear reporting data? This cannot be undone.', 'simple-honeypot-cf7' ) ); ?>"><?php esc_html_e( 'Clear Reporting Data', 'simple-honeypot-cf7' ); ?></button>
 						<p class="description"><?php esc_html_e( 'Removes all recorded spam stats, breakdowns, and event logs.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Reset all settings', 'simple-honeypot-cf7' ); ?></th>
 					<td>
-						<button type="submit" name="simple_honeypot_cf7_action" value="reset_settings" class="button button-delete" onclick="return confirm('<?php echo esc_js( __( 'Are you sure you want to reset all settings to defaults? Reporting data and per-form settings will not be affected.', 'simple-honeypot-cf7' ) ); ?>');"><?php esc_html_e( 'Reset All Settings', 'simple-honeypot-cf7' ); ?></button>
+						<button type="submit" name="simple_honeypot_cf7_action" value="reset_settings" class="button button-delete" data-confirm="<?php echo esc_attr( __( 'Are you sure you want to reset all settings to defaults? Reporting data and per-form settings will not be affected.', 'simple-honeypot-cf7' ) ); ?>"><?php esc_html_e( 'Reset All Settings', 'simple-honeypot-cf7' ); ?></button>
 						<p class="description"><?php esc_html_e( 'Restores every global setting to its original default value. Your report data and individual form overrides remain untouched.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>

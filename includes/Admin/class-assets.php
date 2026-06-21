@@ -23,7 +23,7 @@ final class Assets {
 	 * @return void
 	 */
 	public function enqueue( $hook ) {
-		if ( false === strpos( $hook, 'simple-honeypot-cf7' ) && false === strpos( $hook, 'wpcf7' ) ) {
+		if ( false === strpos( $hook, 'simple-honeypot-cf7' ) && false === strpos( $hook, 'wpcf7' ) && false === strpos( $hook, 'toplevel_page_wpcf7' ) ) {
 			return;
 		}
 
@@ -41,6 +41,23 @@ final class Assets {
 			array( 'jquery' ),
 			SIMPLE_HONEYPOT_CF7_VERSION,
 			true
+		);
+
+		wp_localize_script(
+			'simple-honeypot-cf7-admin',
+			'simpleHoneypotCf7',
+			array(
+				'unsavedChanges' => __( 'You have unsaved changes.', 'simple-honeypot-cf7' ),
+				'confirmTitle'   => __( 'Are you sure?', 'default' ),
+				'confirmYes'     => __( 'Yes', 'default' ),
+				'confirmNo'      => __( 'No', 'default' ),
+				/* translators: %s: minimum allowed value */
+				'valueTooLow'    => __( 'Value must be at least %s.', 'simple-honeypot-cf7' ),
+				/* translators: %s: maximum allowed value */
+				'valueTooHigh'   => __( 'Value must be at most %s.', 'simple-honeypot-cf7' ),
+				/* translators: %s: comma-separated list of unrecognized rule patterns */
+				'invalidRules'   => __( 'Unrecognized rule pattern: %s', 'simple-honeypot-cf7' ),
+			)
 		);
 	}
 }
