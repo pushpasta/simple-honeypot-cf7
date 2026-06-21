@@ -32,6 +32,28 @@ final class Importer {
 			return array( 'success' => false );
 		}
 
+		$max_size = wp_max_upload_size();
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- File size is checked numerically.
+		if ( ! empty( $_FILES['import_file']['size'] ) && (int) $_FILES['import_file']['size'] > $max_size ) {
+			return array(
+				'success' => false,
+				'error'   => sprintf(
+					/* translators: %s: maximum file size in MB. */
+					__( 'File is too large. Maximum size is %s MB.', 'simple-honeypot-cf7' ),
+					number_format( $max_size / ( 1024 * 1024 ), 1 )
+				),
+			);
+		}
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- MIME type is checked, not used for output.
+		if ( ! empty( $_FILES['import_file']['type'] ) && 'application/json' !== $_FILES['import_file']['type'] ) {
+			return array(
+				'success' => false,
+				'error'   => __( 'Only JSON files are supported.', 'simple-honeypot-cf7' ),
+			);
+		}
+
 		$contents = file_get_contents( $_FILES['import_file']['tmp_name'] );
 
 		if ( false === $contents ) {
@@ -66,7 +88,7 @@ final class Importer {
 		$merged['store_honeypot_value'] = empty( $merged['store_honeypot_value'] ) ? 0 : 1;
 		$merged['keep_recent_events']   = max( 10, absint( $merged['keep_recent_events'] ) );
 		$merged['custom_rules_enabled'] = empty( $merged['custom_rules_enabled'] ) ? 0 : 1;
-		$merged['custom_rules']         = $this->sanitize_rules( $merged['custom_rules'] );
+		$merged['custom_rules']         = Settings::sanitize_rules( $merged['custom_rules'] );
 
 		Settings::update_settings( $merged );
 
@@ -83,19 +105,5 @@ final class Importer {
 		// phpcs:enable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 
 		return array( 'success' => true );
-	}
-
-	/**
-	 * Sanitize rules textarea content line by line.
-	 *
-	 * @param string $rules Rules text.
-	 * @return string
-	 */
-	private function sanitize_rules( $rules ) {
-		$lines = preg_split( '/\r\n|\r|\n/', (string) $rules );
-		$lines = array_map( 'sanitize_text_field', $lines );
-		$lines = array_map( 'trim', $lines );
-
-		return implode( "\n", $lines );
 	}
 }

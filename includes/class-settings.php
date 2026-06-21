@@ -16,9 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Settings {
 
-	const SETTINGS_OPTION = 'simple_honeypot_cf7_settings';
-	const STATS_OPTION    = 'simple_honeypot_cf7_stats';
-	const FORM_META       = '_simple_honeypot_cf7_settings';
+	const SETTINGS_OPTION  = 'simple_honeypot_cf7_settings';
+	const STATS_OPTION     = 'simple_honeypot_cf7_stats';
+	const FORM_META        = '_simple_honeypot_cf7_settings';
+	const RULES_SOFT_LIMIT = 10000;
 
 	/**
 	 * Create default options when they do not exist.
@@ -84,14 +85,27 @@ final class Settings {
 	}
 
 	/**
+	 * Cached settings to avoid repeated DB reads within a single request.
+	 *
+	 * @var array|null
+	 */
+	private static $settings_cache;
+
+	/**
 	 * Get global settings merged with defaults.
 	 *
 	 * @return array
 	 */
 	public static function get_settings() {
+		if ( null !== self::$settings_cache ) {
+			return self::$settings_cache;
+		}
+
 		$settings = get_option( self::SETTINGS_OPTION, array() );
 
-		return wp_parse_args( is_array( $settings ) ? $settings : array(), self::default_settings() );
+		self::$settings_cache = wp_parse_args( is_array( $settings ) ? $settings : array(), self::default_settings() );
+
+		return self::$settings_cache;
 	}
 
 	/**
@@ -230,6 +244,22 @@ final class Settings {
 	 */
 	private static function allowed_mode( $mode ) {
 		return in_array( $mode, array( 'inherit', 'enabled', 'disabled' ), true ) ? $mode : 'inherit';
+	}
+
+	/**
+	 * Sanitize textarea rules line by line.
+	 *
+	 * @param string $rules Rules text.
+	 * @return string
+	 */
+	public static function sanitize_rules( $rules ) {
+		$lines = preg_split( '/\r\n|\r|\n/', (string) $rules );
+		$lines = array_map( 'sanitize_text_field', $lines );
+		$lines = array_map( 'trim', $lines );
+		$lines = array_filter( $lines, 'strlen' );
+		$lines = array_values( array_unique( $lines ) );
+
+		return implode( "\n", $lines );
 	}
 
 	/**

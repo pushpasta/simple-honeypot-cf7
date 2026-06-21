@@ -26,11 +26,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<input type="checkbox" name="custom_rules_enabled" value="1" <?php checked( $settings['custom_rules_enabled'], 1 ); ?> />
 								<?php esc_html_e( 'Enable rules.', 'simple-honeypot-cf7' ); ?>
 							</label>
-							<textarea class="large-text code simple-honeypot-cf7-rules" name="custom_rules" rows="16" placeholder="<?php echo esc_attr( "192.168.1.*\n10.0.0.0/24\n2001:db8::/32\n*@temporary-mail.com\nspammer@example.com" ); ?>"><?php echo esc_textarea( $settings['custom_rules'] ); ?></textarea>
+							<textarea class="large-text code simple-honeypot-cf7-rules" name="custom_rules" rows="16" placeholder="<?php echo esc_attr( "# Blocked by IT dept\n192.168.1.*\n10.0.0.0/24\n2001:db8::/32\n*@temporary-mail.com\nspammer@example.com" ); ?>"><?php echo esc_textarea( $settings['custom_rules'] ); ?></textarea>
 							<p class="description">
 								<?php
 								/* translators: * characters are literal wildcard symbols and must not be translated. */
-								esc_html_e( 'One rule per line. Each line is auto-detected as either an IP or email based on format. Supported: IPv4, IPv6, wildcard *, and CIDR for IP; wildcard * for email. Unrecognized lines are ignored.', 'simple-honeypot-cf7' );
+								esc_html_e( 'One rule per line. Lines starting with # are treated as comments. Each line is auto-detected as either an IP or email based on format. Supported: IPv4, IPv6, wildcard *, and CIDR for IP; wildcard * for email. Unrecognized lines are ignored.', 'simple-honeypot-cf7' );
 								?>
 							</p>
 						</div>
@@ -39,6 +39,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</table>
 		</div>
 	</div>
+
+	<?php if ( count( $parsed_rules ) > \SimpleHoneypotCF7\Settings::RULES_SOFT_LIMIT ) : ?>
+		<div class="notice notice-warning inline">
+			<p>
+				<?php
+				printf(
+					/* translators: %s: number of active rules */
+					esc_html__( 'You have %s active rules. A large number of rules may slow down form submissions.', 'simple-honeypot-cf7' ),
+					'<strong>' . esc_html( number_format_i18n( count( $parsed_rules ) ) ) . '</strong>'
+				);
+				?>
+			</p>
+		</div>
+	<?php endif; ?>
 
 	<div class="notice notice-info inline">
 		<p>
@@ -56,6 +70,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 
 	<p class="submit">
-		<?php submit_button( __( 'Save' ), 'primary', 'submit', false ); ?>
+		<?php submit_button( __( 'Save', 'default' ), 'primary', 'submit', false ); ?>
 	</p>
 </form>
