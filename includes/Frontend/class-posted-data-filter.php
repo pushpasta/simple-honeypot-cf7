@@ -34,9 +34,33 @@ final class Posted_Data_Filter {
 		$form_id      = $contact_form && method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
 		$prefix       = Token::form_prefix( $form_id );
 
-		foreach ( $posted_data as $key => $value ) {
-			if ( $prefix && 0 === strpos( (string) $key, $prefix . '_' ) ) {
-				unset( $posted_data[ $key ] );
+		// Build the list of valid field names from form tags.
+		$valid_names = $this->get_valid_field_names( $contact_form );
+
+		// Add dynamic honeypot field names so they are not removed.
+		foreach ( Token::posted_tokens( $form_id ) as $token ) {
+			$data = Token::validate( $token, $form_id );
+
+			if ( ! empty( $data['dynamic_name'] ) ) {
+				$valid_names[] = sanitize_key( $data['dynamic_name'] );
+			}
+		}
+
+		// Remove keys that are not recognized form fields (buttons, CF7 meta, etc.).
+		if ( ! empty( $valid_names ) ) {
+			foreach ( array_keys( $posted_data ) as $key ) {
+				if ( ! in_array( $key, $valid_names, true ) ) {
+					unset( $posted_data[ $key ] );
+				}
+			}
+		}
+
+		// Remove honeypot-prefixed fields.
+		if ( $prefix ) {
+			foreach ( array_keys( $posted_data ) as $key ) {
+				if ( 0 === strpos( (string) $key, $prefix . '_' ) ) {
+					unset( $posted_data[ $key ] );
+				}
 			}
 		}
 
@@ -60,5 +84,27 @@ final class Posted_Data_Filter {
 		}
 
 		return $posted_data;
+	}
+
+	/**
+	 * Collect valid field names from the contact form's tags.
+	 *
+	 * @param mixed $contact_form Contact Form 7 form object.
+	 * @return array List of valid field names.
+	 */
+	private function get_valid_field_names( $contact_form ) {
+		$names = array();
+
+		if ( ! $contact_form || ! method_exists( $contact_form, 'scan_form_tags' ) ) {
+			return $names;
+		}
+
+		foreach ( $contact_form->scan_form_tags() as $tag ) {
+			if ( ! empty( $tag->name ) ) {
+				$names[] = $tag->name;
+			}
+		}
+
+		return $names;
 	}
 }
