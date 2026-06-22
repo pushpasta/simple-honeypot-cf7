@@ -4,7 +4,7 @@
 
 Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
 
-![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-1.2.2-blueviolet) ![License](https://img.shields.io/badge/License-GPLv2%20or%20later-green)
+![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-1.3.0-blueviolet) ![License](https://img.shields.io/badge/License-GPLv2%20or%20later-green)
 
 ![Stars](https://img.shields.io/github/stars/pushpasta/simple-honeypot-cf7?style=social) ![Forks](https://img.shields.io/github/forks/pushpasta/simple-honeypot-cf7?style=social) ![Watchers](https://img.shields.io/github/watchers/pushpasta/simple-honeypot-cf7?style=social) ![Last Commit](https://img.shields.io/github/last-commit/pushpasta/simple-honeypot-cf7?style=social) ![Downloads](https://img.shields.io/github/downloads/pushpasta/simple-honeypot-cf7/total?style=social)
 
@@ -15,7 +15,7 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 | Tags | contact form 7, cf7, honeypot, antispam, spam protection, bot protection, proof of work, hashcash |
 | Requires at least | 6.7 |
 | Tested up to | 7.0 |
-| Stable tag | 1.2.2 |
+| Stable tag | 1.3.0 |
 | Requires PHP | 7.4 |
 | Requires Plugins | contact-form-7 |
 | License | GPLv2 or later |
@@ -139,6 +139,22 @@ Review detailed records of each blocked submission, including reason, IP, and us
 
 ## Changelog
 
+### 1.3.0
+
+### Added
+* Display plugin version with tooltip in admin footer.
+* Auto-link bare URLs in plugin description.
+* Add shared Request helper for form submission handling.
+* Add performance caches for spam checker.
+* Consolidate rules sanitization with soft-limit warning.
+* Add confirm dialog and client validation for settings.
+* Add forms overview tab with per-form settings display.
+
+### Fixed
+* Prevent button values and CF7 meta fields from leaking into posted_data.
+* Unify Count translator comment to resolve pot warning.
+* Correct text domains and add translator comments.
+
 ### 1.2.2
 
 ### Fixed
@@ -187,6 +203,9 @@ Review detailed records of each blocked submission, including reason, IP, and us
 * Initial release.
 
 ## Upgrade Notice
+
+### 1.3.0
+* New features including version display, forms overview, and improved spam rules. Recommended update for all users.
 
 ### 1.2.2
 * Recommended update. Fixes IP address links in the reports table.
