@@ -88,6 +88,7 @@ final class Form_Tag {
 		$contact_form = class_exists( '\WPCF7_ContactForm' ) ? \WPCF7_ContactForm::get_current() : null;
 		$form_id      = $contact_form && method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
 		$field_name   = sanitize_key( $tag->name );
+		$tag_name     = $tag->name;
 
 		if ( ! isset( $this->field_indices[ $form_id ] ) ) {
 			$this->field_indices[ $form_id ] = 0;
@@ -110,25 +111,49 @@ final class Form_Tag {
 		$tokens_field_name = Token::tokens_field_name( $form_id );
 		$class             = method_exists( $tag, 'get_class_option' ) ? $tag->get_class_option( 'wpcf7-form-control wpcf7-text' ) : 'wpcf7-form-control wpcf7-text';
 
-		$pow_challenge = '';
-		if ( ! empty( $settings['pow_enabled'] ) && is_ssl() ) {
-			$pow_challenge = Token::pow_challenge( $form_id, $settings );
-		}
-
 		$html = $this->template->get(
 			'frontend/honeypot-field.php',
 			array(
 				'class'             => $class,
 				'dynamic_name'      => $dynamic_name,
 				'hiding_style'      => Token::hiding_style( $form_id, $field_index ),
-				'pow_challenge'     => $pow_challenge,
-				'tag_name'          => $tag->name,
+				'tag_name'          => $tag_name,
 				'token'             => $token,
 				'tokens_field_name' => $tokens_field_name,
 			)
 		);
 
 		return apply_filters( 'simple_honeypot_cf7_html', $html, $tag );
+	}
+
+	/**
+	 * Inject the proof-of-work hidden field into CF7's hidden-fields-container.
+	 *
+	 * @param array<string,string> $hidden_fields Existing hidden fields.
+	 * @return array<string,string>
+	 */
+	public function add_pow_field( $hidden_fields ) {
+		$settings = Settings::get_settings();
+
+		if ( empty( $settings['pow_enabled'] ) || ! is_ssl() ) {
+			return $hidden_fields;
+		}
+
+		$contact_form = class_exists( '\WPCF7_ContactForm' ) ? \WPCF7_ContactForm::get_current() : null;
+		$form_id      = $contact_form && method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
+
+		if ( ! $form_id ) {
+			return $hidden_fields;
+		}
+
+		$tokens_field_name = Token::tokens_field_name( $form_id );
+		$pow_challenge     = Token::pow_challenge( $form_id, $settings );
+
+		if ( ! empty( $pow_challenge ) ) {
+			$hidden_fields[ $tokens_field_name . '_pow' ] = $pow_challenge;
+		}
+
+		return $hidden_fields;
 	}
 
 	/**
