@@ -7,6 +7,8 @@
 
 namespace SimpleHoneypotCF7;
 
+use SimpleHoneypotCF7\Reporting\Event_Logger;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -23,7 +25,18 @@ final class Activator {
 	 */
 	public static function activate() {
 		Settings::activate();
+		self::setup_events_table();
 		self::opt_in_auto_updates();
+	}
+
+	/**
+	 * Create the events table and migrate legacy data if present.
+	 *
+	 * @return void
+	 */
+	private static function setup_events_table() {
+		Event_Logger::create_table();
+		Event_Logger::migrate_from_options( Settings::STATS_OPTION );
 	}
 
 	/**

@@ -7,6 +7,7 @@
 
 namespace SimpleHoneypotCF7\Admin;
 
+use SimpleHoneypotCF7\Reporting\Event_Logger;
 use SimpleHoneypotCF7\Settings;
 use SimpleHoneypotCF7\Support\Contact_Form_7;
 use SimpleHoneypotCF7\Support\Template;
@@ -167,8 +168,13 @@ final class Settings_Page {
 	private function tab_context( $tab ) {
 		if ( 'reports' === $tab ) {
 			$settings = Settings::get_settings();
+			$stats    = Settings::get_stats();
+
+			// Events live in the custom table; populate for the template.
+			$stats['events'] = Event_Logger::get_recent( $settings['keep_recent_events'] );
+
 			return array(
-				'stats'        => Settings::get_stats(),
+				'stats'        => $stats,
 				'settings'     => $settings,
 				'parsed_rules' => \SimpleHoneypotCF7\Rules\Rules::parse( $settings['custom_rules'] ),
 			);
@@ -402,27 +408,15 @@ final class Settings_Page {
 
 		check_admin_referer( 'simple_honeypot_cf7_purge_events' );
 
-		$days   = isset( $_GET['days'] ) ? absint( $_GET['days'] ) : 90;
-		$days   = max( 1, $days );
-		$cutoff = time() - ( $days * DAY_IN_SECONDS );
-		$stats  = Settings::get_stats();
-		$before = isset( $stats['events'] ) ? count( $stats['events'] ) : 0;
-
-		$stats['events'] = array_values(
-			array_filter(
-				$stats['events'],
-				function ( $e ) use ( $cutoff ) {
-					return isset( $e['time'] ) && $e['time'] >= $cutoff;
-				}
-			)
-		);
-
-		Settings::update_stats( $stats );
+		$days    = isset( $_GET['days'] ) ? absint( $_GET['days'] ) : 90;
+		$days    = max( 1, $days );
+		$before  = Event_Logger::count();
+		$removed = Event_Logger::purge_old( $days );
 
 		set_transient(
 			'simple_honeypot_cf7_purge_notice',
 			array(
-				'removed' => $before - count( $stats['events'] ),
+				'removed' => $removed,
 				'days'    => $days,
 			),
 			60

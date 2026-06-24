@@ -42,6 +42,8 @@ final class Settings {
 	 * @return void
 	 */
 	public static function uninstall() {
+		\SimpleHoneypotCF7\Reporting\Event_Logger::drop_table();
+
 		delete_option( self::SETTINGS_OPTION );
 		delete_option( self::STATS_OPTION );
 		delete_site_transient( 'shcf7_github_release' );
@@ -81,7 +83,6 @@ final class Settings {
 			'run_since' => time(),
 			'reasons'   => array(),
 			'forms'     => array(),
-			'events'    => array(),
 		);
 	}
 
@@ -146,7 +147,16 @@ final class Settings {
 	 * @return void
 	 */
 	public static function reset_stats() {
-		self::update_stats( self::default_stats() );
+		$stats    = self::default_stats();
+		$existing = get_option( self::STATS_OPTION, array() );
+
+		// Preserve the original activation date.
+		if ( is_array( $existing ) && ! empty( $existing['run_since'] ) ) {
+			$stats['run_since'] = (int) $existing['run_since'];
+		}
+
+		self::update_stats( $stats );
+		\SimpleHoneypotCF7\Reporting\Event_Logger::delete_all();
 	}
 
 	/**

@@ -33,10 +33,6 @@ final class Reporter {
 		$form_title = $contact_form && method_exists( $contact_form, 'title' ) ? wp_strip_all_tags( $contact_form->title() ) : __( 'Unknown form', 'simple-honeypot-cf7' );
 		$form_key   = (string) $form_id;
 
-		if ( ! isset( $stats['events'] ) || ! is_array( $stats['events'] ) ) {
-			$stats['events'] = array();
-		}
-
 		$stats['total'] = absint( $stats['total'] ) + 1;
 
 		foreach ( $reasons as $reason ) {
@@ -59,35 +55,23 @@ final class Reporter {
 		$stats['forms'][ $form_key ]['title'] = $form_title;
 		$stats['forms'][ $form_key ]['count'] = absint( $stats['forms'][ $form_key ]['count'] ) + 1;
 
-		array_unshift(
-			$stats['events'],
-			array(
-				'time'       => time(),
-				'form_id'    => $form_id,
-				'form_title' => $form_title,
-				'ip'         => Request::remote_ip(),
-				'user_agent' => Request::user_agent(),
-				'reasons'    => array_map( array( $this, 'sanitize_reason' ), $reasons ),
-			)
-		);
+		Settings::update_stats( $stats );
 
-		$stats['events'] = array_slice( $stats['events'], 0, max( 10, absint( $settings['keep_recent_events'] ) ) );
+		Event_Logger::insert(
+			$form_id,
+			$form_title,
+			Request::remote_ip(),
+			Request::user_agent(),
+			array_map( array( $this, 'sanitize_reason' ), $reasons )
+		);
 
 		$purge_days = absint( $settings['purge_events_after_days'] );
 
 		if ( $purge_days > 0 ) {
-			$cutoff          = time() - ( $purge_days * DAY_IN_SECONDS );
-			$stats['events'] = array_values(
-				array_filter(
-					$stats['events'],
-					function ( $e ) use ( $cutoff ) {
-						return isset( $e['time'] ) && $e['time'] >= $cutoff;
-					}
-				)
-			);
+			Event_Logger::purge_old( $purge_days );
 		}
 
-		Settings::update_stats( $stats );
+		Event_Logger::purge_excess( $settings['keep_recent_events'] );
 	}
 
 	/**
