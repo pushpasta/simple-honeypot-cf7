@@ -10,6 +10,7 @@ namespace SimpleHoneypotCF7\Frontend;
 use SimpleHoneypotCF7\Reporting\Reporter;
 use SimpleHoneypotCF7\Rules\Rules;
 use SimpleHoneypotCF7\Settings;
+use SimpleHoneypotCF7\Support\Reason_Factory;
 use SimpleHoneypotCF7\Support\Request;
 use SimpleHoneypotCF7\Support\String_Helper;
 
@@ -68,7 +69,7 @@ final class Spam_Checker {
 			$tokens = Token::posted_tokens( $form_id );
 
 			if ( count( $tokens ) < count( $honeypot_tags ) ) {
-				$reasons[] = $this->reason( 'missing_token', __( 'Honeypot validation token was missing.', 'simple-honeypot-cf7' ) );
+				$reasons[] = Reason_Factory::create( 'missing_token', __( 'Honeypot validation token was missing.', 'simple-honeypot-cf7' ) );
 			}
 
 			$time_checked  = false;
@@ -78,7 +79,7 @@ final class Spam_Checker {
 				$data = Token::validate( $token, $form_id );
 
 				if ( empty( $data ) ) {
-					$reasons[] = $this->reason( 'invalid_token', __( 'Honeypot validation token was invalid or expired.', 'simple-honeypot-cf7' ) );
+					$reasons[] = Reason_Factory::create( 'invalid_token', __( 'Honeypot validation token was invalid or expired.', 'simple-honeypot-cf7' ) );
 					continue;
 				}
 
@@ -102,7 +103,7 @@ final class Spam_Checker {
 		}
 
 		if ( ! empty( $settings['pow_enabled'] ) && is_ssl() && ! $this->check_pow( $form_id ) ) {
-			$reasons[] = $this->reason( 'pow_failed', __( 'Proof-of-Work validation failed.', 'simple-honeypot-cf7' ) );
+			$reasons[] = Reason_Factory::create( 'pow_failed', __( 'Proof-of-Work validation failed.', 'simple-honeypot-cf7' ) );
 		}
 
 		foreach ( Rules::check( $settings, $posted_data, Request::remote_ip(), $email_fields ) as $rule_reason ) {
@@ -141,7 +142,7 @@ final class Spam_Checker {
 		$created_at = isset( $data['created_at'] ) ? (int) $data['created_at'] : 0;
 
 		if ( $created_at <= 0 ) {
-			$reasons[] = $this->reason( 'missing_time', __( 'Honeypot timing data was missing.', 'simple-honeypot-cf7' ), $data );
+			$reasons[] = Reason_Factory::create( 'missing_time', __( 'Honeypot timing data was missing.', 'simple-honeypot-cf7' ), empty( $data['field_name'] ) ? '' : $data['field_name'], empty( $data['value'] ) ? '' : $data['value'] );
 			return;
 		}
 
@@ -151,25 +152,26 @@ final class Spam_Checker {
 		$max_age  = max( 10, absint( $settings['max_age_minutes'] ) ) * MINUTE_IN_SECONDS;
 
 		if ( $created_at > $now ) {
-			$reasons[] = $this->reason( 'future_time', __( 'Honeypot timing data was in the future.', 'simple-honeypot-cf7' ), $data );
+			$reasons[] = Reason_Factory::create( 'future_time', __( 'Honeypot timing data was in the future.', 'simple-honeypot-cf7' ), empty( $data['field_name'] ) ? '' : $data['field_name'], empty( $data['value'] ) ? '' : $data['value'] );
 			return;
 		}
 
 		if ( $elapsed > $max_age ) {
-			$reasons[] = $this->reason(
+			$reasons[] = Reason_Factory::create(
 				'stale_time',
 				sprintf(
 					/* translators: %d: elapsed seconds. */
 					__( 'Form was submitted with stale honeypot timing data after %d seconds.', 'simple-honeypot-cf7' ),
 					$elapsed
 				),
-				$data
+				empty( $data['field_name'] ) ? '' : $data['field_name'],
+				empty( $data['value'] ) ? '' : $data['value']
 			);
 			return;
 		}
 
 		if ( $min_time > 0 && $elapsed < $min_time ) {
-			$reasons[] = $this->reason(
+			$reasons[] = Reason_Factory::create(
 				'too_fast',
 				sprintf(
 					/* translators: 1: elapsed seconds, 2: required seconds. */
@@ -177,7 +179,8 @@ final class Spam_Checker {
 					$elapsed,
 					$min_time
 				),
-				$data
+				empty( $data['field_name'] ) ? '' : $data['field_name'],
+				empty( $data['value'] ) ? '' : $data['value']
 			);
 		}
 	}
@@ -243,14 +246,15 @@ final class Spam_Checker {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading Contact Form 7 submission data.
 		if ( '' === $dynamic_name || ! array_key_exists( $dynamic_name, $_POST ) ) {
-			$reasons[] = $this->reason(
+			$reasons[] = Reason_Factory::create(
 				'honeypot_missing',
 				sprintf(
 					/* translators: %s: honeypot field name. */
 					__( 'Expected honeypot field was missing for "%s".', 'simple-honeypot-cf7' ),
 					$field_name
 				),
-				$data
+				empty( $data['field_name'] ) ? '' : $data['field_name'],
+				empty( $data['value'] ) ? '' : $data['value']
 			);
 			return;
 		}
@@ -265,7 +269,7 @@ final class Spam_Checker {
 		}
 
 		if ( '' !== $value ) {
-			$reasons[] = $this->reason(
+			$reasons[] = Reason_Factory::create(
 				'honeypot_filled',
 				sprintf(
 					/* translators: 1: field name, 2: submitted value. */
@@ -273,7 +277,8 @@ final class Spam_Checker {
 					$field_name,
 					$this->short_value( $value )
 				),
-				array_merge( $data, array( 'value' => $this->short_value( $value ) ) )
+				empty( $data['field_name'] ) ? '' : $data['field_name'],
+				$value
 			);
 		}
 	}
@@ -300,23 +305,6 @@ final class Spam_Checker {
 				)
 			);
 		}
-	}
-
-	/**
-	 * Build a reason entry.
-	 *
-	 * @param string $type    Reason type.
-	 * @param string $message Human-readable message.
-	 * @param array  $data    Context data.
-	 * @return array
-	 */
-	private function reason( $type, $message, array $data = array() ) {
-		return array(
-			'type'    => sanitize_key( $type ),
-			'message' => wp_strip_all_tags( $message ),
-			'field'   => empty( $data['field_name'] ) ? '' : sanitize_key( $data['field_name'] ),
-			'value'   => empty( $data['value'] ) ? '' : $this->short_value( $data['value'] ),
-		);
 	}
 
 	/**

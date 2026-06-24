@@ -7,6 +7,7 @@
 
 namespace SimpleHoneypotCF7\Rules;
 
+use SimpleHoneypotCF7\Support\Reason_Factory;
 use SimpleHoneypotCF7\Support\String_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -39,7 +40,7 @@ final class Rules {
 
 		foreach ( self::parse( $settings['custom_rules'] ) as $rule ) {
 			if ( self::matches( $rule, $ip, $email_values ) ) {
-				$reasons[] = self::reason(
+				$reasons[] = Reason_Factory::create(
 					'custom_rule_' . $rule['type'],
 					sprintf(
 						/* translators: 1: rule type, 2: rule pattern. */
@@ -47,6 +48,7 @@ final class Rules {
 						$rule['type'],
 						$rule['label']
 					),
+					'',
 					$rule['label']
 				);
 			}
@@ -277,22 +279,5 @@ final class Rules {
 		$regex = '/^' . $regex . '$/i';
 
 		return 1 === preg_match( $regex, $target );
-	}
-
-	/**
-	 * Build a reason entry for matched rules.
-	 *
-	 * @param string $type    Reason type.
-	 * @param string $message Human-readable message.
-	 * @param string $value   Matched value.
-	 * @return array
-	 */
-	private static function reason( $type, $message, $value = '' ) {
-		return array(
-			'type'    => sanitize_key( $type ),
-			'message' => wp_strip_all_tags( $message ),
-			'field'   => '',
-			'value'   => self::truncate( $value ),
-		);
 	}
 }
