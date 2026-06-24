@@ -14,8 +14,8 @@
  * Requires Plugins:  contact-form-7
  * Author:            pushpasta
  * Author URI:        https://github.com/pushpasta/
- * License:           GPL-2.0+
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * License:           GNU GPLv3
+ * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:       simple-honeypot-cf7
  * Domain Path:       /languages
  */

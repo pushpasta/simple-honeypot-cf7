@@ -7,8 +7,8 @@ Requires PHP: 7.4
 Tested up to: 7.0
 Requires Plugins: contact-form-7
 Stable tag: 1.3.0
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License: GNU GPLv3
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
 
