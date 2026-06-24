@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<p class="description">
 								<?php
 								/* translators: * characters are literal wildcard symbols and must not be translated. */
-								esc_html_e( 'One rule per line. Lines starting with # are treated as comments. Each line is auto-detected as either an IP or email based on format. Supported: IPv4, IPv6, wildcard *, and CIDR for IP; wildcard * for email. Unrecognized lines are ignored.', 'simple-honeypot-cf7' );
+								esc_html_e( 'One rule per line. Lines starting with # are treated as comments. Each line is auto-detected as either an IP or email based on format. Supported: IPv4, IPv6, wildcard *, and CIDR for IP; wildcard * for email. Unrecognized lines will be removed on save.', 'simple-honeypot-cf7' );
 								?>
 							</p>
 						</div>

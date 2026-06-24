@@ -57,15 +57,16 @@ final class Settings {
 	 */
 	public static function default_settings() {
 		return array(
-			'time_check_enabled'   => 1,
-			'min_time_seconds'     => 4,
-			'max_age_minutes'      => 120,
-			'custom_rules_enabled' => 0,
-			'custom_rules'         => '',
-			'pow_enabled'          => 0,
-			'pow_complexity'       => 8,
-			'store_honeypot_value' => 0,
-			'keep_recent_events'   => 100,
+			'time_check_enabled'      => 1,
+			'min_time_seconds'        => 4,
+			'max_age_minutes'         => 120,
+			'custom_rules_enabled'    => 0,
+			'custom_rules'            => '',
+			'pow_enabled'             => 0,
+			'pow_complexity'          => 8,
+			'store_honeypot_value'    => 0,
+			'keep_recent_events'      => 100,
+			'purge_events_after_days' => 0,
 		);
 	}
 
@@ -159,6 +160,18 @@ final class Settings {
 	}
 
 	/**
+	 * Default per-form settings.
+	 *
+	 * @return array
+	 */
+	public static function default_form_settings() {
+		return array(
+			'time_mode'        => 'inherit',
+			'min_time_seconds' => 0,
+		);
+	}
+
+	/**
 	 * Get per-form settings.
 	 *
 	 * @param int $form_id Contact Form 7 form ID.
@@ -169,10 +182,7 @@ final class Settings {
 
 		return wp_parse_args(
 			is_array( $settings ) ? $settings : array(),
-			array(
-				'time_mode'        => 'inherit',
-				'min_time_seconds' => 0,
-			)
+			self::default_form_settings()
 		);
 	}
 
@@ -259,7 +269,33 @@ final class Settings {
 		$lines = array_filter( $lines, 'strlen' );
 		$lines = array_values( array_unique( $lines ) );
 
-		return implode( "\n", $lines );
+		$normalized = array();
+
+		foreach ( $lines as $line ) {
+			// Skip comments.
+			if ( 0 === strpos( $line, '#' ) ) {
+				$normalized[] = $line;
+				continue;
+			}
+
+			// Detect type — must be email or IP, otherwise skip.
+			$type = Rules\Rules::detect_type( $line );
+
+			if ( '' === $type ) {
+				continue;
+			}
+
+			// Normalize.
+			$line = preg_replace( '/\*{2,}/', '*', $line );
+
+			if ( 'email' === $type && 0 === strpos( $line, '@' ) ) {
+				$line = '*' . $line;
+			}
+
+			$normalized[] = $line;
+		}
+
+		return implode( "\n", $normalized );
 	}
 
 	/**

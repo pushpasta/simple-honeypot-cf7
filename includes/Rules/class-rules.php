@@ -74,17 +74,18 @@ final class Rules {
 				continue;
 			}
 
-			$prefix_type = '';
-
-			if ( preg_match( '/^(ip|email):/i', $line, $m ) ) {
-				$prefix_type = strtolower( $m[1] );
-				$line        = substr( $line, strlen( $m[0] ) );
-			}
-
-			$type = '' !== $prefix_type ? $prefix_type : self::detect_type( $line );
+			$type = self::detect_type( $line );
 
 			if ( '' === $type ) {
 				continue;
+			}
+
+			// Strip consecutive wildcards (e.g. "192.168.**.1" → "192.168.*.1").
+			$line = preg_replace( '/\*{2,}/', '*', $line );
+
+			// Auto-prepend * to bare email domain patterns (e.g. "@example.com" → "*@example.com").
+			if ( 'email' === $type && 0 === strpos( $line, '@' ) ) {
+				$line = '*' . $line;
 			}
 
 			$parsed[] = array(
@@ -101,9 +102,9 @@ final class Rules {
 	 * Detect rule type from pattern format.
 	 *
 	 * @param string $pattern Rule line.
-	 * @return string
+	 * @return string 'ip', 'email', or ''.
 	 */
-	private static function detect_type( $pattern ) {
+	public static function detect_type( $pattern ) {
 		if ( false !== strpos( $pattern, '@' ) ) {
 			return 'email';
 		}
