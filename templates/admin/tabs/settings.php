@@ -109,9 +109,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<td>
 						<input type="number" class="small-text" id="keep_recent_events" name="keep_recent_events" min="10" step="1" value="<?php echo esc_attr( $settings['keep_recent_events'] ); ?>" placeholder="100" />
 						<?php esc_html_e( 'recent events', 'simple-honeypot-cf7' ); ?>
-						<?php if ( $settings['keep_recent_events'] > 1000 ) : ?>
-							<p class="description" style="color: #d63638;"><strong><?php esc_html_e( 'Warning: High values may slow down the admin dashboard and increase database usage.', 'simple-honeypot-cf7' ); ?></strong></p>
-						<?php endif; ?>
+						<div id="simple-honeypot-cf7-events-warning"></div>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="purge_events_after_days"><?php esc_html_e( 'Auto-delete events older than', 'simple-honeypot-cf7' ); ?></label></th>
+					<td>
+						<input type="number" class="small-text" id="purge_events_after_days" name="purge_events_after_days" min="0" step="1" value="<?php echo esc_attr( $settings['purge_events_after_days'] ); ?>" placeholder="0" />
+						<?php esc_html_e( 'days (0 = disabled)', 'simple-honeypot-cf7' ); ?>
+						<p class="description"><?php esc_html_e( 'Automatically remove events older than this many days each time a new event is recorded. Set to 0 to disable.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
 			</table>

@@ -73,6 +73,20 @@ final class Reporter {
 
 		$stats['events'] = array_slice( $stats['events'], 0, max( 10, absint( $settings['keep_recent_events'] ) ) );
 
+		$purge_days = absint( $settings['purge_events_after_days'] );
+
+		if ( $purge_days > 0 ) {
+			$cutoff          = time() - ( $purge_days * DAY_IN_SECONDS );
+			$stats['events'] = array_values(
+				array_filter(
+					$stats['events'],
+					function ( $e ) use ( $cutoff ) {
+						return isset( $e['time'] ) && $e['time'] >= $cutoff;
+					}
+				)
+			);
+		}
+
 		Settings::update_stats( $stats );
 	}
 

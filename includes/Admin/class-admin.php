@@ -37,6 +37,7 @@ final class Admin {
 		add_action( 'admin_menu', array( $settings_page, 'register_menu' ) );
 		add_action( 'admin_init', array( $settings_page, 'handle_post' ) );
 		add_action( 'admin_post_simple_honeypot_cf7_export_settings', array( $settings_page, 'export_settings' ) );
+		add_action( 'admin_post_simple_honeypot_cf7_purge_events', array( $settings_page, 'purge_events' ) );
 
 		add_filter( 'plugin_action_links_' . SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, array( $settings_page, 'settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'row_meta' ), 10, 2 );

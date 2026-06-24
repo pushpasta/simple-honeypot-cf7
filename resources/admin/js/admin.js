@@ -162,6 +162,26 @@
 			// Apply initial disabled state on page load.
 			$form.find( '.simple-honeypot-cf7-custom-rules-toggle input:not(:checked)' ).trigger( 'change' );
 
+			// Events keep count warning.
+			function updateEventsWarning() {
+				var val   = parseInt( $( '#keep_recent_events' ).val(), 10 );
+				var $warn = $( '#simple-honeypot-cf7-events-warning' );
+				var html  = '';
+
+				if ( val > 2000 ) {
+					html = '<p class="description" style="color: #d63638;"><strong>Values above 2,000 can cause save timeouts. Consider lowering this or enabling auto-delete.</strong></p>';
+				} else if ( val > 1000 ) {
+					html = '<p class="description" style="color: #996800;"><strong>Values above 1,000 may slow down the admin dashboard.</strong></p>';
+				} else if ( val > 500 ) {
+					html = '<p class="description">Consider keeping this below 500 for best performance.</p>';
+				}
+
+				$warn.html( html );
+			}
+
+			$( '#keep_recent_events' ).on( 'input', updateEventsWarning );
+			updateEventsWarning();
+
 			// Confirm modal for destructive actions.
 			var $pendingButton = null;
 
@@ -222,7 +242,23 @@
 			var $button = $( this );
 			var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
 			$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( $button.data( 'reset-message' ) );
-			$dialog.attr( 'data-reset-href', $button.attr( 'href' ) );
+			$dialog.attr( 'data-confirm-href', $button.attr( 'href' ) );
+			$dialog[ 0 ].showModal();
+		}
+	);
+
+	// Confirm dialog for purge events button.
+	$( document ).on(
+		'click',
+		'.simple-honeypot-cf7-purge-events-btn[data-confirm]',
+		function ( e ) {
+			e.preventDefault();
+			var $button = $( this );
+			var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
+			var days    = $( '#sphcf7_purge_days' ).val() || 90;
+			var href    = $button.attr( 'href' ) + '&days=' + parseInt( days, 10 );
+			$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( $button.data( 'confirm' ) );
+			$dialog.attr( 'data-confirm-href', href );
 			$dialog[ 0 ].showModal();
 		}
 	);
@@ -232,9 +268,9 @@
 		'.simple-honeypot-cf7-confirm-yes',
 		function () {
 			var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
-			var href    = $dialog.attr( 'data-reset-href' );
+			var href    = $dialog.attr( 'data-confirm-href' );
 			if ( href ) {
-				$dialog.removeAttr( 'data-reset-href' );
+				$dialog.removeAttr( 'data-confirm-href' );
 				$dialog[ 0 ].close();
 				window.location.href = href;
 			}
@@ -246,8 +282,8 @@
 		'.simple-honeypot-cf7-confirm-no',
 		function () {
 			var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
-			if ( $dialog.attr( 'data-reset-href' ) ) {
-				$dialog.removeAttr( 'data-reset-href' );
+			if ( $dialog.attr( 'data-confirm-href' ) ) {
+				$dialog.removeAttr( 'data-confirm-href' );
 				$dialog[ 0 ].close();
 			}
 		}

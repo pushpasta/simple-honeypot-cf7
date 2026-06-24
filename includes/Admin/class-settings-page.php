@@ -309,13 +309,14 @@ final class Settings_Page {
 	 * @return array
 	 */
 	private function settings_from_post( array $settings, array $post ) {
-		$settings['time_check_enabled']   = empty( $post['time_check_enabled'] ) ? 0 : 1;
-		$settings['min_time_seconds']     = max( 0, absint( isset( $post['min_time_seconds'] ) ? $post['min_time_seconds'] : $settings['min_time_seconds'] ) );
-		$settings['max_age_minutes']      = max( 10, absint( isset( $post['max_age_minutes'] ) ? $post['max_age_minutes'] : $settings['max_age_minutes'] ) );
-		$settings['pow_enabled']          = empty( $post['pow_enabled'] ) ? 0 : 1;
-		$settings['pow_complexity']       = max( 4, min( 20, absint( isset( $post['pow_complexity'] ) ? $post['pow_complexity'] : $settings['pow_complexity'] ) ) );
-		$settings['store_honeypot_value'] = empty( $post['store_honeypot_value'] ) ? 0 : 1;
-		$settings['keep_recent_events']   = max( 10, absint( isset( $post['keep_recent_events'] ) ? $post['keep_recent_events'] : $settings['keep_recent_events'] ) );
+		$settings['time_check_enabled']      = empty( $post['time_check_enabled'] ) ? 0 : 1;
+		$settings['min_time_seconds']        = max( 0, absint( isset( $post['min_time_seconds'] ) ? $post['min_time_seconds'] : $settings['min_time_seconds'] ) );
+		$settings['max_age_minutes']         = max( 10, absint( isset( $post['max_age_minutes'] ) ? $post['max_age_minutes'] : $settings['max_age_minutes'] ) );
+		$settings['pow_enabled']             = empty( $post['pow_enabled'] ) ? 0 : 1;
+		$settings['pow_complexity']          = max( 4, min( 20, absint( isset( $post['pow_complexity'] ) ? $post['pow_complexity'] : $settings['pow_complexity'] ) ) );
+		$settings['store_honeypot_value']    = empty( $post['store_honeypot_value'] ) ? 0 : 1;
+		$settings['keep_recent_events']      = max( 10, absint( isset( $post['keep_recent_events'] ) ? $post['keep_recent_events'] : $settings['keep_recent_events'] ) );
+		$settings['purge_events_after_days'] = max( 0, absint( isset( $post['purge_events_after_days'] ) ? $post['purge_events_after_days'] : $settings['purge_events_after_days'] ) );
 
 		return $settings;
 	}
@@ -386,6 +387,48 @@ final class Settings_Page {
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON download; escaping would break the format.
 		echo $json;
+		exit;
+	}
+
+	/**
+	 * Handle admin_post request to purge old events.
+	 *
+	 * @return void
+	 */
+	public function purge_events() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to purge events.', 'simple-honeypot-cf7' ) );
+		}
+
+		check_admin_referer( 'simple_honeypot_cf7_purge_events' );
+
+		$days   = isset( $_GET['days'] ) ? absint( $_GET['days'] ) : 90;
+		$days   = max( 1, $days );
+		$cutoff = time() - ( $days * DAY_IN_SECONDS );
+		$stats  = Settings::get_stats();
+		$before = isset( $stats['events'] ) ? count( $stats['events'] ) : 0;
+
+		$stats['events'] = array_values(
+			array_filter(
+				$stats['events'],
+				function ( $e ) use ( $cutoff ) {
+					return isset( $e['time'] ) && $e['time'] >= $cutoff;
+				}
+			)
+		);
+
+		Settings::update_stats( $stats );
+
+		set_transient(
+			'simple_honeypot_cf7_purge_notice',
+			array(
+				'removed' => $before - count( $stats['events'] ),
+				'days'    => $days,
+			),
+			60
+		);
+
+		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=simple-honeypot-cf7&tab=reports' ) );
 		exit;
 	}
 

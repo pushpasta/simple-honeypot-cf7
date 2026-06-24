@@ -74,3 +74,19 @@ require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/tables/forms-table.php';
 $events = $stats['events'];
 require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/tables/events-table.php';
 ?>
+<?php if ( ! empty( $events ) ) : ?>
+<div class="simple-honeypot-cf7-purge-events" style="margin-top: 15px;">
+	<label for="sphcf7_purge_days"><?php esc_html_e( 'Delete events older than', 'simple-honeypot-cf7' ); ?></label>
+	<input type="number" id="sphcf7_purge_days" class="small-text" min="1" step="1" value="90" placeholder="90" />
+	<?php esc_html_e( 'days', 'simple-honeypot-cf7' ); ?>
+	<?php
+	$url = wp_nonce_url(
+		admin_url( 'admin-post.php?action=simple_honeypot_cf7_purge_events' ),
+		'simple_honeypot_cf7_purge_events'
+	);
+	?>
+	<a href="<?php echo esc_url( $url ); ?>" class="button button-delete simple-honeypot-cf7-purge-events-btn" data-confirm="<?php echo esc_attr__( 'Are you sure? This will permanently delete old event data.', 'simple-honeypot-cf7' ); ?>">
+		<?php esc_html_e( 'Purge Old Events', 'simple-honeypot-cf7' ); ?>
+	</a>
+</div>
+<?php endif; ?>
