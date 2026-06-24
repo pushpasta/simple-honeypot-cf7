@@ -213,6 +213,45 @@
 			);
 		}
 	);
+	// Confirm dialog for reset per-form settings (lives outside the guarded block).
+	$( document ).on(
+		'click',
+		'.simple-honeypot-cf7-reset-form-settings[data-reset-message]',
+		function ( e ) {
+			e.preventDefault();
+			var $button = $( this );
+			var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
+			$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( $button.data( 'reset-message' ) );
+			$dialog.attr( 'data-reset-href', $button.attr( 'href' ) );
+			$dialog[ 0 ].showModal();
+		}
+	);
+
+	$( document ).on(
+		'click',
+		'.simple-honeypot-cf7-confirm-yes',
+		function () {
+			var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
+			var href    = $dialog.attr( 'data-reset-href' );
+			if ( href ) {
+				$dialog.removeAttr( 'data-reset-href' );
+				$dialog[ 0 ].close();
+				window.location.href = href;
+			}
+		}
+	);
+
+	$( document ).on(
+		'click',
+		'.simple-honeypot-cf7-confirm-no',
+		function () {
+			var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
+			if ( $dialog.attr( 'data-reset-href' ) ) {
+				$dialog.removeAttr( 'data-reset-href' );
+				$dialog[ 0 ].close();
+			}
+		}
+	);
 
 	$( window ).on(
 		'beforeunload',

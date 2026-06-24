@@ -31,4 +31,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</td>
 		</tr>
 	</table>
+	<p class="simple-honeypot-cf7-form-panel-reset">
+		<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=simple_honeypot_cf7_reset_form_settings&form_id=' . $form_id ), 'simple_honeypot_cf7_reset_form_settings' ) ); ?>" class="button simple-honeypot-cf7-reset-form-settings" data-reset-message="<?php echo esc_attr__( 'Are you sure you want to restore this form\'s Simple Honeypot settings to defaults?', 'simple-honeypot-cf7' ); ?>">
+			<?php esc_html_e( 'Restore to defaults', 'simple-honeypot-cf7' ); ?>
+		</a>
+	</p>
 </div>
+
+<dialog id="simple-honeypot-cf7-confirm-dialog" class="simple-honeypot-cf7-dialog">
+	<div class="simple-honeypot-cf7-dialog-inner">
+		<p class="simple-honeypot-cf7-confirm-message"></p>
+		<div class="simple-honeypot-cf7-dialog-actions">
+			<button type="button" class="button simple-honeypot-cf7-confirm-yes"><?php esc_html_e( 'Yes', 'simple-honeypot-cf7' ); ?></button>
+			<button type="button" class="button simple-honeypot-cf7-confirm-no"><?php esc_html_e( 'No', 'simple-honeypot-cf7' ); ?></button>
+		</div>
+	</div>
+</dialog>

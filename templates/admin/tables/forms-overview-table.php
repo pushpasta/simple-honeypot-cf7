@@ -50,11 +50,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</span>
 					<?php else : ?>
 						<?php
-						printf(
-							/* translators: %d: number of seconds */
-							esc_html__( '%d seconds', 'simple-honeypot-cf7' ),
-							absint( $form['min_time_seconds'] )
-						);
+						echo esc_html( (string) absint( $form['min_time_seconds'] ) );
 						?>
 					<?php endif; ?>
 				</td>

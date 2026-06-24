@@ -33,6 +33,7 @@ final class Admin {
 		add_action( 'admin_enqueue_scripts', array( $assets, 'enqueue' ) );
 		add_action( 'admin_notices', array( $notices, 'contact_form_7_missing' ) );
 		add_action( 'admin_notices', array( $notices, 'pow_requires_ssl' ) );
+		add_action( 'admin_notices', array( $notices, 'reset_form_notice' ) );
 		add_action( 'admin_menu', array( $settings_page, 'register_menu' ) );
 		add_action( 'admin_init', array( $settings_page, 'handle_post' ) );
 		add_action( 'admin_post_simple_honeypot_cf7_export_settings', array( $settings_page, 'export_settings' ) );
@@ -45,6 +46,7 @@ final class Admin {
 			add_filter( 'wpcf7_editor_panels', array( $form_panel, 'register_panel' ) );
 			add_action( 'wpcf7_after_save', array( $form_panel, 'save' ) );
 			add_action( 'wpcf7_admin_init', array( $tag_generator, 'register' ), 20, 0 );
+			add_action( 'admin_post_simple_honeypot_cf7_reset_form_settings', array( $form_panel, 'reset_form_settings' ) );
 		}
 	}
 

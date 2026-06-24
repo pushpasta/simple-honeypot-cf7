@@ -60,6 +60,7 @@ final class Form_Panel {
 		$this->template->render(
 			'admin/cf7-form-panel.php',
 			array(
+				'form_id'       => $form_id,
 				'form_settings' => Settings::get_form_settings( $form_id ),
 			)
 		);
@@ -98,5 +99,37 @@ final class Form_Panel {
 				'min_time_seconds' => isset( $form['min_time_seconds'] ) ? absint( $form['min_time_seconds'] ) : 0,
 			)
 		);
+	}
+
+	/**
+	 * Handle admin_post request to reset per-form settings to defaults.
+	 *
+	 * @return void
+	 */
+	public function reset_form_settings() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to reset form settings.', 'simple-honeypot-cf7' ) );
+		}
+
+		check_admin_referer( 'simple_honeypot_cf7_reset_form_settings' );
+
+		$form_id = isset( $_GET['form_id'] ) ? absint( $_GET['form_id'] ) : 0;
+
+		if ( ! $form_id ) {
+			wp_die( esc_html__( 'Invalid form ID.', 'simple-honeypot-cf7' ) );
+		}
+
+		delete_post_meta( $form_id, Settings::FORM_META );
+
+		set_transient(
+			'simple_honeypot_cf7_reset_notice',
+			array(
+				'form_id' => $form_id,
+			),
+			60
+		);
+
+		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=wpcf7' ) );
+		exit;
 	}
 }

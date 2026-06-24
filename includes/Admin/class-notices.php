@@ -59,4 +59,23 @@ final class Notices {
 		esc_html_e( 'Proof of Work requires HTTPS. It is currently enabled but this site does not appear to be served over a secure connection. PoW checks will be skipped for all submissions.', 'simple-honeypot-cf7' );
 		echo '</p></div>';
 	}
+
+	/**
+	 * Show a success notice after resetting per-form settings.
+	 *
+	 * @return void
+	 */
+	public function reset_form_notice() {
+		$notice = get_transient( 'simple_honeypot_cf7_reset_notice' );
+
+		if ( ! $notice || empty( $notice['form_id'] ) ) {
+			return;
+		}
+
+		delete_transient( 'simple_honeypot_cf7_reset_notice' );
+
+		echo '<div class="notice notice-success is-dismissible"><p>';
+		esc_html_e( 'Simple Honeypot settings for this form have been restored to defaults.', 'simple-honeypot-cf7' );
+		echo '</p></div>';
+	}
 }
