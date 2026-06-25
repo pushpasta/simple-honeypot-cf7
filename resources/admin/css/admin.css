@@ -198,6 +198,10 @@
 	margin-right: 6px;
 }
 
+.simple-honeypot-cf7-admin #keep_recent_events {
+	width: 120px;
+}
+
 .simple-honeypot-cf7-admin .form-table input[type="number"],
 .simple-honeypot-cf7-admin .form-table input[type="text"] {
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;

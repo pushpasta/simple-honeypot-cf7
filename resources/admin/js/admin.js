@@ -162,26 +162,6 @@
 			// Apply initial disabled state on page load.
 			$form.find( '.simple-honeypot-cf7-custom-rules-toggle input:not(:checked)' ).trigger( 'change' );
 
-			// Events keep count warning.
-			function updateEventsWarning() {
-				var val   = parseInt( $( '#keep_recent_events' ).val(), 10 );
-				var $warn = $( '#simple-honeypot-cf7-events-warning' );
-				var html  = '';
-
-				if ( val > 2000 ) {
-					html = '<p class="description" style="color: #d63638;"><strong>Values above 2,000 can cause save timeouts. Consider lowering this or enabling auto-delete.</strong></p>';
-				} else if ( val > 1000 ) {
-					html = '<p class="description" style="color: #996800;"><strong>Values above 1,000 may slow down the admin dashboard.</strong></p>';
-				} else if ( val > 500 ) {
-					html = '<p class="description">Consider keeping this below 500 for best performance.</p>';
-				}
-
-				$warn.html( html );
-			}
-
-			$( '#keep_recent_events' ).on( 'input', updateEventsWarning );
-			updateEventsWarning();
-
 			// Confirm modal for destructive actions.
 			var $pendingButton = null;
 
@@ -255,7 +235,7 @@
 			e.preventDefault();
 			var $button = $( this );
 			var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
-			var days    = $( '#sphcf7_purge_days' ).val() || 90;
+			var days    = $( '#shp4cf7_purge_days' ).val() || 90;
 			var href    = $button.attr( 'href' ) + '&days=' + parseInt( days, 10 );
 			$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( $button.data( 'confirm' ) );
 			$dialog.attr( 'data-confirm-href', href );
