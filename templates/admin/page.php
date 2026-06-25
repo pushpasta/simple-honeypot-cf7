@@ -33,6 +33,7 @@ $version_tooltip = sprintf(
 			'rules'    => 'dashicons-shield',
 			'forms'    => 'dashicons-email-alt',
 			'reports'  => 'dashicons-chart-bar',
+			'tools'    => 'dashicons-admin-tools',
 		);
 		foreach ( $tabs as $slug => $label ) :
 			?>

@@ -80,6 +80,7 @@ final class Settings_Page {
 			'rules'    => __( 'Rules', 'simple-honeypot-cf7' ),
 			'forms'    => __( 'Forms', 'simple-honeypot-cf7' ),
 			'reports'  => __( 'Reports', 'simple-honeypot-cf7' ),
+			'tools'    => __( 'Tools', 'simple-honeypot-cf7' ),
 		);
 
 		if ( ! isset( $tabs[ $current_tab ] ) ) {
@@ -120,13 +121,13 @@ final class Settings_Page {
 
 		if ( 'reset_stats' === sanitize_key( $post[ SIMPLE_HONEYPOT_CF7_BASE . '_action' ] ) ) {
 			Settings::reset_stats();
-			$this->redirect( 'settings', 'stats-reset' );
+			$this->redirect( 'tools', 'stats-reset' );
 			return;
 		}
 
 		if ( 'reset_settings' === sanitize_key( $post[ SIMPLE_HONEYPOT_CF7_BASE . '_action' ] ) ) {
 			Settings::reset_settings();
-			$this->redirect( 'settings', 'settings-reset' );
+			$this->redirect( 'tools', 'settings-reset' );
 			return;
 		}
 
@@ -139,11 +140,11 @@ final class Settings_Page {
 				if ( ! empty( $result['error'] ) ) {
 					$args['import_error'] = $result['error'];
 				}
-				$this->redirect( 'settings', 'import-failed', $args );
+				$this->redirect( 'tools', 'import-failed', $args );
 				return;
 			}
 
-			$this->redirect( 'settings', 'import-success' );
+			$this->redirect( 'tools', 'import-success' );
 			return;
 		}
 
@@ -191,6 +192,12 @@ final class Settings_Page {
 
 		if ( 'forms' === $tab ) {
 			return array( 'forms_with_overrides' => $this->get_forms_with_overrides() );
+		}
+
+		if ( 'tools' === $tab ) {
+			return array(
+				'export_url' => wp_nonce_url( admin_url( 'admin-post.php?action=' . SIMPLE_HONEYPOT_CF7_BASE . '_export_settings' ), SIMPLE_HONEYPOT_CF7_BASE . '_export_settings' ),
+			);
 		}
 
 		return array(
@@ -423,7 +430,7 @@ final class Settings_Page {
 			60
 		);
 
-		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=simple-honeypot-cf7&tab=reports' ) );
+		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=simple-honeypot-cf7&tab=tools' ) );
 		exit;
 	}
 
