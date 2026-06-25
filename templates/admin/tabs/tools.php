@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <form method="post" action="" enctype="multipart/form-data">
 	<?php wp_nonce_field( SIMPLE_HONEYPOT_CF7_BASE . '_save_settings', SIMPLE_HONEYPOT_CF7_BASE . '_nonce' ); ?>
-	<input type="hidden" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="save" />
 	<input type="hidden" name="tab" value="tools" />
 
 	<div class="postbox simple-honeypot-cf7-card">
@@ -57,28 +56,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<p class="description"><?php esc_html_e( 'Restores every global setting to its original default value. Your report data and individual form overrides remain untouched.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Purge old events', 'simple-honeypot-cf7' ); ?></th>
+					<td>
+						<label for="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_purge_days' ); ?>"><?php esc_html_e( 'Delete events older than', 'simple-honeypot-cf7' ); ?></label>
+						<input type="number" id="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_purge_days' ); ?>" class="small-text" min="1" step="1" value="90" placeholder="90" />
+						<?php esc_html_e( 'days', 'simple-honeypot-cf7' ); ?>
+						<?php
+						$url = wp_nonce_url(
+							admin_url( 'admin-post.php?action=' . SIMPLE_HONEYPOT_CF7_BASE . '_purge_events' ),
+							SIMPLE_HONEYPOT_CF7_BASE . '_purge_events'
+						);
+						?>
+						<a href="<?php echo esc_url( $url ); ?>" class="button button-delete simple-honeypot-cf7-purge-events-btn" data-confirm="<?php echo esc_attr__( 'Are you sure? This will permanently delete old event data.', 'simple-honeypot-cf7' ); ?>">
+							<?php esc_html_e( 'Purge Old Events', 'simple-honeypot-cf7' ); ?>
+						</a>
+						<p class="description"><?php esc_html_e( 'Permanently delete old event data from the database.', 'simple-honeypot-cf7' ); ?></p>
+					</td>
+				</tr>
 			</table>
 		</div>
 	</div>
 
-	<?php submit_button( __( 'Save', 'simple-honeypot-cf7' ) ); ?>
 </form>
-
-<div class="postbox simple-honeypot-cf7-card simple-honeypot-cf7-card--danger">
-	<h2 class="hndle"><span class="dashicons dashicons-trash"></span><span><?php esc_html_e( 'Purge Old Events', 'simple-honeypot-cf7' ); ?></span></h2>
-	<div class="inside">
-		<p class="description"><?php esc_html_e( 'Permanently delete old event data from the database.', 'simple-honeypot-cf7' ); ?></p>
-		<label for="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_purge_days' ); ?>"><?php esc_html_e( 'Delete events older than', 'simple-honeypot-cf7' ); ?></label>
-		<input type="number" id="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_purge_days' ); ?>" class="small-text" min="1" step="1" value="90" placeholder="90" />
-		<?php esc_html_e( 'days', 'simple-honeypot-cf7' ); ?>
-		<?php
-		$url = wp_nonce_url(
-			admin_url( 'admin-post.php?action=' . SIMPLE_HONEYPOT_CF7_BASE . '_purge_events' ),
-			SIMPLE_HONEYPOT_CF7_BASE . '_purge_events'
-		);
-		?>
-		<a href="<?php echo esc_url( $url ); ?>" class="button button-delete simple-honeypot-cf7-purge-events-btn" data-confirm="<?php echo esc_attr__( 'Are you sure? This will permanently delete old event data.', 'simple-honeypot-cf7' ); ?>">
-			<?php esc_html_e( 'Purge Old Events', 'simple-honeypot-cf7' ); ?>
-		</a>
-	</div>
-</div>
