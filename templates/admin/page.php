@@ -76,14 +76,15 @@ $version_tooltip = sprintf(
 					</ul>
 				</div>
 			</div>
+			<div class="postbox simple-honeypot-cf7-card">
+				<h2 class="hndle"><span class="dashicons dashicons-heart"></span><span><?php esc_html_e( 'Support the project', 'simple-honeypot-cf7' ); ?></span></h2>
+				<div class="inside">
+					<p class="description"><?php esc_html_e( 'If Simple Honeypot helps protect your site, please support its development.', 'simple-honeypot-cf7' ); ?></p>
+					<a href="https://github.com/pushpasta/simple-honeypot-cf7/?sponsor" target="_blank" rel="noopener noreferrer" class="button"><?php esc_html_e( 'Donate', 'simple-honeypot-cf7' ); ?></a>
+				</div>
+			</div>
 		</aside>
 	</div>
-
-	<hr style="margin-top:32px;">
-	<p class="description">
-		<?php esc_html_e( 'If Simple Honeypot helps protect your site, please support its development.', 'simple-honeypot-cf7' ); ?>
-		<a href="<?php echo esc_url( 'https://github.com/pushpasta/simple-honeypot-cf7/?sponsor' ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Donate', 'simple-honeypot-cf7' ); ?></a>
-	</p>
 
 	<dialog id="simple-honeypot-cf7-confirm-dialog" class="simple-honeypot-cf7-dialog">
 		<div class="simple-honeypot-cf7-dialog-inner">
