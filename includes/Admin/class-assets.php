@@ -57,6 +57,7 @@ final class Assets {
 				'valueTooHigh'   => __( 'Value must be at most %s.', 'simple-honeypot-cf7' ),
 				/* translators: %s: comma-separated list of unrecognized rule patterns */
 				'invalidRules'   => __( 'Unrecognized rule pattern: %s', 'simple-honeypot-cf7' ),
+				'selectFile'     => __( 'Please select a file to import.', 'simple-honeypot-cf7' ),
 			)
 		);
 	}

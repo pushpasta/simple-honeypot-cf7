@@ -99,7 +99,15 @@
 			$form.on(
 				'submit',
 				function ( e ) {
-					var valid = true;
+					var valid      = true;
+					var $submitter = $( document.activeElement );
+					var isImport   = $submitter.is( '#simple-honeypot-cf7-import-btn' );
+
+					// Guard: import button clicked with no file.
+					if ( isImport && ( ! $importFile.length || ! $importFile[ 0 ].files.length ) ) {
+						showFieldError( $importFile, simpleHoneypotCf7.selectFile );
+						valid = false;
+					}
 
 					$form.find( 'input[type="number"]' ).each(
 						function () {
@@ -139,8 +147,7 @@
 						e.preventDefault();
 						formDirty = false;
 					} else {
-						formDirty      = false;
-						var $submitter = $( document.activeElement );
+						formDirty = false;
 						if ( $submitter.is( 'input[type="submit"], button[type="submit"]' ) ) {
 							$submitter.prop( 'disabled', true );
 						}
@@ -161,6 +168,20 @@
 
 			// Apply initial disabled state on page load.
 			$form.find( '.simple-honeypot-cf7-custom-rules-toggle input:not(:checked)' ).trigger( 'change' );
+
+			// Import: enable button only when file selected.
+			var $importFile = $( '#simple-honeypot-cf7-import-file' );
+			var $importBtn  = $( '#simple-honeypot-cf7-import-btn' );
+
+			if ( $importFile.length && $importBtn.length ) {
+				$importFile.on(
+					'change',
+					function () {
+						$importBtn.prop( 'disabled', ! this.files.length );
+						clearFieldError( $importFile );
+					}
+				);
+			}
 
 			// Confirm modal for destructive actions.
 			var $pendingButton = null;

@@ -140,9 +140,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Import settings', 'simple-honeypot-cf7' ); ?></th>
 					<td>
-						<input type="file" name="import_file" accept=".json" />
-						<button type="submit" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="import_settings" class="button"><?php esc_html_e( 'Import Settings', 'simple-honeypot-cf7' ); ?></button>
-						<p class="description"><?php esc_html_e( 'Upload a previously exported JSON file to restore all settings.', 'simple-honeypot-cf7' ); ?></p>
+						<input type="file" id="simple-honeypot-cf7-import-file" name="import_file" accept=".json" />
+						<button type="submit" id="simple-honeypot-cf7-import-btn" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="import_settings" class="button" disabled><?php esc_html_e( 'Import Settings', 'simple-honeypot-cf7' ); ?></button>
+						<p class="description"><?php esc_html_e( 'Upload a previously exported JSON file. Settings present in the file will be overwritten. Settings not mentioned will remain unchanged.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
 			</table>
