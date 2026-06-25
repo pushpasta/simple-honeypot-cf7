@@ -67,6 +67,25 @@ $version_tooltip = sprintf(
 
 		<aside class="simple-honeypot-cf7-sidebar">
 			<div class="postbox simple-honeypot-cf7-card">
+				<h2 class="hndle"><span class="dashicons dashicons-shield"></span><span><?php esc_html_e( 'Blocked Spam', 'simple-honeypot-cf7' ); ?></span></h2>
+				<div class="inside">
+					<dl class="simple-honeypot-cf7-sidebar-stats">
+						<dt><?php esc_html_e( 'Today', 'simple-honeypot-cf7' ); ?></dt>
+						<dd><?php echo esc_html( number_format_i18n( $spam_counts['today'] ) ); ?></dd>
+						<dt><?php esc_html_e( 'Yesterday', 'simple-honeypot-cf7' ); ?></dt>
+						<dd><?php echo esc_html( number_format_i18n( $spam_counts['yesterday'] ) ); ?></dd>
+						<dt><?php esc_html_e( 'Last 7 days', 'simple-honeypot-cf7' ); ?></dt>
+						<dd><?php echo esc_html( number_format_i18n( $spam_counts['last_7_days'] ) ); ?></dd>
+						<dt><?php esc_html_e( 'This month', 'simple-honeypot-cf7' ); ?></dt>
+						<dd><?php echo esc_html( number_format_i18n( $spam_counts['this_month'] ) ); ?></dd>
+						<dt><?php esc_html_e( 'Last month', 'simple-honeypot-cf7' ); ?></dt>
+						<dd><?php echo esc_html( number_format_i18n( $spam_counts['last_month'] ) ); ?></dd>
+						<dt><strong><?php esc_html_e( 'Total', 'simple-honeypot-cf7' ); ?></strong></dt>
+						<dd><strong><?php echo esc_html( number_format_i18n( $spam_counts['total'] ) ); ?></strong></dd>
+					</dl>
+				</div>
+			</div>
+			<div class="postbox simple-honeypot-cf7-card">
 				<h2 class="hndle"><span class="dashicons dashicons-sos"></span><span><?php esc_html_e( 'Do you need help?', 'simple-honeypot-cf7' ); ?></span></h2>
 				<div class="inside">
 					<ul class="simple-honeypot-cf7-sidebar-links">

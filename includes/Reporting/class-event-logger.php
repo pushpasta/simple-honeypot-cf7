@@ -173,6 +173,43 @@ final class Event_Logger {
 	}
 
 	/**
+	 * Count events for common time periods.
+	 *
+	 * Returns counts for today, yesterday, last 7 days, this month,
+	 * last month, and total — in a single query.
+	 *
+	 * @return array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int, total: int}
+	 */
+	public static function count_by_period() {
+		global $wpdb;
+
+		$table = $wpdb->prefix . self::TABLE;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$row = $wpdb->get_row( "SELECT SUM( time >= CURDATE() ) AS today, SUM( time >= CURDATE() - INTERVAL 1 DAY AND time < CURDATE() ) AS yesterday, SUM( time >= CURDATE() - INTERVAL 7 DAY ) AS last_7_days, SUM( time >= DATE_FORMAT( CURDATE(), '%Y-%m-01' ) ) AS this_month, SUM( time >= DATE_FORMAT( CURDATE() - INTERVAL 1 MONTH, '%Y-%m-01' ) AND time < DATE_FORMAT( CURDATE(), '%Y-%m-01' ) ) AS last_month, COUNT(*) AS total FROM {$table}", ARRAY_A );
+
+		if ( ! is_array( $row ) ) {
+			return array(
+				'today'       => 0,
+				'yesterday'   => 0,
+				'last_7_days' => 0,
+				'this_month'  => 0,
+				'last_month'  => 0,
+				'total'       => 0,
+			);
+		}
+
+		return array(
+			'today'       => absint( $row['today'] ),
+			'yesterday'   => absint( $row['yesterday'] ),
+			'last_7_days' => absint( $row['last_7_days'] ),
+			'this_month'  => absint( $row['this_month'] ),
+			'last_month'  => absint( $row['last_month'] ),
+			'total'       => absint( $row['total'] ),
+		);
+	}
+
+	/**
 	 * Delete events older than a given number of days.
 	 *
 	 * @param int $days Retention period in days.

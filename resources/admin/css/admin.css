@@ -96,6 +96,27 @@
 	color: #646970;
 }
 
+.simple-honeypot-cf7-sidebar-stats {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 4px 12px;
+	margin: 0;
+}
+
+.simple-honeypot-cf7-sidebar-stats dt {
+	font-weight: normal;
+}
+
+.simple-honeypot-cf7-sidebar-stats dd {
+	text-align: right;
+	margin: 0;
+	font-weight: 600;
+}
+
+.simple-honeypot-cf7-sidebar-stats dd strong {
+	font-weight: 700;
+}
+
 @media screen and (max-width: 960px) {
 	.simple-honeypot-cf7-layout {
 		flex-direction: column;
