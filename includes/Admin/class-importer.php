@@ -78,7 +78,7 @@ final class Importer {
 		}
 
 		$global = $data['global_settings'];
-		$merged = wp_parse_args( $global, Settings::default_settings() );
+		$merged = wp_parse_args( $global, Settings::get_settings() );
 
 		$merged['time_check_enabled']   = empty( $merged['time_check_enabled'] ) ? 0 : 1;
 		$merged['min_time_seconds']     = max( 0, absint( $merged['min_time_seconds'] ) );
