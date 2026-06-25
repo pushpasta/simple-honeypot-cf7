@@ -17,6 +17,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="postbox simple-honeypot-cf7-card">
 		<h2 class="hndle"><span class="dashicons dashicons-shield"></span><span><?php esc_html_e( 'Rule sources', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
+			<?php if ( count( $parsed_rules ) > \SimpleHoneypotCF7\Settings::RULES_SOFT_LIMIT ) : ?>
+				<div class="notice notice-warning inline">
+					<p>
+						<?php
+						printf(
+							/* translators: %s: number of active rules */
+							esc_html__( 'You have %s active rules. A large number of rules may slow down form submissions.', 'simple-honeypot-cf7' ),
+							'<strong>' . esc_html( number_format_i18n( count( $parsed_rules ) ) ) . '</strong>'
+						);
+						?>
+					</p>
+				</div>
+			<?php endif; ?>
 			<table class="form-table" role="presentation">
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Rules', 'simple-honeypot-cf7' ); ?></th>
@@ -40,36 +53,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 
-	<?php if ( count( $parsed_rules ) > \SimpleHoneypotCF7\Settings::RULES_SOFT_LIMIT ) : ?>
-		<div class="notice notice-warning inline">
-			<p>
-				<?php
-				printf(
-					/* translators: %s: number of active rules */
-					esc_html__( 'You have %s active rules. A large number of rules may slow down form submissions.', 'simple-honeypot-cf7' ),
-					'<strong>' . esc_html( number_format_i18n( count( $parsed_rules ) ) ) . '</strong>'
-				);
-				?>
-			</p>
-		</div>
-	<?php endif; ?>
+	<div class="notice notice-info inline">
+		<p>
+			<?php
+			echo wp_kses(
+				sprintf(
+					/* translators: 1: URL to Discussion settings page. */
+					__( 'Need to block specific words or patterns? Use the <a href="%1$s">WordPress Disallowed Comment Keys</a> setting instead &mdash; Contact Form 7 checks it automatically.', 'simple-honeypot-cf7' ),
+					esc_url( admin_url( 'options-discussion.php' ) )
+				),
+				array( 'a' => array( 'href' => array() ) )
+			);
+			?>
+		</p>
+	</div>
 
 	<p class="submit">
 		<?php submit_button( __( 'Save', 'simple-honeypot-cf7' ), 'primary', 'submit', false ); ?>
 	</p>
 </form>
-
-<div class="notice notice-info inline">
-	<p>
-		<?php
-		echo wp_kses(
-			sprintf(
-				/* translators: 1: URL to Discussion settings page. */
-				__( 'Need to block specific words or patterns? Use the <a href="%1$s">WordPress Disallowed Comment Keys</a> setting instead &mdash; Contact Form 7 checks it automatically.', 'simple-honeypot-cf7' ),
-				esc_url( admin_url( 'options-discussion.php' ) )
-			),
-			array( 'a' => array( 'href' => array() ) )
-		);
-		?>
-	</p>
-</div>
