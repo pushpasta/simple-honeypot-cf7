@@ -78,4 +78,5 @@ require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/tables/forms-table.php';
 <?php
 $events = $stats['events'];
 require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/tables/events-table.php';
+require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/tables/events-pagination.php';
 ?>

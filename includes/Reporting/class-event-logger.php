@@ -122,17 +122,19 @@ final class Event_Logger {
 	/**
 	 * Get the most recent events.
 	 *
-	 * @param int $limit Maximum number of events to return. Clamped to 1–1000.
+	 * @param int $limit  Maximum number of events to return. Clamped to 1–1000.
+	 * @param int $offset Number of events to skip for pagination. Default 0.
 	 * @return array[] Array of event arrays (newest first).
 	 */
-	public static function get_recent( $limit = 100 ) {
+	public static function get_recent( $limit = 100, $offset = 0 ) {
 		global $wpdb;
 
-		$limit = max( 1, min( 1000, absint( $limit ) ) );
-		$table = $wpdb->prefix . self::TABLE;
+		$limit  = max( 1, min( 1000, absint( $limit ) ) );
+		$offset = max( 0, absint( $offset ) );
+		$table  = $wpdb->prefix . self::TABLE;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT form_id, form_title, ip, user_agent, reasons, time FROM {$table} ORDER BY time DESC LIMIT %d", $limit ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT form_id, form_title, ip, user_agent, reasons, time FROM {$table} ORDER BY time DESC LIMIT %d OFFSET %d", $limit, $offset ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		if ( ! is_array( $rows ) ) {
 			return array();

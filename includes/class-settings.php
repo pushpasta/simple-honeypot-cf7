@@ -79,6 +79,7 @@ final class Settings {
 			'store_honeypot_value'    => 0,
 			'keep_recent_events'      => 1000,
 			'purge_events_after_days' => 0,
+			'events_per_page'         => 20,
 		);
 	}
 

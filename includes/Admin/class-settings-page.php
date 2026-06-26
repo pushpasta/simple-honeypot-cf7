@@ -160,13 +160,25 @@ final class Settings_Page {
 			$settings = Settings::get_settings();
 			$stats    = Settings::get_stats();
 
+			$per_page     = $settings['events_per_page'];
+			$total_events = Event_Logger::count();
+			$total_pages  = max( 1, (int) ceil( $total_events / $per_page ) );
+			$current_page = max( 1, min( $total_pages, isset( $_GET['events_page'] ) ? absint( $_GET['events_page'] ) : 1 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$offset       = ( $current_page - 1 ) * $per_page;
+
 			// Events live in the custom table; populate for the template.
-			$stats['events'] = Event_Logger::get_recent( $settings['keep_recent_events'] );
+			$stats['events'] = Event_Logger::get_recent( $per_page, $offset );
 
 			return array(
 				'stats'        => $stats,
 				'settings'     => $settings,
 				'parsed_rules' => \SimpleHoneypotCF7\Rules\Rules::parse( $settings['custom_rules'] ),
+				'pagination'   => array(
+					'total'        => $total_events,
+					'per_page'     => $per_page,
+					'current_page' => $current_page,
+					'total_pages'  => $total_pages,
+				),
 			);
 		}
 
@@ -274,12 +286,12 @@ final class Settings_Page {
 		$updated = sanitize_key( $get['updated'] );
 
 		if ( 'stats-reset' === $updated ) {
-			$result['message'] = __( 'Report data has been cleared.', 'simple-honeypot-cf7' );
+			$result['message'] = __( 'Reporting data has been cleared.', 'simple-honeypot-cf7' );
 			return $result;
 		}
 
 		if ( 'settings-reset' === $updated ) {
-			$result['message'] = __( 'Global settings have been restored to defaults.', 'simple-honeypot-cf7' );
+			$result['message'] = __( 'All global settings have been reset to defaults.', 'simple-honeypot-cf7' );
 			return $result;
 		}
 
@@ -294,7 +306,7 @@ final class Settings_Page {
 		}
 
 		if ( 'import-failed' === $updated ) {
-			$result['message'] = isset( $get['import_error'] ) ? sanitize_text_field( $get['import_error'] ) : __( 'Import failed. Please check the file and try again.', 'simple-honeypot-cf7' );
+			$result['message'] = isset( $get['import_error'] ) ? sanitize_text_field( $get['import_error'] ) : __( 'Import failed. Please verify the file and try again.', 'simple-honeypot-cf7' );
 			$result['type']    = 'notice-error';
 			return $result;
 		}
@@ -330,6 +342,7 @@ final class Settings_Page {
 		$settings['store_honeypot_value']    = empty( $post['store_honeypot_value'] ) ? 0 : 1;
 		$settings['keep_recent_events']      = max( 10, absint( isset( $post['keep_recent_events'] ) ? $post['keep_recent_events'] : $settings['keep_recent_events'] ) );
 		$settings['purge_events_after_days'] = max( 0, absint( isset( $post['purge_events_after_days'] ) ? $post['purge_events_after_days'] : $settings['purge_events_after_days'] ) );
+		$settings['events_per_page']         = max( 5, min( 200, absint( isset( $post['events_per_page'] ) ? $post['events_per_page'] : $settings['events_per_page'] ) ) );
 
 		return $settings;
 	}

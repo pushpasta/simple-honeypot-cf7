@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="postbox simple-honeypot-cf7-card">
 		<h2 class="hndle"><span class="dashicons dashicons-clock"></span><span><?php esc_html_e( 'Time Check', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
-			<p class="description"><?php esc_html_e( 'Blocks submissions sent faster than a human could reasonably fill out the form.', 'simple-honeypot-cf7' ); ?></p>
+			<p class="description"><?php esc_html_e( 'Blocks submissions that arrive faster than a human could reasonably fill out the form.', 'simple-honeypot-cf7' ); ?></p>
 			<table class="form-table" role="presentation">
 				<tr>
 					<th scope="row"><label for="time_check_enabled"><?php esc_html_e( 'Enable time check', 'simple-honeypot-cf7' ); ?></label></th>
@@ -59,7 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="postbox simple-honeypot-cf7-card">
 		<h2 class="hndle"><span class="dashicons dashicons-shield"></span><span><?php esc_html_e( 'Proof of Work', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
-			<p class="description"><?php esc_html_e( 'Requires the visitor\'s browser to solve a small computational puzzle before submitting. Adds friction for bots while being imperceptible to humans. Requires JavaScript and a secure (HTTPS) connection.', 'simple-honeypot-cf7' ); ?></p>
+			<p class="description"><?php esc_html_e( 'Requires the visitor\'s browser to solve a small computational puzzle before submitting. Adds friction for bots while remaining imperceptible to humans. Requires JavaScript and HTTPS.', 'simple-honeypot-cf7' ); ?></p>
 			<table class="form-table" role="presentation">
 				<tr>
 					<th scope="row"><label for="pow_enabled"><?php esc_html_e( 'Enable Proof of Work', 'simple-honeypot-cf7' ); ?></label></th>
@@ -116,7 +116,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<td>
 						<input type="number" class="small-text" id="purge_events_after_days" name="purge_events_after_days" min="0" step="1" value="<?php echo esc_attr( $settings['purge_events_after_days'] ); ?>" placeholder="0" />
 						<?php esc_html_e( 'days (0 = disabled)', 'simple-honeypot-cf7' ); ?>
-						<p class="description"><?php esc_html_e( 'Automatically remove events older than this many days each time a new event is recorded. Set to 0 to disable.', 'simple-honeypot-cf7' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Automatically removes events older than the specified number of days each time a new event is recorded. Set to 0 to disable.', 'simple-honeypot-cf7' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="events_per_page"><?php esc_html_e( 'Events per page', 'simple-honeypot-cf7' ); ?></label></th>
+					<td>
+						<input type="number" class="small-text" id="events_per_page" name="events_per_page" min="5" step="1" value="<?php echo esc_attr( $settings['events_per_page'] ); ?>" placeholder="20" />
+						<?php esc_html_e( 'entries shown on the Reports tab', 'simple-honeypot-cf7' ); ?>
 					</td>
 				</tr>
 			</table>
