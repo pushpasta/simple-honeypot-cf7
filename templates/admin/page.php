@@ -17,7 +17,7 @@ $version_tooltip = sprintf(
 ?>
 <div class="wrap simple-honeypot-cf7-admin">
 	<h1><img src="<?php echo esc_url( SIMPLE_HONEYPOT_CF7_URL . 'resources/admin/img/shp-icon.png' ); ?>" alt="" style="width:36px;height:36px;border-radius:4px;margin-right:10px;vertical-align:middle;"><strong style="font-weight:700;">Simple Honeypot</strong> <?php esc_html_e( 'for Contact Form 7', 'simple-honeypot-cf7' ); ?> <span style="font-weight:400;font-size:13px;color:#646970;" title="<?php echo esc_attr( $version_tooltip ); ?>">v<?php echo esc_html( SIMPLE_HONEYPOT_CF7_VERSION ); ?></span></h1>
-	<p class="description"><?php esc_html_e( 'Configure honeypot fields, timing checks, proof-of-work, custom rules, and spam reporting.', 'simple-honeypot-cf7' ); ?></p>
+	<p class="description"><?php esc_html_e( 'Protect Contact Form 7 from spam with honeypot fields, timing checks, proof-of-work, and custom blocking rules.', 'simple-honeypot-cf7' ); ?></p>
 
 	<?php if ( ! empty( $notice ) ) : ?>
 		<?php

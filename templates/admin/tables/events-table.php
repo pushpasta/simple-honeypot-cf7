@@ -13,7 +13,7 @@ if ( empty( $events ) ) :
 	?>
 	<div class="simple-honeypot-cf7-empty-state">
 		<span class="dashicons dashicons-list-view"></span>
-		<p><?php esc_html_e( 'No events recorded yet. Recent spam attempts will be listed here.', 'simple-honeypot-cf7' ); ?></p>
+		<p><?php esc_html_e( 'No events recorded yet. Blocked spam attempts will appear here.', 'simple-honeypot-cf7' ); ?></p>
 	</div>
 	<?php
 	return;

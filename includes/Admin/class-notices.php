@@ -89,7 +89,7 @@ final class Notices {
 		}
 
 		self::render(
-			__( 'Proof of Work requires HTTPS. It is currently enabled but this site does not appear to be served over a secure connection. PoW checks will be skipped for all submissions.', 'simple-honeypot-cf7' ),
+			__( 'Proof of Work requires HTTPS. This site does not appear to be served over a secure connection. PoW checks will be skipped for all submissions.', 'simple-honeypot-cf7' ),
 			'warning'
 		);
 	}
@@ -109,7 +109,7 @@ final class Notices {
 		delete_transient( SIMPLE_HONEYPOT_CF7_BASE . '_reset_notice' );
 
 		self::render(
-			__( 'Simple Honeypot settings for this form have been restored to defaults.', 'simple-honeypot-cf7' ),
+			__( 'Per-form settings for this form have been restored to defaults.', 'simple-honeypot-cf7' ),
 			'success',
 			true
 		);
@@ -135,13 +135,13 @@ final class Notices {
 		if ( 0 === $removed ) {
 			$message = sprintf(
 				/* translators: %d: number of days */
-				esc_html__( 'No events older than %d days were found.', 'simple-honeypot-cf7' ),
+				esc_html__( 'No events older than %d days were found to delete.', 'simple-honeypot-cf7' ),
 				esc_html( $days )
 			);
 		} else {
 			$message = sprintf(
 				/* translators: 1: number of deleted events, 2: number of days */
-				esc_html__( 'Deleted %1$d events older than %2$d days.', 'simple-honeypot-cf7' ),
+				esc_html( _n( 'Deleted %1$d event older than %2$d days.', 'Deleted %1$d events older than %2$d days.', $removed, 'simple-honeypot-cf7' ) ),
 				esc_html( $removed ),
 				esc_html( $days )
 			);

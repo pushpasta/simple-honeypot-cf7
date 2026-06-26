@@ -21,10 +21,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="notice notice-warning inline">
 					<p>
 						<?php
+						$rule_count = count( $parsed_rules );
 						printf(
 							/* translators: %s: number of active rules */
-							esc_html__( 'You have %s active rules. A large number of rules may slow down form submissions.', 'simple-honeypot-cf7' ),
-							'<strong>' . esc_html( number_format_i18n( count( $parsed_rules ) ) ) . '</strong>'
+							esc_html( _n( 'You have %s active rule. A large number of rules may slow down form submissions.', 'You have %s active rules. A large number of rules may slow down form submissions.', $rule_count, 'simple-honeypot-cf7' ) ),
+							'<strong>' . esc_html( number_format_i18n( $rule_count ) ) . '</strong>'
 						);
 						?>
 					</p>
@@ -43,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<p class="description">
 								<?php
 								/* translators: * characters are literal wildcard symbols and must not be translated. */
-								esc_html_e( 'One rule per line. Lines starting with # are treated as comments. Each line is auto-detected as either an IP or email based on format. Supported: IPv4, IPv6, wildcard *, and CIDR for IP; wildcard * for email. Unrecognized lines will be removed on save.', 'simple-honeypot-cf7' );
+								esc_html_e( 'One rule per line. Lines starting with # are treated as comments. Each line is auto-detected as an IP or email based on format. Supported formats: IPv4, IPv6, wildcard *, and CIDR for IP addresses; wildcard * for email addresses. Unrecognized lines are removed on save.', 'simple-honeypot-cf7' );
 								?>
 							</p>
 						</div>
