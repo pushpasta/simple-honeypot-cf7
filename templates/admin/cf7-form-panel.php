@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<option value="enabled" <?php selected( $form_settings['time_mode'], 'enabled' ); ?>><?php esc_html_e( 'Enabled for this form', 'simple-honeypot-cf7' ); ?></option>
 					<option value="disabled" <?php selected( $form_settings['time_mode'], 'disabled' ); ?>><?php esc_html_e( 'Disabled for this form', 'simple-honeypot-cf7' ); ?></option>
 				</select>
-				<p class="description"><?php esc_html_e( 'Controls whether submissions to this form are checked for submission speed. When enabled, submissions sent faster than the minimum time are blocked.', 'simple-honeypot-cf7' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Controls whether submissions to this form are checked for speed. When enabled, submissions sent faster than the minimum time are blocked.', 'simple-honeypot-cf7' ); ?></p>
 			</td>
 		</tr>
 		<tr>
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</tr>
 	</table>
 	<p class="simple-honeypot-cf7-form-panel-reset">
-		<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=' . SIMPLE_HONEYPOT_CF7_BASE . '_reset_form_settings&form_id=' . $form_id ), SIMPLE_HONEYPOT_CF7_BASE . '_reset_form_settings' ) ); ?>" class="button simple-honeypot-cf7-reset-form-settings" data-confirm="<?php echo esc_attr__( 'Are you sure you want to restore this form\'s Simple Honeypot settings to defaults?', 'simple-honeypot-cf7' ); ?>">
+		<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=' . SIMPLE_HONEYPOT_CF7_BASE . '_reset_form_settings&form_id=' . $form_id ), SIMPLE_HONEYPOT_CF7_BASE . '_reset_form_settings' ) ); ?>" class="button simple-honeypot-cf7-reset-form-settings" data-confirm="<?php echo esc_attr__( 'This will restore this form\'s settings to defaults.', 'simple-honeypot-cf7' ); ?>">
 			<?php esc_html_e( 'Restore to defaults', 'simple-honeypot-cf7' ); ?>
 		</a>
 	</p>

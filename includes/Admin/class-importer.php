@@ -62,18 +62,18 @@ final class Importer {
 
 		$data = json_decode( $contents, true );
 
-		if ( ! is_array( $data ) || empty( $data['global_settings'] ) || ! is_array( $data['global_settings'] ) || empty( $data['version'] ) ) {
+		$version = isset( $data['version'] ) ? sanitize_text_field( $data['version'] ) : '';
+		if ( '' !== $version && version_compare( $version, '1.0.0', '<' ) ) {
 			return array(
 				'success' => false,
-				'error'   => __( 'Invalid file format.', 'simple-honeypot-cf7' ),
+				'error'   => __( 'This export was created with an incompatible plugin version.', 'simple-honeypot-cf7' ),
 			);
 		}
 
-		$version = sanitize_text_field( $data['version'] );
-		if ( version_compare( $version, '1.0.0', '<' ) ) {
+		if ( ! is_array( $data ) || empty( $data['global_settings'] ) || ! is_array( $data['global_settings'] ) || ! isset( $data['global_settings']['time_check_enabled'] ) ) {
 			return array(
 				'success' => false,
-				'error'   => __( 'The file format is not supported by this version of the plugin.', 'simple-honeypot-cf7' ),
+				'error'   => __( 'The file does not match the expected format and cannot be imported.', 'simple-honeypot-cf7' ),
 			);
 		}
 

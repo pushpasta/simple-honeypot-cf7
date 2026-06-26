@@ -51,6 +51,9 @@ final class Rest_Api {
 						'type'              => 'integer',
 						'default'           => 90,
 						'sanitize_callback' => 'absint',
+						'validate_callback' => function ( $value ) {
+							return is_numeric( $value ) && absint( $value ) >= 1;
+						},
 					),
 				),
 			)
@@ -105,7 +108,7 @@ final class Rest_Api {
 				return new \WP_REST_Response(
 					array(
 						'success' => false,
-						'error'   => __( 'Unknown action.', 'simple-honeypot-cf7' ),
+						'error'   => __( 'Invalid action.', 'simple-honeypot-cf7' ),
 					),
 					400
 				);

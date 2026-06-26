@@ -224,7 +224,16 @@
 				var $header  = $dialog.find( '.simple-honeypot-cf7-confirm-header' );
 				var $yes     = $dialog.find( '.simple-honeypot-cf7-confirm-yes' );
 
-				$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( $trigger.data( 'confirm' ) );
+				var message   = $trigger.data( 'confirm' );
+				var daysInput = $trigger.data( 'confirm-days' );
+
+				if ( daysInput ) {
+					var daysValue = $( '#' + daysInput ).val() || '90';
+					message       = message.replace( '%d', daysValue );
+					$dialog.find( '.simple-honeypot-cf7-confirm-message' ).html( message );
+				} else {
+					$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( message );
+				}
 
 				if ( isDanger ) {
 					$header.show();
