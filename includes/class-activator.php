@@ -24,8 +24,8 @@ final class Activator {
 	 * @return void
 	 */
 	public static function activate() {
-		Settings::activate();
 		Upgrader::run();
+		Settings::activate();
 		self::setup_events_table();
 		self::opt_in_auto_updates();
 	}

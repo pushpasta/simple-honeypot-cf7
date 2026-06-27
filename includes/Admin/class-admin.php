@@ -7,7 +7,10 @@
 
 namespace SimpleHoneypotCF7\Admin;
 
+use SimpleHoneypotCF7\Reporting\Event_Logger;
+use SimpleHoneypotCF7\Settings;
 use SimpleHoneypotCF7\Support\Contact_Form_7;
+use SimpleHoneypotCF7\Upgrader;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -32,6 +35,7 @@ final class Admin {
 		$rest_api      = new Rest_Api();
 
 		add_action( 'admin_enqueue_scripts', array( $assets, 'enqueue' ) );
+		add_action( 'admin_init', array( $this, 'run_upgrader' ) );
 		add_action( 'admin_notices', array( $notices, 'contact_form_7_missing' ) );
 		add_action( 'admin_notices', array( $notices, 'pow_requires_ssl' ) );
 		add_action( 'admin_notices', array( $notices, 'reset_form_notice' ) );
@@ -51,6 +55,21 @@ final class Admin {
 			add_action( 'wpcf7_admin_init', array( $tag_generator, 'register' ), 20, 0 );
 			add_action( 'admin_post_' . SIMPLE_HONEYPOT_CF7_BASE . '_reset_form_settings', array( $form_panel, 'reset_form_settings' ) );
 		}
+	}
+
+	/**
+	 * Run pending database migrations and event table setup.
+	 *
+	 * Fires on admin_init so migrations execute after plugin updates,
+	 * not only on manual activation.
+	 *
+	 * @return void
+	 */
+	public function run_upgrader() {
+		Upgrader::run();
+		Settings::activate();
+		Event_Logger::create_table();
+		Event_Logger::migrate_from_options( Settings::STATS_OPTION );
 	}
 
 	/**
