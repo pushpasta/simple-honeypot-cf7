@@ -103,7 +103,7 @@
 					var $submitter = $( document.activeElement );
 					var isImport   = $submitter.is( '#simple-honeypot-cf7-import-btn' );
 
-					// Guard: import button clicked with no file.
+					// Guard: import with no file.
 					if ( isImport && ( ! $importFile.length || ! $importFile[ 0 ].files.length ) ) {
 						showFieldError( $importFile, simpleHoneypotCf7.selectFile );
 						valid = false;

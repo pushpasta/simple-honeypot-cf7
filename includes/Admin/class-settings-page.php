@@ -129,7 +129,7 @@ final class Settings_Page {
 			return;
 		}
 
-		if ( 'import_settings' === sanitize_key( $post[ SIMPLE_HONEYPOT_CF7_BASE . '_action' ] ) ) {
+		if ( ! empty( $post[ SIMPLE_HONEYPOT_CF7_BASE . '_import_settings' ] ) ) {
 			$importer = new Importer();
 			$result   = $importer->import();
 
