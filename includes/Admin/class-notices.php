@@ -14,9 +14,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Displays admin notices.
+ * Renders admin notices.
  */
 final class Notices {
+
+	/**
+	 * Render a notice.
+	 *
+	 * @param string $message     Notice message.
+	 * @param string $type        Notice type: success, error, warning, info.
+	 * @param bool   $dismissible Whether the notice can be dismissed.
+	 * @return void
+	 */
+	public static function render( $message, $type = 'success', $dismissible = false ) {
+		if ( empty( $message ) ) {
+			return;
+		}
+
+		$allowed = array( 'success', 'error', 'warning', 'info' );
+		$type    = in_array( $type, $allowed, true ) ? $type : 'success';
+
+		$classes = array(
+			'notice',
+			'notice-' . $type,
+		);
+
+		if ( $dismissible ) {
+			$classes[] = 'is-dismissible';
+		}
+
+		printf(
+			'<div class="%s"><p>%s</p></div>',
+			esc_attr( implode( ' ', $classes ) ),
+			wp_kses_post( $message )
+		);
+	}
 
 	/**
 	 * Show a notice when Contact Form 7 is unavailable.
@@ -30,13 +62,14 @@ final class Notices {
 
 		$link = '<a href="' . esc_url( admin_url( 'plugin-install.php?tab=search&s=contact+form+7' ) ) . '">' . esc_html__( 'Contact Form 7', 'simple-honeypot-cf7' ) . '</a>';
 
-		echo '<div class="notice notice-error"><p>';
-		printf(
-			/* translators: %s: Contact Form 7 install link. */
-			wp_kses_post( __( 'Simple Honeypot for Contact Form 7 requires %s to be installed and activated.', 'simple-honeypot-cf7' ) ),
-			wp_kses_post( $link )
+		self::render(
+			sprintf(
+				/* translators: %s: Contact Form 7 install link. */
+				wp_kses_post( __( 'Simple Honeypot for Contact Form 7 requires %s to be installed and activated.', 'simple-honeypot-cf7' ) ),
+				wp_kses_post( $link )
+			),
+			'error'
 		);
-		echo '</p></div>';
 	}
 
 	/**
@@ -55,9 +88,10 @@ final class Notices {
 			return;
 		}
 
-		echo '<div class="notice notice-warning"><p>';
-		esc_html_e( 'Proof of Work requires HTTPS. It is currently enabled but this site does not appear to be served over a secure connection. PoW checks will be skipped for all submissions.', 'simple-honeypot-cf7' );
-		echo '</p></div>';
+		self::render(
+			__( 'Proof of Work requires HTTPS. It is currently enabled but this site does not appear to be served over a secure connection. PoW checks will be skipped for all submissions.', 'simple-honeypot-cf7' ),
+			'warning'
+		);
 	}
 
 	/**
@@ -74,9 +108,11 @@ final class Notices {
 
 		delete_transient( SIMPLE_HONEYPOT_CF7_BASE . '_reset_notice' );
 
-		echo '<div class="notice notice-success is-dismissible"><p>';
-		esc_html_e( 'Simple Honeypot settings for this form have been restored to defaults.', 'simple-honeypot-cf7' );
-		echo '</p></div>';
+		self::render(
+			__( 'Simple Honeypot settings for this form have been restored to defaults.', 'simple-honeypot-cf7' ),
+			'success',
+			true
+		);
 	}
 
 	/**
@@ -96,16 +132,14 @@ final class Notices {
 		$removed = isset( $notice['removed'] ) ? absint( $notice['removed'] ) : 0;
 		$days    = isset( $notice['days'] ) ? absint( $notice['days'] ) : 0;
 
-		echo '<div class="notice notice-success is-dismissible"><p>';
-
 		if ( 0 === $removed ) {
-			printf(
+			$message = sprintf(
 				/* translators: %d: number of days */
 				esc_html__( 'No events older than %d days were found.', 'simple-honeypot-cf7' ),
 				esc_html( $days )
 			);
 		} else {
-			printf(
+			$message = sprintf(
 				/* translators: 1: number of deleted events, 2: number of days */
 				esc_html__( 'Deleted %1$d events older than %2$d days.', 'simple-honeypot-cf7' ),
 				esc_html( $removed ),
@@ -113,6 +147,6 @@ final class Notices {
 			);
 		}
 
-		echo '</p></div>';
+		self::render( $message, 'success', true );
 	}
 }

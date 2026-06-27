@@ -21,8 +21,8 @@ $version_tooltip = sprintf(
 
 	<?php if ( ! empty( $notice ) ) : ?>
 		<?php
-		$notice_type = isset( $notice_type ) ? $notice_type : '';
-		require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/notice.php';
+		$notice_type = isset( $notice_type ) ? $notice_type : 'success';
+		\SimpleHoneypotCF7\Admin\Notices::render( $notice, $notice_type );
 		?>
 	<?php endif; ?>
 
