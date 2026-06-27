@@ -86,11 +86,11 @@ final class Form_Panel {
 
 		$form_id = (int) $contact_form->id();
 
-		if ( empty( $post['simple_honeypot_cf7_form'] ) ) {
+		if ( empty( $post[ SIMPLE_HONEYPOT_CF7_BASE . '_form' ] ) ) {
 			return;
 		}
 
-		$form = (array) $post['simple_honeypot_cf7_form'];
+		$form = (array) $post[ SIMPLE_HONEYPOT_CF7_BASE . '_form' ];
 
 		Settings::update_form_settings(
 			$form_id,
@@ -111,7 +111,7 @@ final class Form_Panel {
 			wp_die( esc_html__( 'You do not have permission to reset form settings.', 'simple-honeypot-cf7' ) );
 		}
 
-		check_admin_referer( 'simple_honeypot_cf7_reset_form_settings' );
+		check_admin_referer( SIMPLE_HONEYPOT_CF7_BASE . '_reset_form_settings' );
 
 		$form_id = isset( $_GET['form_id'] ) ? absint( $_GET['form_id'] ) : 0;
 
@@ -122,7 +122,7 @@ final class Form_Panel {
 		delete_post_meta( $form_id, Settings::FORM_META );
 
 		set_transient(
-			'simple_honeypot_cf7_reset_notice',
+			SIMPLE_HONEYPOT_CF7_BASE . '_reset_notice',
 			array(
 				'form_id' => $form_id,
 			),

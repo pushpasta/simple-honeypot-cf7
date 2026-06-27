@@ -21,7 +21,7 @@ final class Event_Logger {
 	 *
 	 * @var string
 	 */
-	const TABLE = 'simple_honeypot_cf7_events';
+	const TABLE = SIMPLE_HONEYPOT_CF7_BASE . '_events';
 
 	/**
 	 * Schema version.

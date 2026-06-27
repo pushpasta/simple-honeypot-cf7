@@ -34,10 +34,11 @@ final class Admin {
 		add_action( 'admin_notices', array( $notices, 'contact_form_7_missing' ) );
 		add_action( 'admin_notices', array( $notices, 'pow_requires_ssl' ) );
 		add_action( 'admin_notices', array( $notices, 'reset_form_notice' ) );
+		add_action( 'admin_notices', array( $notices, 'purge_events_notice' ) );
 		add_action( 'admin_menu', array( $settings_page, 'register_menu' ) );
 		add_action( 'admin_init', array( $settings_page, 'handle_post' ) );
-		add_action( 'admin_post_simple_honeypot_cf7_export_settings', array( $settings_page, 'export_settings' ) );
-		add_action( 'admin_post_simple_honeypot_cf7_purge_events', array( $settings_page, 'purge_events' ) );
+		add_action( 'admin_post_' . SIMPLE_HONEYPOT_CF7_BASE . '_export_settings', array( $settings_page, 'export_settings' ) );
+		add_action( 'admin_post_' . SIMPLE_HONEYPOT_CF7_BASE . '_purge_events', array( $settings_page, 'purge_events' ) );
 
 		add_filter( 'plugin_action_links_' . SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, array( $settings_page, 'settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'row_meta' ), 10, 2 );
@@ -47,7 +48,7 @@ final class Admin {
 			add_filter( 'wpcf7_editor_panels', array( $form_panel, 'register_panel' ) );
 			add_action( 'wpcf7_after_save', array( $form_panel, 'save' ) );
 			add_action( 'wpcf7_admin_init', array( $tag_generator, 'register' ), 20, 0 );
-			add_action( 'admin_post_simple_honeypot_cf7_reset_form_settings', array( $form_panel, 'reset_form_settings' ) );
+			add_action( 'admin_post_' . SIMPLE_HONEYPOT_CF7_BASE . '_reset_form_settings', array( $form_panel, 'reset_form_settings' ) );
 		}
 	}
 

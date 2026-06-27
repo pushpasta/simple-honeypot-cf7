@@ -66,16 +66,53 @@ final class Notices {
 	 * @return void
 	 */
 	public function reset_form_notice() {
-		$notice = get_transient( 'simple_honeypot_cf7_reset_notice' );
+		$notice = get_transient( SIMPLE_HONEYPOT_CF7_BASE . '_reset_notice' );
 
 		if ( ! $notice || empty( $notice['form_id'] ) ) {
 			return;
 		}
 
-		delete_transient( 'simple_honeypot_cf7_reset_notice' );
+		delete_transient( SIMPLE_HONEYPOT_CF7_BASE . '_reset_notice' );
 
 		echo '<div class="notice notice-success is-dismissible"><p>';
 		esc_html_e( 'Simple Honeypot settings for this form have been restored to defaults.', 'simple-honeypot-cf7' );
+		echo '</p></div>';
+	}
+
+	/**
+	 * Show a success notice after purging old events.
+	 *
+	 * @return void
+	 */
+	public function purge_events_notice() {
+		$notice = get_transient( SIMPLE_HONEYPOT_CF7_BASE . '_purge_notice' );
+
+		if ( ! $notice || ! is_array( $notice ) ) {
+			return;
+		}
+
+		delete_transient( SIMPLE_HONEYPOT_CF7_BASE . '_purge_notice' );
+
+		$removed = isset( $notice['removed'] ) ? absint( $notice['removed'] ) : 0;
+		$days    = isset( $notice['days'] ) ? absint( $notice['days'] ) : 0;
+
+		echo '<div class="notice notice-success is-dismissible"><p>';
+
+		if ( 0 === $removed ) {
+			printf(
+				/* translators: %d: number of days */
+				esc_html__( 'No events older than %d days were found.', 'simple-honeypot-cf7' ),
+				esc_html( $days )
+			);
+		} else {
+			printf(
+				/* translators: 1: number of deleted events, 2: number of days */
+				esc_html__( 'Deleted %1$d events older than %2$d days.', 'simple-honeypot-cf7' ),
+				esc_html( $removed ),
+				esc_html( $days )
+			);
+		}
+
 		echo '</p></div>';
 	}
 }

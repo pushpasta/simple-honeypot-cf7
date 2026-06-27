@@ -123,7 +123,7 @@ final class Form_Tag {
 			)
 		);
 
-		return apply_filters( 'simple_honeypot_cf7_html', $html, $tag );
+		return apply_filters( SIMPLE_HONEYPOT_CF7_BASE . '_html', $html, $tag );
 	}
 
 	/**

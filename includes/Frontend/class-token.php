@@ -26,12 +26,12 @@ final class Token {
 	 */
 	private static $validate_cache = array();
 
-	const SIGN_PREFIX     = 'shcf7|token|sign|';
-	const NAME_PREFIX     = 'shcf7|token|dname|';
+	const SIGN_PREFIX     = SIMPLE_HONEYPOT_CF7_BASE . '|token|sign|';
+	const NAME_PREFIX     = SIMPLE_HONEYPOT_CF7_BASE . '|token|dname|';
 	const TICK_SECONDS    = HOUR_IN_SECONDS;
 	const FIELD_TYPES     = array( 'text', 'email', 'tel', 'url', 'number', 'date', 'textarea' );
 	const POW_TICK        = 300; // 5-minute PoW challenge window.
-	const POW_SIGN_PREFIX = 'shcf7|pow|sign|';
+	const POW_SIGN_PREFIX = SIMPLE_HONEYPOT_CF7_BASE . '|pow|sign|';
 
 	const HIDING_STYLES = array(
 		'position:absolute!important;left:-10000px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important;',
@@ -148,7 +148,7 @@ final class Token {
 			return self::$prefix_cache[ $form_id ];
 		}
 
-		$hash  = wp_hash( 'shcf7|fprefix|' . $form_id );
+		$hash  = wp_hash( SIMPLE_HONEYPOT_CF7_BASE . '|fprefix|' . $form_id );
 		$chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
 		$name  = '';
 
@@ -216,7 +216,7 @@ final class Token {
 	 */
 	public static function hiding_style( $form_id, $field_index = 0 ) {
 		$tick  = (int) floor( time() / self::TICK_SECONDS );
-		$index = hexdec( substr( wp_hash( 'shcf7|hide|' . (int) $form_id . '|' . $tick . '|' . $field_index ), 0, 2 ) ) % count( self::HIDING_STYLES );
+		$index = hexdec( substr( wp_hash( SIMPLE_HONEYPOT_CF7_BASE . '|hide|' . (int) $form_id . '|' . $tick . '|' . $field_index ), 0, 2 ) ) % count( self::HIDING_STYLES );
 		return self::HIDING_STYLES[ $index ];
 	}
 
@@ -240,7 +240,7 @@ final class Token {
 	public static function pow_challenge( $form_id, array $settings = array() ) {
 		$tick       = (int) floor( time() / self::POW_TICK );
 		$complexity = empty( $settings['pow_complexity'] ) ? 8 : max( 4, min( 20, absint( $settings['pow_complexity'] ) ) );
-		$seed       = substr( wp_hash( 'shcf7|pow|seed|' . (int) $form_id . '|' . $tick ), 0, 16 );
+		$seed       = substr( wp_hash( SIMPLE_HONEYPOT_CF7_BASE . '|pow|seed|' . (int) $form_id . '|' . $tick ), 0, 16 );
 		$payload    = implode( '.', array( $seed, $complexity, $tick, (int) $form_id ) );
 
 		return $payload . '.' . wp_hash( self::POW_SIGN_PREFIX . $payload );

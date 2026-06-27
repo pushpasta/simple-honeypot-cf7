@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <form method="post" action="">
-	<?php wp_nonce_field( 'simple_honeypot_cf7_save_settings', 'simple_honeypot_cf7_nonce' ); ?>
-	<input type="hidden" name="simple_honeypot_cf7_action" value="save" />
+	<?php wp_nonce_field( SIMPLE_HONEYPOT_CF7_BASE . '_save_settings', SIMPLE_HONEYPOT_CF7_BASE . '_nonce' ); ?>
+	<input type="hidden" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="save" />
 	<input type="hidden" name="tab" value="rules" />
 
 	<div class="postbox simple-honeypot-cf7-card">

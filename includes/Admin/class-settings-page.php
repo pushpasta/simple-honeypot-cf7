@@ -108,28 +108,28 @@ final class Settings_Page {
 	 */
 	public function handle_post() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce is verified after the permission check below.
-		if ( empty( $_POST['simple_honeypot_cf7_action'] ) || ! current_user_can( 'manage_options' ) ) {
+		if ( empty( $_POST[ SIMPLE_HONEYPOT_CF7_BASE . '_action' ] ) || ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified immediately below.
 		$post = wp_unslash( $_POST );
 
-		check_admin_referer( 'simple_honeypot_cf7_save_settings', 'simple_honeypot_cf7_nonce' );
+		check_admin_referer( SIMPLE_HONEYPOT_CF7_BASE . '_save_settings', SIMPLE_HONEYPOT_CF7_BASE . '_nonce' );
 
-		if ( 'reset_stats' === sanitize_key( $post['simple_honeypot_cf7_action'] ) ) {
+		if ( 'reset_stats' === sanitize_key( $post[ SIMPLE_HONEYPOT_CF7_BASE . '_action' ] ) ) {
 			Settings::reset_stats();
 			$this->redirect( 'settings', 'stats-reset' );
 			return;
 		}
 
-		if ( 'reset_settings' === sanitize_key( $post['simple_honeypot_cf7_action'] ) ) {
+		if ( 'reset_settings' === sanitize_key( $post[ SIMPLE_HONEYPOT_CF7_BASE . '_action' ] ) ) {
 			Settings::reset_settings();
 			$this->redirect( 'settings', 'settings-reset' );
 			return;
 		}
 
-		if ( 'import_settings' === sanitize_key( $post['simple_honeypot_cf7_action'] ) ) {
+		if ( 'import_settings' === sanitize_key( $post[ SIMPLE_HONEYPOT_CF7_BASE . '_action' ] ) ) {
 			$importer = new Importer();
 			$result   = $importer->import();
 
@@ -194,7 +194,7 @@ final class Settings_Page {
 
 		return array(
 			'settings'   => Settings::get_settings(),
-			'export_url' => wp_nonce_url( admin_url( 'admin-post.php?action=simple_honeypot_cf7_export_settings' ), 'simple_honeypot_cf7_export_settings' ),
+			'export_url' => wp_nonce_url( admin_url( 'admin-post.php?action=' . SIMPLE_HONEYPOT_CF7_BASE . '_export_settings' ), SIMPLE_HONEYPOT_CF7_BASE . '_export_settings' ),
 		);
 	}
 
@@ -351,7 +351,7 @@ final class Settings_Page {
 			wp_die( esc_html__( 'You do not have permission to export settings.', 'simple-honeypot-cf7' ) );
 		}
 
-		check_admin_referer( 'simple_honeypot_cf7_export_settings' );
+		check_admin_referer( SIMPLE_HONEYPOT_CF7_BASE . '_export_settings' );
 
 		$global = Settings::get_settings();
 		$forms  = array();
@@ -383,7 +383,7 @@ final class Settings_Page {
 
 		nocache_headers();
 		header( 'Content-Type: application/json; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename=simple-honeypot-cf7-settings.json' );
+		header( 'Content-Disposition: attachment; filename=' . SIMPLE_HONEYPOT_CF7_BASE . '_v' . SIMPLE_HONEYPOT_CF7_VERSION . '-settings.json' );
 
 		$json = wp_json_encode( $data, JSON_PRETTY_PRINT );
 
@@ -406,7 +406,7 @@ final class Settings_Page {
 			wp_die( esc_html__( 'You do not have permission to purge events.', 'simple-honeypot-cf7' ) );
 		}
 
-		check_admin_referer( 'simple_honeypot_cf7_purge_events' );
+		check_admin_referer( SIMPLE_HONEYPOT_CF7_BASE . '_purge_events' );
 
 		$days    = isset( $_GET['days'] ) ? absint( $_GET['days'] ) : 90;
 		$days    = max( 1, $days );
@@ -414,7 +414,7 @@ final class Settings_Page {
 		$removed = Event_Logger::purge_old( $days );
 
 		set_transient(
-			'simple_honeypot_cf7_purge_notice',
+			SIMPLE_HONEYPOT_CF7_BASE . '_purge_notice',
 			array(
 				'removed' => $removed,
 				'days'    => $days,

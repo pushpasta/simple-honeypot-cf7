@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <form method="post" action="" enctype="multipart/form-data">
-	<?php wp_nonce_field( 'simple_honeypot_cf7_save_settings', 'simple_honeypot_cf7_nonce' ); ?>
-	<input type="hidden" name="simple_honeypot_cf7_action" value="save" />
+	<?php wp_nonce_field( SIMPLE_HONEYPOT_CF7_BASE . '_save_settings', SIMPLE_HONEYPOT_CF7_BASE . '_nonce' ); ?>
+	<input type="hidden" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="save" />
 	<input type="hidden" name="tab" value="settings" />
 
 	<div class="postbox simple-honeypot-cf7-card">
@@ -107,9 +107,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="keep_recent_events"><?php esc_html_e( 'Events to keep', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="number" class="small-text" id="keep_recent_events" name="keep_recent_events" min="10" step="1" value="<?php echo esc_attr( $settings['keep_recent_events'] ); ?>" placeholder="100" />
+						<input type="number" class="small-text" id="keep_recent_events" name="keep_recent_events" min="10" step="1" value="<?php echo esc_attr( $settings['keep_recent_events'] ); ?>" placeholder="1000" />
 						<?php esc_html_e( 'recent events', 'simple-honeypot-cf7' ); ?>
-						<div id="simple-honeypot-cf7-events-warning"></div>
 					</td>
 				</tr>
 				<tr>
@@ -142,7 +141,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<th scope="row"><?php esc_html_e( 'Import settings', 'simple-honeypot-cf7' ); ?></th>
 					<td>
 						<input type="file" name="import_file" accept=".json" />
-						<button type="submit" name="simple_honeypot_cf7_action" value="import_settings" class="button"><?php esc_html_e( 'Import Settings', 'simple-honeypot-cf7' ); ?></button>
+						<button type="submit" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="import_settings" class="button"><?php esc_html_e( 'Import Settings', 'simple-honeypot-cf7' ); ?></button>
 						<p class="description"><?php esc_html_e( 'Upload a previously exported JSON file to restore all settings.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
@@ -158,14 +157,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Clear reporting data', 'simple-honeypot-cf7' ); ?></th>
 					<td>
-						<button type="submit" name="simple_honeypot_cf7_action" value="reset_stats" class="button button-delete" data-confirm="<?php echo esc_attr( __( 'Are you sure you want to clear reporting data? This cannot be undone.', 'simple-honeypot-cf7' ) ); ?>"><?php esc_html_e( 'Clear Reporting Data', 'simple-honeypot-cf7' ); ?></button>
+						<button type="submit" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="reset_stats" class="button button-delete" data-confirm="<?php echo esc_attr( __( 'Are you sure you want to clear reporting data? This cannot be undone.', 'simple-honeypot-cf7' ) ); ?>"><?php esc_html_e( 'Clear Reporting Data', 'simple-honeypot-cf7' ); ?></button>
 						<p class="description"><?php esc_html_e( 'Removes all recorded spam stats, breakdowns, and event logs.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Reset all settings', 'simple-honeypot-cf7' ); ?></th>
 					<td>
-						<button type="submit" name="simple_honeypot_cf7_action" value="reset_settings" class="button button-delete" data-confirm="<?php echo esc_attr( __( 'Are you sure you want to reset all settings to defaults? Reporting data and per-form settings will not be affected.', 'simple-honeypot-cf7' ) ); ?>"><?php esc_html_e( 'Reset All Settings', 'simple-honeypot-cf7' ); ?></button>
+						<button type="submit" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="reset_settings" class="button button-delete" data-confirm="<?php echo esc_attr( __( 'Are you sure you want to reset all settings to defaults? Reporting data and per-form settings will not be affected.', 'simple-honeypot-cf7' ) ); ?>"><?php esc_html_e( 'Reset All Settings', 'simple-honeypot-cf7' ); ?></button>
 						<p class="description"><?php esc_html_e( 'Restores every global setting to its original default value. Your report data and individual form overrides remain untouched.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>

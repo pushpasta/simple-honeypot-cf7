@@ -16,9 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Settings {
 
-	const SETTINGS_OPTION  = 'simple_honeypot_cf7_settings';
-	const STATS_OPTION     = 'simple_honeypot_cf7_stats';
-	const FORM_META        = '_simple_honeypot_cf7_settings';
+	const SETTINGS_OPTION  = SIMPLE_HONEYPOT_CF7_BASE . '_settings';
+	const STATS_OPTION     = SIMPLE_HONEYPOT_CF7_BASE . '_stats';
+	const FORM_META        = '_' . SIMPLE_HONEYPOT_CF7_BASE . '_settings';
 	const RULES_SOFT_LIMIT = 10000;
 
 	/**
@@ -46,10 +46,20 @@ final class Settings {
 
 		delete_option( self::SETTINGS_OPTION );
 		delete_option( self::STATS_OPTION );
-		delete_site_transient( 'shcf7_github_release' );
+		delete_option( Upgrader::DB_VERSION_OPTION );
+
+		delete_site_transient( SIMPLE_HONEYPOT_CF7_BASE . '_github_release' );
+		self::cleanup_readme_transients();
 
 		self::delete_form_meta_settings();
 		self::remove_auto_update_opt_in();
+
+		// @todo Remove legacy option cleanup after a suitable deprecation period.
+		foreach ( Upgrader::LEGACY_OPTIONS as $legacy_option ) {
+			delete_option( $legacy_option );
+		}
+
+		delete_option( '_simple_honeypot_cf7_settings' );
 	}
 
 	/**
@@ -67,7 +77,7 @@ final class Settings {
 			'pow_enabled'             => 0,
 			'pow_complexity'          => 8,
 			'store_honeypot_value'    => 0,
-			'keep_recent_events'      => 100,
+			'keep_recent_events'      => 1000,
 			'purge_events_after_days' => 0,
 		);
 	}
@@ -334,13 +344,66 @@ final class Settings {
 	 * @return void
 	 */
 	private static function remove_auto_update_opt_in() {
-		$auto_updates = get_site_option( 'auto_update_plugins', array() );
+		if ( is_multisite() ) {
+			$auto_updates = get_site_option( 'auto_update_plugins', array() );
 
-		if ( in_array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, $auto_updates, true ) ) {
-			update_site_option(
-				'auto_update_plugins',
-				array_diff( $auto_updates, array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ) )
-			);
+			if ( in_array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, $auto_updates, true ) ) {
+				$auto_updates = array_values( array_diff( $auto_updates, array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ) ) );
+
+				if ( empty( $auto_updates ) ) {
+					delete_site_option( 'auto_update_plugins' );
+				} else {
+					update_site_option( 'auto_update_plugins', $auto_updates );
+				}
+			}
+		} else {
+			$auto_updates = get_option( 'auto_update_plugins', array() );
+
+			if ( in_array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, $auto_updates, true ) ) {
+				$auto_updates = array_values( array_diff( $auto_updates, array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ) ) );
+
+				if ( empty( $auto_updates ) ) {
+					delete_option( 'auto_update_plugins' );
+				} else {
+					update_option( 'auto_update_plugins', $auto_updates );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Delete cached readme site transients for all known tags.
+	 *
+	 * These are stored with the pattern shp4cf7_readme_{md5} in wp_sitemeta
+	 * and cannot be enumerated without a direct query.
+	 *
+	 * @return void
+	 */
+	private static function cleanup_readme_transients() {
+		if ( ! is_multisite() ) {
+			return;
+		}
+
+		global $wpdb;
+
+		$transient_prefix = SIMPLE_HONEYPOT_CF7_BASE . '_readme_';
+		$esc_prefix       = $wpdb->esc_like( '_site_transient_' . $transient_prefix ) . '%';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$esc_prefix
+			)
+		);
+
+		if ( ! is_array( $rows ) ) {
+			return;
+		}
+
+		foreach ( $rows as $option_name ) {
+			$tag_hash = str_replace( '_site_transient_' . $transient_prefix, '', $option_name );
+			delete_site_transient( $transient_prefix . $tag_hash );
 		}
 	}
 }

@@ -25,6 +25,7 @@ final class GitHub_Updater {
 
 	const API_TIMEOUT       = 10;
 	const GITHUB_API_ACCEPT = 'application/vnd.github+json';
+	const FILTER_PREFIX     = SIMPLE_HONEYPOT_CF7_BASE . '_github_';
 
 	/**
 	 * GitHub owner.
@@ -216,7 +217,7 @@ final class GitHub_Updater {
 			}
 			if ( ! \WP_Filesystem() ) {
 				return new \WP_Error(
-					'shcf7_filesystem_init',
+					SIMPLE_HONEYPOT_CF7_BASE . '_filesystem_init',
 					__( 'Could not initialize filesystem.', 'simple-honeypot-cf7' )
 				);
 			}
@@ -231,7 +232,7 @@ final class GitHub_Updater {
 
 		if ( ! $wp_filesystem->move( $source, $target ) ) {
 			return new \WP_Error(
-				'shcf7_filesystem_move',
+				SIMPLE_HONEYPOT_CF7_BASE . '_filesystem_move',
 				sprintf(
 					/* translators: 1: source directory, 2: destination directory */
 					__( 'Could not move %1$s to %2$s', 'simple-honeypot-cf7' ),
@@ -264,7 +265,7 @@ final class GitHub_Updater {
 	 * @return array|null Keys: name, requires_wp, tested_up_to, requires_php, sections.
 	 */
 	private function release_readme( $tag ) {
-		$transient_key = 'shcf7_rdm_' . md5( $tag );
+		$transient_key = SIMPLE_HONEYPOT_CF7_BASE . '_readme_' . md5( $tag );
 		$cached        = get_site_transient( $transient_key );
 
 		if ( false !== $cached ) {
@@ -277,7 +278,7 @@ final class GitHub_Updater {
 		 * @param array|null $readme Mock readme data.
 		 * @param string     $tag    Release tag.
 		 */
-		$readme = apply_filters( 'shcf7_github_readme', null, $tag );
+		$readme = apply_filters( self::FILTER_PREFIX . 'readme', null, $tag );
 
 		if ( null !== $readme ) {
 			set_site_transient( $transient_key, $readme, YEAR_IN_SECONDS );
@@ -519,7 +520,7 @@ final class GitHub_Updater {
 	 * @return object|null
 	 */
 	private function fetch_latest_release() {
-		$transient_key = 'shcf7_github_release';
+		$transient_key = SIMPLE_HONEYPOT_CF7_BASE . '_github_release';
 		$cached        = get_site_transient( $transient_key );
 
 		if ( false !== $cached ) {
@@ -531,7 +532,7 @@ final class GitHub_Updater {
 		 *
 		 * @param object|null $release Mock release object.
 		 */
-		$release = apply_filters( 'shcf7_github_release', null );
+		$release = apply_filters( self::FILTER_PREFIX . 'release', null );
 
 		if ( null !== $release ) {
 			set_site_transient( $transient_key, $release, DAY_IN_SECONDS );
@@ -550,7 +551,7 @@ final class GitHub_Updater {
 		 *
 		 * @param string $url The API URL.
 		 */
-		$url = apply_filters( 'shcf7_github_api_url', $url );
+		$url = apply_filters( self::FILTER_PREFIX . 'api_url', $url );
 
 		$response = wp_remote_get(
 			$url,
