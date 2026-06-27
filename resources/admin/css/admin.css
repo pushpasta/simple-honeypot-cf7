@@ -43,6 +43,65 @@
 	color: #2271b1;
 }
 
+/* Layout: Main + Sidebar
+	========================================================================== */
+
+.simple-honeypot-cf7-layout {
+	display: flex;
+	gap: 20px;
+}
+
+.simple-honeypot-cf7-main {
+	flex: 7;
+	min-width: 0;
+}
+
+.simple-honeypot-cf7-sidebar {
+	flex: 2;
+	min-width: 0;
+}
+
+.simple-honeypot-cf7-sidebar .postbox {
+	margin-top: 0;
+}
+
+.simple-honeypot-cf7-sidebar-links {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.simple-honeypot-cf7-sidebar-links li {
+	margin: 0;
+	padding: 0;
+}
+
+.simple-honeypot-cf7-sidebar-links a {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 0;
+	text-decoration: none;
+	color: #2271b1;
+}
+
+.simple-honeypot-cf7-sidebar-links a:hover {
+	color: #135e96;
+}
+
+.simple-honeypot-cf7-sidebar-links .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	color: #646970;
+}
+
+@media screen and (max-width: 960px) {
+	.simple-honeypot-cf7-layout {
+		flex-direction: column;
+	}
+}
+
 /* Rules Group
 	========================================================================== */
 

@@ -41,16 +41,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 
 	<?php if ( count( $parsed_rules ) > \SimpleHoneypotCF7\Settings::RULES_SOFT_LIMIT ) : ?>
-		<?php
-		\SimpleHoneypotCF7\Admin\Notices::render(
-			sprintf(
-				/* translators: %s: number of active rules */
-				esc_html__( 'You have %s active rules. A large number of rules may slow down form submissions.', 'simple-honeypot-cf7' ),
-				'<strong>' . esc_html( number_format_i18n( count( $parsed_rules ) ) ) . '</strong>'
-			),
-			'warning'
-		);
-		?>
+		<div class="notice notice-warning inline">
+			<p>
+				<?php
+				printf(
+					/* translators: %s: number of active rules */
+					esc_html__( 'You have %s active rules. A large number of rules may slow down form submissions.', 'simple-honeypot-cf7' ),
+					'<strong>' . esc_html( number_format_i18n( count( $parsed_rules ) ) ) . '</strong>'
+				);
+				?>
+			</p>
+		</div>
 	<?php endif; ?>
 
 	<p class="submit">
@@ -58,16 +59,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</p>
 </form>
 
-<?php
-\SimpleHoneypotCF7\Admin\Notices::render(
-	wp_kses(
-		sprintf(
-			/* translators: 1: URL to Discussion settings page. */
-			__( 'Need to block specific words or patterns? Use the <a href="%1$s">WordPress Disallowed Comment Keys</a> setting instead &mdash; Contact Form 7 checks it automatically.', 'simple-honeypot-cf7' ),
-			esc_url( admin_url( 'options-discussion.php' ) )
-		),
-		array( 'a' => array( 'href' => array() ) )
-	),
-	'info'
-);
-?>
+<div class="notice notice-info inline">
+	<p>
+		<?php
+		echo wp_kses(
+			sprintf(
+				/* translators: 1: URL to Discussion settings page. */
+				__( 'Need to block specific words or patterns? Use the <a href="%1$s">WordPress Disallowed Comment Keys</a> setting instead &mdash; Contact Form 7 checks it automatically.', 'simple-honeypot-cf7' ),
+				esc_url( admin_url( 'options-discussion.php' ) )
+			),
+			array( 'a' => array( 'href' => array() ) )
+		);
+		?>
+	</p>
+</div>

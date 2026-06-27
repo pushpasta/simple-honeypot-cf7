@@ -53,14 +53,31 @@ $version_tooltip = sprintf(
 		<?php endforeach; ?>
 	</nav>
 
-	<?php
-	if ( ! empty( $tab_context ) && is_array( $tab_context ) ) {
-		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- Template data is intentionally exposed to the tab template.
-		extract( $tab_context, EXTR_SKIP );
-	}
+	<div class="simple-honeypot-cf7-layout">
+		<div class="simple-honeypot-cf7-main">
+		<?php
+		if ( ! empty( $tab_context ) && is_array( $tab_context ) ) {
+			// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- Template data is intentionally exposed to the tab template.
+			extract( $tab_context, EXTR_SKIP );
+		}
 
-	require SIMPLE_HONEYPOT_CF7_PATH . 'templates/' . $tab_template;
-	?>
+		require SIMPLE_HONEYPOT_CF7_PATH . 'templates/' . $tab_template;
+		?>
+		</div>
+
+		<aside class="simple-honeypot-cf7-sidebar">
+			<div class="postbox simple-honeypot-cf7-card">
+				<h2 class="hndle"><span class="dashicons dashicons-sos"></span><span><?php esc_html_e( 'Do you need help?', 'simple-honeypot-cf7' ); ?></span></h2>
+				<div class="inside">
+					<ul class="simple-honeypot-cf7-sidebar-links">
+						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/issues" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-warning"></span><?php esc_html_e( 'Report a bug', 'simple-honeypot-cf7' ); ?></a></li>
+						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/discussions" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-format-chat"></span><?php esc_html_e( 'Ask a question', 'simple-honeypot-cf7' ); ?></a></li>
+						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/releases" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-archive"></span><?php esc_html_e( 'View releases', 'simple-honeypot-cf7' ); ?></a></li>
+					</ul>
+				</div>
+			</div>
+		</aside>
+	</div>
 
 	<hr style="margin-top:32px;">
 	<p class="description">
