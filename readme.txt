@@ -74,11 +74,13 @@ All plugin data is removed from the database, including settings, statistics, an
 
 == Screenshots ==
 
-1. **General Settings:** Configure timing threshold, token lifetime, proof-of-work complexity, and data retention.
-2. **Rules:** Create IP or email rules to block specific addresses or patterns.
-3. **Reports:** View blocked submission statistics with reason and form breakdowns.
-4. **Form Settings:** Override time-check settings on a per-form basis.
-5. **Spam Log:** Review detailed records of each blocked submission, including reason, IP, and user agent.
+1. **Settings:** Configure timing threshold, token lifetime, proof-of-work complexity, data retention, and event limits.
+2. **Rules:** Create IP or email rules with wildcard and CIDR support to block specific addresses or patterns.
+3. **Forms:** Overview of forms with custom per-form settings, showing timing mode and minimum time at a glance.
+4. **Reports:** View blocked submission statistics with breakdowns by time period, reason, and form.
+5. **Tools:** Import and export all settings as JSON, or manage data with purge, clear, and reset actions.
+6. **Per-Form Settings:** Override global timing and honeypot settings on a per-form basis inside the Contact Form 7 editor.
+7. **Spam Status:** Detection reason and details recorded for each blocked submission, visible in record-keeping plugins like Flamingo.
 
 == Changelog ==
 
