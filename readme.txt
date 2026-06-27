@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.0
 Requires Plugins: contact-form-7
-Stable tag: 1.3.0
+Stable tag: 2.0.0
 License: GNU GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -82,6 +82,28 @@ All plugin data is removed from the database, including settings, statistics, an
 
 == Changelog ==
 
+= 2.0.0 =
+
+= Added =
+* Events table pagination with configurable per-page setting.
+* Dynamic confirm dialog with danger styling and countdown.
+* Tools tab for import, export, and danger zone actions.
+* Blocked spam summary in sidebar.
+* Import with dialog confirmation and file upload styled as button.
+* Sidebar with help and contribute links.
+* Unified admin notice system with icons and colors.
+* Import button disabled until file selected.
+* Purge events notice with count.
+* Custom events table for better performance.
+* Auto-delete and manual purge for old events.
+* Rules normalization and validation on save.
+* Reset to defaults button in CF7 panel.
+
+= Fixed =
+* Correct events pagination link.
+* Improve confirm dialogs and importer validation.
+* Preserve current settings on import.
+
 = 1.3.0 =
 
 = Added =
@@ -146,6 +168,9 @@ All plugin data is removed from the database, including settings, statistics, an
 * Initial release.
 
 == Upgrade Notice ==
+
+= 2.0.0 =
+* Major update with new Tools tab, events pagination, improved UI, and better spam management. Recommended update for all users.
 
 = 1.3.0 =
 * New features including version display, forms overview, and improved spam rules. Recommended update for all users.
