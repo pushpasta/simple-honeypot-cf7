@@ -65,7 +65,7 @@
 	}
 
 	function clearFieldError( $field ) {
-		$field.siblings( '.simple-honeypot-cf7-field-error' ).removeClass( 'is-visible' );
+		$field.closest( 'td' ).find( '.simple-honeypot-cf7-field-error' ).removeClass( 'is-visible' );
 		$field.removeClass( 'simple-honeypot-cf7-field-invalid' );
 	}
 
@@ -105,7 +105,7 @@
 
 					// Guard: import with no file.
 					if ( isImport && ( ! $importFile.length || ! $importFile[ 0 ].files.length ) ) {
-						showFieldError( $importFile, simpleHoneypotCf7.selectFile );
+						showFieldError( $importFile.next( 'label' ), simpleHoneypotCf7.selectFile );
 						valid = false;
 					}
 
@@ -148,7 +148,7 @@
 						formDirty = false;
 					} else {
 						formDirty = false;
-						if ( $submitter.is( 'input[type="submit"], button[type="submit"]' ) ) {
+						if ( $submitter.is( 'input[type="submit"], button[type="submit"]' ) && ! isImport ) {
 							$submitter.prop( 'disabled', true );
 						}
 					}
@@ -170,14 +170,19 @@
 			$form.find( '.simple-honeypot-cf7-custom-rules-toggle input:not(:checked)' ).trigger( 'change' );
 
 			// Import: enable button only when file selected.
-			var $importFile = $( '#simple-honeypot-cf7-import-file' );
-			var $importBtn  = $( '#simple-honeypot-cf7-import-btn' );
+			var $importFile       = $( '#simple-honeypot-cf7-import-file' );
+			var $importBtn        = $( '#simple-honeypot-cf7-import-btn' );
+			var $importLabel      = $importFile.next( 'label' );
+			var importDefaultText = $importLabel.text();
 
 			if ( $importFile.length && $importBtn.length ) {
 				$importFile.on(
 					'change',
 					function () {
-						$importBtn.prop( 'disabled', ! this.files.length );
+						var hasFile = this.files.length > 0;
+						$importBtn.prop( 'disabled', ! hasFile );
+						$importLabel.text( hasFile ? this.files[ 0 ].name : importDefaultText );
+						$importLabel.attr( 'title', hasFile ? this.files[ 0 ].name : '' );
 						clearFieldError( $importFile );
 					}
 				);
