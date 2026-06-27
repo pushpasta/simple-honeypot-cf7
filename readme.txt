@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.0
 Requires Plugins: contact-form-7
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GNU GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -81,6 +81,12 @@ All plugin data is removed from the database, including settings, statistics, an
 5. **Spam Log:** Review detailed records of each blocked submission, including reason, IP, and user agent.
 
 == Changelog ==
+
+= 2.0.1 =
+
+= Fixed =
+* Run migrations on admin_init so data ports correctly after plugin updates.
+* Run upgrader before creating default options to prevent data loss during activation.
 
 = 2.0.0 =
 
@@ -168,6 +174,9 @@ All plugin data is removed from the database, including settings, statistics, an
 * Initial release.
 
 == Upgrade Notice ==
+
+= 2.0.1 =
+* Fixes data migration from v1.x. Recommended update for users upgrading from v1.3.0.
 
 = 2.0.0 =
 * Major update with new Tools tab, events pagination, improved UI, and better spam management. Recommended update for all users.
