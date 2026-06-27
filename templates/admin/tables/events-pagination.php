@@ -15,7 +15,7 @@ if ( ! isset( $pagination ) || $pagination['total_pages'] <= 1 ) {
 	return;
 }
 
-$page_url = admin_url( 'admin.php?page=wpcf7&post_type=wpcf7_contact_form&tab=reports' );
+$page_url = admin_url( 'admin.php?page=simple-honeypot-cf7&tab=reports' );
 
 $links = array();
 for ( $i = 1; $i <= $pagination['total_pages']; $i++ ) {

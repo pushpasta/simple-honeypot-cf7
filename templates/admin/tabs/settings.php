@@ -105,6 +105,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<p class="description"><?php esc_html_e( 'Control how many recent blocked submissions are retained in the database.', 'simple-honeypot-cf7' ); ?></p>
 			<table class="form-table" role="presentation">
 				<tr>
+					<th scope="row"><label for="events_per_page"><?php esc_html_e( 'Events per page', 'simple-honeypot-cf7' ); ?></label></th>
+					<td>
+						<input type="number" class="small-text" id="events_per_page" name="events_per_page" min="5" step="1" value="<?php echo esc_attr( $settings['events_per_page'] ); ?>" placeholder="20" />
+						<?php esc_html_e( 'entries shown on the Reports tab', 'simple-honeypot-cf7' ); ?>
+					</td>
+				</tr>
+				<tr>
 					<th scope="row"><label for="keep_recent_events"><?php esc_html_e( 'Events to keep', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
 						<input type="number" class="small-text" id="keep_recent_events" name="keep_recent_events" min="10" step="1" value="<?php echo esc_attr( $settings['keep_recent_events'] ); ?>" placeholder="1000" />
@@ -117,13 +124,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<input type="number" class="small-text" id="purge_events_after_days" name="purge_events_after_days" min="0" step="1" value="<?php echo esc_attr( $settings['purge_events_after_days'] ); ?>" placeholder="0" />
 						<?php esc_html_e( 'days (0 = disabled)', 'simple-honeypot-cf7' ); ?>
 						<p class="description"><?php esc_html_e( 'Automatically removes events older than the specified number of days each time a new event is recorded. Set to 0 to disable.', 'simple-honeypot-cf7' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="events_per_page"><?php esc_html_e( 'Events per page', 'simple-honeypot-cf7' ); ?></label></th>
-					<td>
-						<input type="number" class="small-text" id="events_per_page" name="events_per_page" min="5" step="1" value="<?php echo esc_attr( $settings['events_per_page'] ); ?>" placeholder="20" />
-						<?php esc_html_e( 'entries shown on the Reports tab', 'simple-honeypot-cf7' ); ?>
 					</td>
 				</tr>
 			</table>
