@@ -119,18 +119,6 @@ final class Settings_Page {
 
 		check_admin_referer( SIMPLE_HONEYPOT_CF7_BASE . '_save_settings', SIMPLE_HONEYPOT_CF7_BASE . '_nonce' );
 
-		if ( 'reset_stats' === sanitize_key( $post[ SIMPLE_HONEYPOT_CF7_BASE . '_action' ] ) ) {
-			Settings::reset_stats();
-			$this->redirect( 'tools', 'stats-reset' );
-			return;
-		}
-
-		if ( 'reset_settings' === sanitize_key( $post[ SIMPLE_HONEYPOT_CF7_BASE . '_action' ] ) ) {
-			Settings::reset_settings();
-			$this->redirect( 'tools', 'settings-reset' );
-			return;
-		}
-
 		if ( ! empty( $post[ SIMPLE_HONEYPOT_CF7_BASE . '_import_settings' ] ) ) {
 			$importer = new Importer();
 			$result   = $importer->import();
@@ -295,6 +283,11 @@ final class Settings_Page {
 			return $result;
 		}
 
+		if ( 'purge-events' === $updated ) {
+			$result['message'] = '';
+			return $result;
+		}
+
 		if ( 'import-success' === $updated ) {
 			$result['message'] = __( 'Settings imported successfully.', 'simple-honeypot-cf7' );
 			return $result;
@@ -308,6 +301,12 @@ final class Settings_Page {
 
 		if ( 'rules' === $updated ) {
 			$result['message'] = __( 'Rules have been saved.', 'simple-honeypot-cf7' );
+			return $result;
+		}
+
+		if ( 'action-failed' === $updated ) {
+			$result['message'] = __( 'The action could not be completed. Please try again.', 'simple-honeypot-cf7' );
+			$result['type']    = 'notice-error';
 			return $result;
 		}
 

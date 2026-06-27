@@ -789,6 +789,26 @@
 	padding: 24px;
 }
 
+.simple-honeypot-cf7-confirm-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 12px;
+}
+
+.simple-honeypot-cf7-confirm-header .dashicons {
+	color: #dc3232;
+	font-size: 24px;
+	width: 24px;
+	height: 24px;
+}
+
+.simple-honeypot-cf7-confirm-header strong {
+	font-size: 16px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
 .simple-honeypot-cf7-confirm-message {
 	margin: 0 0 20px;
 	font-size: 14px;

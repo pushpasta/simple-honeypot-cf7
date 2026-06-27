@@ -188,110 +188,161 @@
 				);
 			}
 
-			// Confirm modal for destructive actions.
-			var $pendingButton = null;
+			// Confirm dialog system.
+			var $pendingTrigger = null;
+			var $confirmDialog  = null;
+			var countdownTimer  = null;
 
-			$form.on(
+			function getConfirmDialog() {
+				if ( $confirmDialog ) {
+					return $confirmDialog;
+				}
+
+				$confirmDialog = $(
+					'<dialog class="simple-honeypot-cf7-dialog">' +
+						'<div class="simple-honeypot-cf7-dialog-inner">' +
+							'<div class="simple-honeypot-cf7-confirm-header">' +
+								'<span class="dashicons dashicons-warning"></span>' +
+								'<strong>' + simpleHoneypotCf7.confirmTitle + '</strong>' +
+							'</div>' +
+							'<p class="simple-honeypot-cf7-confirm-message"></p>' +
+							'<div class="simple-honeypot-cf7-dialog-actions">' +
+								'<button type="button" class="button button-primary simple-honeypot-cf7-confirm-yes" disabled>' + simpleHoneypotCf7.confirmYes + '</button>' +
+								'<button type="button" class="button simple-honeypot-cf7-confirm-no">' + simpleHoneypotCf7.confirmNo + '</button>' +
+							'</div>' +
+						'</div>' +
+					'</dialog>'
+				);
+
+				$( 'body' ).append( $confirmDialog );
+				return $confirmDialog;
+			}
+
+			function openConfirmDialog( $trigger ) {
+				var $dialog  = getConfirmDialog();
+				var isDanger = $trigger.data( 'confirm-danger' ) !== undefined;
+				var $header  = $dialog.find( '.simple-honeypot-cf7-confirm-header' );
+				var $yes     = $dialog.find( '.simple-honeypot-cf7-confirm-yes' );
+
+				$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( $trigger.data( 'confirm' ) );
+
+				if ( isDanger ) {
+					$header.show();
+					$yes.prop( 'disabled', true );
+					startCountdown( $yes, 3 );
+				} else {
+					$header.hide();
+					$yes.prop( 'disabled', false );
+				}
+
+				$pendingTrigger = $trigger;
+				$dialog[ 0 ].showModal();
+			}
+
+			function startCountdown( $button, seconds ) {
+				var remaining = seconds;
+				clearInterval( countdownTimer );
+				$button.text( simpleHoneypotCf7.confirmYes + ' (' + remaining + 's)' );
+
+				countdownTimer = setInterval(
+					function () {
+						remaining--;
+						if ( remaining <= 0 ) {
+							clearInterval( countdownTimer );
+							$button.text( simpleHoneypotCf7.confirmYes ).prop( 'disabled', false );
+						} else {
+							$button.text( simpleHoneypotCf7.confirmYes + ' (' + remaining + 's)' );
+						}
+					},
+					1000
+				);
+			}
+
+			function closeConfirmDialog() {
+				var $dialog = getConfirmDialog();
+				$dialog[ 0 ].close();
+				clearInterval( countdownTimer );
+				$pendingTrigger = null;
+			}
+
+			// Open dialog for elements with data-confirm.
+			$( document ).on(
 				'click',
 				'[data-confirm]',
 				function ( e ) {
 					e.preventDefault();
-					$pendingButton = $( this );
-					var $dialog    = $( '#simple-honeypot-cf7-confirm-dialog' );
-					$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( $pendingButton.data( 'confirm' ) );
-					$dialog[ 0 ].showModal();
+					openConfirmDialog( $( this ) );
 				}
 			);
 
+			// Confirm action.
 			$( document ).on(
 				'click',
 				'.simple-honeypot-cf7-confirm-yes',
 				function () {
-					var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
-					$dialog[ 0 ].close();
-					if ( $pendingButton ) {
-						var name  = $pendingButton.attr( 'name' );
-						var value = $pendingButton.attr( 'value' );
-						$form.append( $( '<input>', { type: 'hidden', name: name, value: value } ) );
-						HTMLFormElement.prototype.submit.call( $form[0] );
-						$pendingButton = null;
+					if ( $( this ).prop( 'disabled' ) || ! $pendingTrigger ) {
+						return;
+					}
+
+					var action = $pendingTrigger.data( 'action' );
+
+					if ( action ) {
+						// REST API action (danger zone).
+						var payload = { action: action };
+
+						if ( 'purge_events' === action ) {
+							payload.days = parseInt( $( '#shp4cf7_purge_days' ).val(), 10 ) || 90;
+						}
+
+						closeConfirmDialog();
+
+						$.ajax(
+							{
+								url: simpleHoneypotCf7.restUrl,
+								method: 'POST',
+								contentType: 'application/json',
+								beforeSend: function ( xhr ) {
+									xhr.setRequestHeader( 'X-WP-Nonce', simpleHoneypotCf7.restNonce );
+								},
+								data: JSON.stringify( payload ),
+								dataType: 'json'
+							}
+						).done(
+							function () {
+								window.location.href = simpleHoneypotCf7.tabUrl + '&updated=' + action.replace( 'reset_', '' ).replace( '_', '-' );
+							}
+						).fail(
+							function () {
+								window.location.href = simpleHoneypotCf7.tabUrl + '&updated=action-failed';
+							}
+						);
+					} else if ( $pendingTrigger.attr( 'href' ) ) {
+						// Direct navigation (e.g. purge link).
+						var href = $pendingTrigger.attr( 'href' );
+						closeConfirmDialog();
+						window.location.href = href;
+					} else {
+						closeConfirmDialog();
 					}
 				}
 			);
 
+			// Cancel / close.
 			$( document ).on(
 				'click',
 				'.simple-honeypot-cf7-confirm-no',
 				function () {
-					$( '#simple-honeypot-cf7-confirm-dialog' )[ 0 ].close();
-					$pendingButton = null;
+					closeConfirmDialog();
 				}
 			);
 
-			// Close on backdrop click.
 			$( document ).on(
 				'click',
 				'.simple-honeypot-cf7-dialog-backdrop',
 				function () {
-					$( '#simple-honeypot-cf7-confirm-dialog' )[ 0 ].close();
-					$pendingButton = null;
+					closeConfirmDialog();
 				}
 			);
-		}
-	);
-	// Confirm dialog for reset per-form settings (lives outside the guarded block).
-	$( document ).on(
-		'click',
-		'.simple-honeypot-cf7-reset-form-settings[data-reset-message]',
-		function ( e ) {
-			e.preventDefault();
-			var $button = $( this );
-			var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
-			$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( $button.data( 'reset-message' ) );
-			$dialog.attr( 'data-confirm-href', $button.attr( 'href' ) );
-			$dialog[ 0 ].showModal();
-		}
-	);
-
-	// Confirm dialog for purge events button.
-	$( document ).on(
-		'click',
-		'.simple-honeypot-cf7-purge-events-btn[data-confirm]',
-		function ( e ) {
-			e.preventDefault();
-			var $button = $( this );
-			var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
-			var days    = $( '#shp4cf7_purge_days' ).val() || 90;
-			var href    = $button.attr( 'href' ) + '&days=' + parseInt( days, 10 );
-			$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( $button.data( 'confirm' ) );
-			$dialog.attr( 'data-confirm-href', href );
-			$dialog[ 0 ].showModal();
-		}
-	);
-
-	$( document ).on(
-		'click',
-		'.simple-honeypot-cf7-confirm-yes',
-		function () {
-			var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
-			var href    = $dialog.attr( 'data-confirm-href' );
-			if ( href ) {
-				$dialog.removeAttr( 'data-confirm-href' );
-				$dialog[ 0 ].close();
-				window.location.href = href;
-			}
-		}
-	);
-
-	$( document ).on(
-		'click',
-		'.simple-honeypot-cf7-confirm-no',
-		function () {
-			var $dialog = $( '#simple-honeypot-cf7-confirm-dialog' );
-			if ( $dialog.attr( 'data-confirm-href' ) ) {
-				$dialog.removeAttr( 'data-confirm-href' );
-				$dialog[ 0 ].close();
-			}
 		}
 	);
 

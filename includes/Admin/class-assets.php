@@ -58,6 +58,9 @@ final class Assets {
 				/* translators: %s: comma-separated list of unrecognized rule patterns */
 				'invalidRules'   => __( 'Unrecognized rule pattern: %s', 'simple-honeypot-cf7' ),
 				'selectFile'     => __( 'Please select a file to import.', 'simple-honeypot-cf7' ),
+				'restUrl'        => rest_url( SIMPLE_HONEYPOT_CF7_BASE . '/v1/action' ),
+				'restNonce'      => wp_create_nonce( 'wp_rest' ),
+				'tabUrl'         => admin_url( 'admin.php?page=simple-honeypot-cf7&tab=tools' ),
 			)
 		);
 	}

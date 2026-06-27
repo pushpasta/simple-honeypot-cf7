@@ -106,13 +106,4 @@ $version_tooltip = sprintf(
 		</aside>
 	</div>
 
-	<dialog id="simple-honeypot-cf7-confirm-dialog" class="simple-honeypot-cf7-dialog">
-		<div class="simple-honeypot-cf7-dialog-inner">
-			<p class="simple-honeypot-cf7-confirm-message"></p>
-			<div class="simple-honeypot-cf7-dialog-actions">
-				<button type="button" class="button simple-honeypot-cf7-confirm-yes"><?php esc_html_e( 'Yes', 'simple-honeypot-cf7' ); ?></button>
-				<button type="button" class="button simple-honeypot-cf7-confirm-no"><?php esc_html_e( 'No', 'simple-honeypot-cf7' ); ?></button>
-			</div>
-		</div>
-	</dialog>
 </div>
