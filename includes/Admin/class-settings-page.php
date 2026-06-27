@@ -98,7 +98,6 @@ final class Settings_Page {
 				'tabs'         => $tabs,
 				'tab_context'  => $this->tab_context( $current_tab ),
 				'tab_template' => 'admin/tabs/' . $current_tab . '.php',
-				'spam_counts'  => Event_Logger::count_by_period(),
 			)
 		);
 	}
@@ -179,6 +178,7 @@ final class Settings_Page {
 					'current_page' => $current_page,
 					'total_pages'  => $total_pages,
 				),
+				'spam_counts'  => Event_Logger::count_by_period(),
 			);
 		}
 

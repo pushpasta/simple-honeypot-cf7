@@ -68,39 +68,26 @@ $version_tooltip = sprintf(
 
 		<aside class="simple-honeypot-cf7-sidebar">
 			<div class="postbox simple-honeypot-cf7-card">
-				<h2 class="hndle"><span class="dashicons dashicons-shield"></span><span><?php esc_html_e( 'Blocked Spam', 'simple-honeypot-cf7' ); ?></span></h2>
-				<div class="inside">
-					<dl class="simple-honeypot-cf7-sidebar-stats">
-						<dt><?php esc_html_e( 'Today', 'simple-honeypot-cf7' ); ?></dt>
-						<dd><?php echo esc_html( number_format_i18n( $spam_counts['today'] ) ); ?></dd>
-						<dt><?php esc_html_e( 'Yesterday', 'simple-honeypot-cf7' ); ?></dt>
-						<dd><?php echo esc_html( number_format_i18n( $spam_counts['yesterday'] ) ); ?></dd>
-						<dt><?php esc_html_e( 'Last 7 days', 'simple-honeypot-cf7' ); ?></dt>
-						<dd><?php echo esc_html( number_format_i18n( $spam_counts['last_7_days'] ) ); ?></dd>
-						<dt><?php esc_html_e( 'This month', 'simple-honeypot-cf7' ); ?></dt>
-						<dd><?php echo esc_html( number_format_i18n( $spam_counts['this_month'] ) ); ?></dd>
-						<dt><?php esc_html_e( 'Last month', 'simple-honeypot-cf7' ); ?></dt>
-						<dd><?php echo esc_html( number_format_i18n( $spam_counts['last_month'] ) ); ?></dd>
-						<dt><strong><?php esc_html_e( 'Total', 'simple-honeypot-cf7' ); ?></strong></dt>
-						<dd><strong><?php echo esc_html( number_format_i18n( $spam_counts['total'] ) ); ?></strong></dd>
-					</dl>
-				</div>
-			</div>
-			<div class="postbox simple-honeypot-cf7-card">
-				<h2 class="hndle"><span class="dashicons dashicons-sos"></span><span><?php esc_html_e( 'Do you need help?', 'simple-honeypot-cf7' ); ?></span></h2>
+				<h2 class="hndle"><span class="dashicons dashicons-sos"></span><span><?php esc_html_e( 'Help & Resources', 'simple-honeypot-cf7' ); ?></span></h2>
 				<div class="inside">
 					<ul class="simple-honeypot-cf7-sidebar-links">
-						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/issues" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-warning"></span><?php esc_html_e( 'Report a bug', 'simple-honeypot-cf7' ); ?></a></li>
-						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/discussions" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-format-chat"></span><?php esc_html_e( 'Ask a question', 'simple-honeypot-cf7' ); ?></a></li>
+						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/issues/new/choose" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-album"></span><?php esc_html_e( 'Open an issue', 'simple-honeypot-cf7' ); ?></a></li>
+						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/issues/new?template=bug_report.yml" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-warning"></span><?php esc_html_e( 'Report a bug', 'simple-honeypot-cf7' ); ?></a></li>
+						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/issues/new?template=feature_request.yml" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-lightbulb"></span><?php esc_html_e( 'Request a feature', 'simple-honeypot-cf7' ); ?></a></li>
+						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/wiki" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-book"></span><?php esc_html_e( 'Wiki', 'simple-honeypot-cf7' ); ?></a></li>
 						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/releases" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-archive"></span><?php esc_html_e( 'View releases', 'simple-honeypot-cf7' ); ?></a></li>
 					</ul>
 				</div>
 			</div>
 			<div class="postbox simple-honeypot-cf7-card">
-				<h2 class="hndle"><span class="dashicons dashicons-heart"></span><span><?php esc_html_e( 'Support the project', 'simple-honeypot-cf7' ); ?></span></h2>
+				<h2 class="hndle"><span class="dashicons dashicons-heart"></span><span><?php esc_html_e( 'Contribute', 'simple-honeypot-cf7' ); ?></span></h2>
 				<div class="inside">
-					<p class="description"><?php esc_html_e( 'If Simple Honeypot helps protect your site, please support its development.', 'simple-honeypot-cf7' ); ?></p>
-					<a href="https://github.com/pushpasta/simple-honeypot-cf7/?sponsor" target="_blank" rel="noopener noreferrer" class="button"><?php esc_html_e( 'Donate', 'simple-honeypot-cf7' ); ?></a>
+					<ul class="simple-honeypot-cf7-sidebar-links">
+						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/stargazers" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-star-filled"></span><?php esc_html_e( 'Star on GitHub', 'simple-honeypot-cf7' ); ?></a></li>
+						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/discussions" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-format-chat"></span><?php esc_html_e( 'Ask a question', 'simple-honeypot-cf7' ); ?></a></li>
+						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/tree/main/languages" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-translation"></span><?php esc_html_e( 'Help with translation', 'simple-honeypot-cf7' ); ?></a></li>
+						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/?sponsors" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-heart"></span><?php esc_html_e( 'Donate', 'simple-honeypot-cf7' ); ?></a></li>
+					</ul>
 				</div>
 			</div>
 		</aside>

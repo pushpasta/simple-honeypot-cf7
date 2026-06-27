@@ -147,16 +147,39 @@
 	margin-bottom: 6px;
 }
 
-/* Breakdown wrapper (50% width on desktop)
+/* Breakdown grid
 	========================================================================== */
 
-.simple-honeypot-cf7-breakdown-wrapper {
-	max-width: 25%;
+.simple-honeypot-cf7-breakdown-grid {
+	display: flex;
+	gap: 20px;
+}
+
+.simple-honeypot-cf7-breakdown-box {
+	width: 33.3%;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 16px;
+}
+
+.simple-honeypot-cf7-breakdown-box h3 {
+	margin: 0 0 4px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.simple-honeypot-cf7-breakdown-box .description {
+	margin: 0 0 12px;
 }
 
 @media screen and (max-width: 782px) {
-	.simple-honeypot-cf7-breakdown-wrapper {
-		max-width: 100%;
+	.simple-honeypot-cf7-breakdown-grid {
+		flex-direction: column;
+	}
+
+	.simple-honeypot-cf7-breakdown-box {
+		width: 100%;
 	}
 }
 
