@@ -7,6 +7,8 @@
 
 namespace SimpleHoneypotCF7;
 
+use SimpleHoneypotCF7\Reporting\Event_Logger;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -26,6 +28,16 @@ final class Upgrader {
 	 * @var string
 	 */
 	const DB_VERSION_OPTION = SIMPLE_HONEYPOT_CF7_BASE . '_db_version';
+
+	/**
+	 * Transient name that caches the last successfully applied DB version.
+	 *
+	 * Used to skip migration checks on admin page loads when nothing
+	 * has changed.
+	 *
+	 * @var string
+	 */
+	const TRANSIENT_VERSION_OPTION = SIMPLE_HONEYPOT_CF7_BASE . '_upgrader_version';
 
 	/**
 	 * The database version this codebase expects.
@@ -63,6 +75,30 @@ final class Upgrader {
 		// Future migrations go here.
 
 		update_option( self::DB_VERSION_OPTION, self::CURRENT_DB_VERSION, false );
+	}
+
+	/**
+	 * Conditionally run migrations based on transient cache.
+	 *
+	 * Skips all work when the transient matches the current version,
+	 * avoiding redundant dbDelta() calls and option lookups on every
+	 * admin page load.
+	 *
+	 * @return void
+	 */
+	public static function maybe_run() {
+		$cached = get_transient( self::TRANSIENT_VERSION_OPTION );
+
+		if ( false !== $cached && self::CURRENT_DB_VERSION === (int) $cached ) {
+			return;
+		}
+
+		self::run();
+		Settings::activate();
+		Event_Logger::create_table();
+		Event_Logger::migrate_from_options( Settings::STATS_OPTION );
+
+		set_transient( self::TRANSIENT_VERSION_OPTION, self::CURRENT_DB_VERSION, 7 * DAY_IN_SECONDS );
 	}
 
 	/**

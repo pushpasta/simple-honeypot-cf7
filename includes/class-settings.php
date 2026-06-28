@@ -47,6 +47,7 @@ final class Settings {
 		delete_option( self::SETTINGS_OPTION );
 		delete_option( self::STATS_OPTION );
 		delete_option( Upgrader::DB_VERSION_OPTION );
+		delete_transient( Upgrader::TRANSIENT_VERSION_OPTION );
 
 		delete_site_transient( SIMPLE_HONEYPOT_CF7_BASE . '_github_release' );
 		self::cleanup_readme_transients();

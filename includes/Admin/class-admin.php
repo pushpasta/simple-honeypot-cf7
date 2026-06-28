@@ -36,6 +36,7 @@ final class Admin {
 
 		add_action( 'admin_enqueue_scripts', array( $assets, 'enqueue' ) );
 		add_action( 'admin_init', array( $this, 'run_upgrader' ) );
+		add_action( 'upgrader_process_complete', array( $this, 'on_plugin_update' ), 10, 2 );
 		add_action( 'admin_notices', array( $notices, 'contact_form_7_missing' ) );
 		add_action( 'admin_notices', array( $notices, 'pow_requires_ssl' ) );
 		add_action( 'admin_notices', array( $notices, 'reset_form_notice' ) );
@@ -60,16 +61,50 @@ final class Admin {
 	/**
 	 * Run pending database migrations and event table setup.
 	 *
-	 * Fires on admin_init so migrations execute after plugin updates,
-	 * not only on manual activation.
+	 * Uses a transient to skip redundant work on most admin page loads.
+	 * The transient stores the last successfully applied DB version and
+	 * is checked via Upgrader::maybe_run().
 	 *
 	 * @return void
 	 */
 	public function run_upgrader() {
-		Upgrader::run();
-		Settings::activate();
-		Event_Logger::create_table();
-		Event_Logger::migrate_from_options( Settings::STATS_OPTION );
+		Upgrader::maybe_run();
+	}
+
+	/**
+	 * Run migrations immediately after this plugin is updated.
+	 *
+	 * Hooked to upgrader_process_complete so migrations execute right
+	 * after a WordPress-initiated plugin update, without waiting for
+	 * the next admin page load.
+	 *
+	 * @param object $upgrader_object WP_Upgrader instance.
+	 * @param array  $options         Update options (action, type, plugins).
+	 * @return void
+	 */
+	public function on_plugin_update( $upgrader_object, $options ) {
+		if ( ! isset( $options['action'], $options['type'], $options['plugins'] ) ) {
+			return;
+		}
+
+		if ( 'update' !== $options['action'] || 'plugin' !== $options['type'] ) {
+			return;
+		}
+
+		if ( ! is_array( $options['plugins'] ) ) {
+			return;
+		}
+
+		foreach ( $options['plugins'] as $plugin_file ) {
+			if ( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME === $plugin_file ) {
+				Upgrader::run();
+				Settings::activate();
+				Event_Logger::create_table();
+				Event_Logger::migrate_from_options( Settings::STATS_OPTION );
+				set_transient( Upgrader::TRANSIENT_VERSION_OPTION, Upgrader::CURRENT_DB_VERSION, 7 * DAY_IN_SECONDS );
+				break;
+			}
+		}
 	}
 
 	/**
