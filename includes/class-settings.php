@@ -86,6 +86,38 @@ final class Settings {
 	}
 
 	/**
+	 * Setting keys accepted on the Settings tab.
+	 *
+	 * @return string[]
+	 */
+	public static function settings_tab_keys() {
+		return array(
+			'time_check_enabled',
+			'min_time_seconds',
+			'max_age_minutes',
+			'pow_enabled',
+			'pow_complexity',
+			'store_honeypot_value',
+			'honeypot_value_max_length',
+			'keep_recent_events',
+			'purge_events_after_days',
+			'events_per_page',
+		);
+	}
+
+	/**
+	 * Setting keys accepted on the Rules tab.
+	 *
+	 * @return string[]
+	 */
+	public static function rules_tab_keys() {
+		return array(
+			'custom_rules_enabled',
+			'custom_rules',
+		);
+	}
+
+	/**
 	 * Default report counters.
 	 *
 	 * @return array
