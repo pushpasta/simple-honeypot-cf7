@@ -2,14 +2,14 @@
 # This file is distributed under the GNU GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Simple Honeypot for Contact Form 7 2.0.0\n"
+"Project-Id-Version: Simple Honeypot for Contact Form 7 2.0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/pushpasta/simple-honeypot-cf7/issues\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-27T03:19:22+02:00\n"
+"POT-Creation-Date: 2026-07-01T00:49:16+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-honeypot-cf7\n"
@@ -40,16 +40,16 @@ msgstr ""
 msgid "https://github.com/pushpasta/"
 msgstr ""
 
-#: includes/Admin/class-admin.php:87
+#: includes/Admin/class-admin.php:122
 #: templates/admin/page.php:89
 msgid "Donate"
 msgstr ""
 
-#: includes/Admin/class-admin.php:118
+#: includes/Admin/class-admin.php:153
 msgid "Disable auto-updates"
 msgstr ""
 
-#: includes/Admin/class-admin.php:121
+#: includes/Admin/class-admin.php:156
 msgid "Enable auto-updates"
 msgstr ""
 
@@ -110,15 +110,19 @@ msgstr ""
 msgid "File is too large. Maximum size is %s MB."
 msgstr ""
 
-#: includes/Admin/class-importer.php:53
+#: includes/Admin/class-importer.php:55
 msgid "Only JSON files are supported."
 msgstr ""
 
-#: includes/Admin/class-importer.php:69
+#: includes/Admin/class-importer.php:70
+msgid "The file is not valid JSON."
+msgstr ""
+
+#: includes/Admin/class-importer.php:78
 msgid "This export was created with an incompatible plugin version."
 msgstr ""
 
-#: includes/Admin/class-importer.php:76
+#: includes/Admin/class-importer.php:85
 msgid "The file does not match the expected format and cannot be imported."
 msgstr ""
 
@@ -209,16 +213,12 @@ msgstr ""
 msgid "Plugin settings have been saved."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:371
+#: includes/Admin/class-settings-page.php:358
 msgid "You do not have permission to export settings."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:411
+#: includes/Admin/class-settings-page.php:398
 msgid "Failed to encode settings."
-msgstr ""
-
-#: includes/Admin/class-settings-page.php:426
-msgid "You do not have permission to purge events."
 msgstr ""
 
 #: includes/Admin/class-tag-generator.php:46
@@ -237,58 +237,58 @@ msgstr ""
 msgid "Could not move %1$s to %2$s"
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:72
+#: includes/Frontend/class-spam-checker.php:84
 msgid "Honeypot validation token was missing."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:82
+#: includes/Frontend/class-spam-checker.php:94
 msgid "Honeypot validation token was invalid or expired."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:106
+#: includes/Frontend/class-spam-checker.php:119
 msgid "Proof-of-Work validation failed."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:145
+#: includes/Frontend/class-spam-checker.php:159
 msgid "Honeypot timing data was missing."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:155
+#: includes/Frontend/class-spam-checker.php:169
 msgid "Honeypot timing data was in the future."
 msgstr ""
 
 #. translators: %d: elapsed seconds.
-#: includes/Frontend/class-spam-checker.php:164
+#: includes/Frontend/class-spam-checker.php:178
 #, php-format
 msgid "Form was submitted with stale honeypot timing data after %d seconds."
 msgstr ""
 
 #. translators: 1: elapsed seconds, 2: required seconds.
-#: includes/Frontend/class-spam-checker.php:178
+#: includes/Frontend/class-spam-checker.php:192
 #, php-format
 msgid "Form was submitted too quickly: %1$d seconds elapsed, %2$d seconds required."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:245
+#: includes/Frontend/class-spam-checker.php:259
 msgid "unknown field"
 msgstr ""
 
 #. translators: %s: honeypot field name.
-#: includes/Frontend/class-spam-checker.php:253
+#: includes/Frontend/class-spam-checker.php:267
 #, php-format
 msgid "Expected honeypot field was missing for \"%s\"."
 msgstr ""
 
 #. translators: 1: field name, 2: submitted value.
-#: includes/Frontend/class-spam-checker.php:276
+#: includes/Frontend/class-spam-checker.php:290
 #, php-format
 msgid "Honeypot field \"%1$s\" was filled with \"%2$s\"."
 msgstr ""
 
 #: includes/Reporting/class-reporter.php:33
-#: templates/admin/tables/events-table.php:45
-#: templates/admin/tables/events-table.php:47
-#: templates/admin/tables/forms-table.php:36
+#: templates/admin/tables/events-table.php:46
+#: templates/admin/tables/events-table.php:48
+#: templates/admin/tables/forms-table.php:37
 #: templates/admin/tabs/reports.php:106
 msgid "Unknown form"
 msgstr ""
@@ -402,7 +402,7 @@ msgstr ""
 
 #. translators: number of events
 #: templates/admin/tables/events-pagination.php:32
-#: templates/admin/tables/events-pagination.php:81
+#: templates/admin/tables/events-pagination.php:84
 #, php-format
 msgid "%s event"
 msgid_plural "%s events"
@@ -411,19 +411,26 @@ msgstr[1] ""
 
 #: templates/admin/tables/events-pagination.php:40
 #: templates/admin/tables/events-pagination.php:45
-#: templates/admin/tables/events-pagination.php:89
-#: templates/admin/tables/events-pagination.php:94
+#: templates/admin/tables/events-pagination.php:92
+#: templates/admin/tables/events-pagination.php:97
 msgid "Previous page"
 msgstr ""
 
-#: templates/admin/tables/events-pagination.php:66
-#: templates/admin/tables/events-pagination.php:71
-#: templates/admin/tables/events-pagination.php:112
-#: templates/admin/tables/events-pagination.php:117
+#. translators: 1: current page, 2: total pages
+#: templates/admin/tables/events-pagination.php:57
+#: templates/admin/tables/events-pagination.php:109
+#, php-format
+msgid "%1$s of %2$s"
+msgstr ""
+
+#: templates/admin/tables/events-pagination.php:69
+#: templates/admin/tables/events-pagination.php:74
+#: templates/admin/tables/events-pagination.php:119
+#: templates/admin/tables/events-pagination.php:124
 msgid "Next page"
 msgstr ""
 
-#: templates/admin/tables/events-pagination.php:100
+#: templates/admin/tables/events-pagination.php:103
 msgid "Current Page"
 msgstr ""
 
@@ -431,63 +438,71 @@ msgstr ""
 msgid "No events recorded yet. Blocked spam attempts will appear here."
 msgstr ""
 
+#: templates/admin/tables/events-table.php:23
+msgid "Spam events"
+msgstr ""
+
 #. translators: table column header
-#: templates/admin/tables/events-table.php:26
+#: templates/admin/tables/events-table.php:27
 msgid "Date"
 msgstr ""
 
 #. translators: table column header for contact form name
-#: templates/admin/tables/events-table.php:28
-#: templates/admin/tables/forms-overview-table.php:16
-#: templates/admin/tables/forms-table.php:26
+#: templates/admin/tables/events-table.php:29
+#: templates/admin/tables/forms-overview-table.php:17
+#: templates/admin/tables/forms-table.php:27
 msgid "Form"
 msgstr ""
 
 #. translators: table column header for visitor IP address
-#: templates/admin/tables/events-table.php:30
+#: templates/admin/tables/events-table.php:31
 msgid "IP Address"
 msgstr ""
 
 #. translators: table column header for browser user agent string
-#: templates/admin/tables/events-table.php:32
+#: templates/admin/tables/events-table.php:33
 msgid "User Agent"
 msgstr ""
 
 #. translators: table column header for spam detection reason
-#: templates/admin/tables/events-table.php:34
+#: templates/admin/tables/events-table.php:35
 msgid "Reason"
 msgstr ""
 
+#: templates/admin/tables/forms-overview-table.php:13
+msgid "Form settings overview"
+msgstr ""
+
 #. translators: table column header for timing check mode (enabled/disabled/uses global)
-#: templates/admin/tables/forms-overview-table.php:18
+#: templates/admin/tables/forms-overview-table.php:19
 msgid "Timing"
 msgstr ""
 
 #. translators: table column header for minimum submission time in seconds
-#: templates/admin/tables/forms-overview-table.php:20
+#: templates/admin/tables/forms-overview-table.php:21
 msgid "Min. Time"
 msgstr ""
 
 #. translators: %s: resolved mode (Enabled or Disabled) inherited from global settings
-#: templates/admin/tables/forms-overview-table.php:34
+#: templates/admin/tables/forms-overview-table.php:35
 #, php-format
 msgid "Uses global (%s)"
 msgstr ""
 
 #. translators: %s: resolved mode (Enabled or Disabled) inherited from global settings
-#: templates/admin/tables/forms-overview-table.php:34
-#: templates/admin/tables/forms-overview-table.php:38
+#: templates/admin/tables/forms-overview-table.php:35
+#: templates/admin/tables/forms-overview-table.php:39
 msgid "Enabled"
 msgstr ""
 
 #. translators: %s: resolved mode (Enabled or Disabled) inherited from global settings
-#: templates/admin/tables/forms-overview-table.php:34
-#: templates/admin/tables/forms-overview-table.php:40
+#: templates/admin/tables/forms-overview-table.php:35
+#: templates/admin/tables/forms-overview-table.php:41
 msgid "Disabled"
 msgstr ""
 
 #. translators: %d: number of seconds inherited from global settings
-#: templates/admin/tables/forms-overview-table.php:48
+#: templates/admin/tables/forms-overview-table.php:49
 #, php-format
 msgid "Uses global (%d)"
 msgstr ""
@@ -496,9 +511,13 @@ msgstr ""
 msgid "No form data yet. Per-form statistics will appear here."
 msgstr ""
 
+#: templates/admin/tables/forms-table.php:23
+msgid "Spam events by form"
+msgstr ""
+
 #. translators: table column header for count of items
-#: templates/admin/tables/forms-table.php:28
-#: templates/admin/tables/key-value-table.php:29
+#: templates/admin/tables/forms-table.php:29
+#: templates/admin/tables/key-value-table.php:30
 msgid "Count"
 msgstr ""
 
@@ -600,7 +619,7 @@ msgid "Which forms received the most spam."
 msgstr ""
 
 #: templates/admin/tabs/reports.php:125
-#: templates/admin/tabs/settings.php:103
+#: templates/admin/tabs/settings.php:112
 msgid "Recent Events"
 msgstr ""
 
@@ -632,7 +651,7 @@ msgid "Need to block specific words or patterns? Use the <a href=\"%1$s\">WordPr
 msgstr ""
 
 #: templates/admin/tabs/rules.php:73
-#: templates/admin/tabs/settings.php:133
+#: templates/admin/tabs/settings.php:142
 msgid "Save"
 msgstr ""
 
@@ -716,35 +735,47 @@ msgstr ""
 msgid "Keep filled honeypot values in posted data for record plugins such as Flamingo."
 msgstr ""
 
-#: templates/admin/tabs/settings.php:105
+#: templates/admin/tabs/settings.php:99
+msgid "Max value length"
+msgstr ""
+
+#: templates/admin/tabs/settings.php:103
+msgid "characters"
+msgstr ""
+
+#: templates/admin/tabs/settings.php:104
+msgid "Maximum length of stored and displayed honeypot values. Shorter values reduce database size."
+msgstr ""
+
+#: templates/admin/tabs/settings.php:114
 msgid "Control how many recent blocked submissions are retained in the database."
 msgstr ""
 
-#: templates/admin/tabs/settings.php:108
+#: templates/admin/tabs/settings.php:117
 msgid "Events per page"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:111
+#: templates/admin/tabs/settings.php:120
 msgid "entries shown on the Reports tab"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:115
+#: templates/admin/tabs/settings.php:124
 msgid "Events to keep"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:118
+#: templates/admin/tabs/settings.php:127
 msgid "recent events"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:122
+#: templates/admin/tabs/settings.php:131
 msgid "Auto-delete events older than"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:125
+#: templates/admin/tabs/settings.php:134
 msgid "days (0 = disabled)"
 msgstr ""
 
-#: templates/admin/tabs/settings.php:126
+#: templates/admin/tabs/settings.php:135
 msgid "Automatically removes events older than the specified number of days each time a new event is recorded. Set to 0 to disable."
 msgstr ""
 

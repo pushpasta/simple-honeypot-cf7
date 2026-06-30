@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.0
 Requires Plugins: contact-form-7
-Stable tag: 2.0.1
+Stable tag: 2.1.0
 License: GNU GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -83,6 +83,35 @@ All plugin data is removed from the database, including settings, statistics, an
 7. **Spam Status:** Detection reason and details recorded for each blocked submission, visible in record-keeping plugins like Flamingo.
 
 == Changelog ==
+
+= 2.1.0 =
+
+= Added =
+* Configurable honeypot value display length setting (10–200).
+* Ellipsis and full value on hover for truncated spam reasons.
+* Screen reader text captions for data tables.
+* Translatable pagination text.
+
+= Fixed =
+* Guard class_exists before static method call in Spam_Checker.
+* Use correct notice type keys for admin notices.
+* Accept wildcard-first IP patterns in rules detection.
+* Remove esc_html() from integer arguments in purge notice for PHP 8.1+ compatibility.
+* Skip PoW and Rules checks when submission already flagged as spam.
+* Add mb_substr fallback in user agent method for multibyte safety.
+* Use wp_get_request_ip for proxy-aware IP detection.
+* Remove dangling aria-describedby from pagination input.
+* Escape class name in reports badge output.
+
+= Security =
+* Validate import settings types, ranges, and JSON integrity.
+* Validate template path against directory traversal.
+* Sanitize all 12 global settings in sanitize_global().
+
+= Performance =
+* Throttle old event purge to once per hour.
+* Memoize compiled wildcard regex patterns.
+* Skip migration checks when database version is current.
 
 = 2.0.1 =
 
@@ -176,6 +205,9 @@ All plugin data is removed from the database, including settings, statistics, an
 * Initial release.
 
 == Upgrade Notice ==
+
+= 2.1.0 =
+* Security, performance, and compatibility fixes. Recommended update for all users.
 
 = 2.0.1 =
 * Fixes data migration from v1.x. Recommended update for users upgrading from v1.3.0.
