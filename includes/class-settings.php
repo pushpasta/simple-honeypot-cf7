@@ -118,7 +118,9 @@ final class Settings {
 
 		$settings = get_option( self::SETTINGS_OPTION, array() );
 
-		self::$settings_cache = wp_parse_args( is_array( $settings ) ? $settings : array(), self::default_settings() );
+		$merged = wp_parse_args( is_array( $settings ) ? $settings : array(), self::default_settings() );
+
+		self::$settings_cache = array_intersect_key( $merged, self::default_settings() );
 
 		return self::$settings_cache;
 	}
