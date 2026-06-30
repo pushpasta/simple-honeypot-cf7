@@ -346,30 +346,23 @@ final class Settings {
 	 * @return void
 	 */
 	private static function remove_auto_update_opt_in() {
-		if ( is_multisite() ) {
-			$auto_updates = get_site_option( 'auto_update_plugins', array() );
+		$is_multisite = is_multisite();
+		$auto_updates = $is_multisite
+			? get_site_option( 'auto_update_plugins', array() )
+			: get_option( 'auto_update_plugins', array() );
 
-			if ( in_array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, $auto_updates, true ) ) {
-				$auto_updates = array_values( array_diff( $auto_updates, array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ) ) );
+		if ( ! in_array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, $auto_updates, true ) ) {
+			return;
+		}
 
-				if ( empty( $auto_updates ) ) {
-					delete_site_option( 'auto_update_plugins' );
-				} else {
-					update_site_option( 'auto_update_plugins', $auto_updates );
-				}
-			}
+		$auto_updates = array_values(
+			array_diff( $auto_updates, array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ) )
+		);
+
+		if ( empty( $auto_updates ) ) {
+			$is_multisite ? delete_site_option( 'auto_update_plugins' ) : delete_option( 'auto_update_plugins' );
 		} else {
-			$auto_updates = get_option( 'auto_update_plugins', array() );
-
-			if ( in_array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, $auto_updates, true ) ) {
-				$auto_updates = array_values( array_diff( $auto_updates, array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ) ) );
-
-				if ( empty( $auto_updates ) ) {
-					delete_option( 'auto_update_plugins' );
-				} else {
-					update_option( 'auto_update_plugins', $auto_updates );
-				}
-			}
+			$is_multisite ? update_site_option( 'auto_update_plugins', $auto_updates ) : update_option( 'auto_update_plugins', $auto_updates );
 		}
 	}
 
