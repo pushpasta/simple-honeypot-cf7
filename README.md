@@ -4,7 +4,7 @@
 
 Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
 
-![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-2.0.1-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
+![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-2.1.0-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
 
 ![Stars](https://img.shields.io/github/stars/pushpasta/simple-honeypot-cf7?style=plastic) ![Forks](https://img.shields.io/github/forks/pushpasta/simple-honeypot-cf7?style=plastic) ![Watchers](https://img.shields.io/github/watchers/pushpasta/simple-honeypot-cf7?style=plastic) ![Last Commit](https://img.shields.io/github/last-commit/pushpasta/simple-honeypot-cf7?style=plastic) ![Downloads](https://img.shields.io/github/downloads/pushpasta/simple-honeypot-cf7/total?style=plastic)
 
@@ -15,7 +15,7 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 | Tags | contact form 7, cf7, honeypot, antispam, spam protection, bot protection, proof of work, hashcash |
 | Requires at least | 6.7 |
 | Tested up to | 7.0 |
-| Stable tag | 2.0.1 |
+| Stable tag | 2.1.0 |
 | Requires PHP | 7.4 |
 | Requires Plugins | contact-form-7 |
 | License | GNU GPLv3 |
@@ -151,6 +151,35 @@ Detection reason and details recorded for each blocked submission, visible in re
 
 ## Changelog
 
+### 2.1.0
+
+### Added
+* Configurable honeypot value display length setting (10–200).
+* Ellipsis and full value on hover for truncated spam reasons.
+* Screen reader text captions for data tables.
+* Translatable pagination text.
+
+### Fixed
+* Guard class_exists before static method call in Spam_Checker.
+* Use correct notice type keys for admin notices.
+* Accept wildcard-first IP patterns in rules detection.
+* Remove esc_html() from integer arguments in purge notice for PHP 8.1+ compatibility.
+* Skip PoW and Rules checks when submission already flagged as spam.
+* Add mb_substr fallback in user agent method for multibyte safety.
+* Use wp_get_request_ip for proxy-aware IP detection.
+* Remove dangling aria-describedby from pagination input.
+* Escape class name in reports badge output.
+
+### Security
+* Validate import settings types, ranges, and JSON integrity.
+* Validate template path against directory traversal.
+* Sanitize all 12 global settings in sanitize_global().
+
+### Performance
+* Throttle old event purge to once per hour.
+* Memoize compiled wildcard regex patterns.
+* Skip migration checks when database version is current.
+
 ### 2.0.1
 
 ### Fixed
@@ -243,6 +272,9 @@ Detection reason and details recorded for each blocked submission, visible in re
 * Initial release.
 
 ## Upgrade Notice
+
+### 2.1.0
+* Security, performance, and compatibility fixes. Recommended update for all users.
 
 ### 2.0.1
 * Fixes data migration from v1.x. Recommended update for users upgrading from v1.3.0.
