@@ -217,8 +217,8 @@ final class Settings {
 	 */
 	public static function update_form_settings( $form_id, array $settings ) {
 		$data = array(
-			'time_mode'        => self::allowed_mode( isset( $settings['time_mode'] ) ? $settings['time_mode'] : 'inherit' ),
-			'min_time_seconds' => absint( isset( $settings['min_time_seconds'] ) ? $settings['min_time_seconds'] : 0 ),
+			'time_mode'        => self::allowed_mode( $settings['time_mode'] ?? 'inherit' ),
+			'min_time_seconds' => absint( $settings['min_time_seconds'] ?? 0 ),
 		);
 
 		update_post_meta( $form_id, self::FORM_META, $data );
