@@ -22,7 +22,13 @@ final class Request {
 	 * @return string
 	 */
 	public static function remote_ip() {
-		return empty( $_SERVER['REMOTE_ADDR'] ) ? '' : sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+		$ip = function_exists( 'wp_get_request_ip' ) ? wp_get_request_ip() : null;
+
+		if ( empty( $ip ) ) {
+			$ip = empty( $_SERVER['REMOTE_ADDR'] ) ? '' : wp_unslash( $_SERVER['REMOTE_ADDR'] );
+		}
+
+		return sanitize_text_field( $ip );
 	}
 
 	/**
