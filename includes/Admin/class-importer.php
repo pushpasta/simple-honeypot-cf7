@@ -64,6 +64,13 @@ final class Importer {
 
 		$data = json_decode( $contents, true );
 
+		if ( JSON_ERROR_NONE !== json_last_error() ) {
+			return array(
+				'success' => false,
+				'error'   => __( 'The file is not valid JSON.', 'simple-honeypot-cf7' ),
+			);
+		}
+
 		$version = isset( $data['version'] ) ? sanitize_text_field( $data['version'] ) : '';
 		if ( '' !== $version && version_compare( $version, '1.0.0', '<' ) ) {
 			return array(
@@ -79,20 +86,21 @@ final class Importer {
 			);
 		}
 
-		$global = $data['global_settings'];
+		$global = $this->validate_global_settings( $data['global_settings'] );
 		$merged = wp_parse_args( $global, Settings::get_settings() );
 
 		$merged = Settings::sanitize_global( $merged );
 
-		$merged['custom_rules_enabled'] = empty( $merged['custom_rules_enabled'] ) ? 0 : 1;
-		$merged['custom_rules']         = Settings::sanitize_rules( $merged['custom_rules'] );
+		$merged['custom_rules'] = Settings::sanitize_rules( $merged['custom_rules'] );
 
 		Settings::update_settings( $merged );
 
 		if ( ! empty( $data['form_settings'] ) && is_array( $data['form_settings'] ) && Contact_Form_7::is_active() ) {
 			foreach ( $data['form_settings'] as $form_id => $form_settings ) {
 				if ( is_numeric( $form_id ) && is_array( $form_settings ) ) {
-					$form_settings['time_mode']        = sanitize_key( isset( $form_settings['time_mode'] ) ? $form_settings['time_mode'] : 'inherit' );
+					$allowed_modes                     = array( 'inherit', 'enabled', 'disabled' );
+					$time_mode                         = sanitize_key( isset( $form_settings['time_mode'] ) ? $form_settings['time_mode'] : 'inherit' );
+					$form_settings['time_mode']        = in_array( $time_mode, $allowed_modes, true ) ? $time_mode : 'inherit';
 					$form_settings['min_time_seconds'] = max( 0, absint( isset( $form_settings['min_time_seconds'] ) ? $form_settings['min_time_seconds'] : 0 ) );
 					Settings::update_form_settings( (int) $form_id, $form_settings );
 				}
@@ -102,5 +110,30 @@ final class Importer {
 		// phpcs:enable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 
 		return array( 'success' => true );
+	}
+
+	/**
+	 * Validate and sanitize imported global settings.
+	 *
+	 * Ensures each value is the correct type and within the allowed range.
+	 *
+	 * @param array $settings Raw settings from the import file.
+	 * @return array Validated settings.
+	 */
+	private function validate_global_settings( array $settings ) {
+		$settings['time_check_enabled']        = empty( $settings['time_check_enabled'] ) ? 0 : 1;
+		$settings['min_time_seconds']          = max( 0, absint( $settings['min_time_seconds'] ) );
+		$settings['max_age_minutes']           = max( 10, absint( $settings['max_age_minutes'] ) );
+		$settings['pow_enabled']               = empty( $settings['pow_enabled'] ) ? 0 : 1;
+		$settings['pow_complexity']            = max( 4, min( 20, absint( $settings['pow_complexity'] ) ) );
+		$settings['store_honeypot_value']      = empty( $settings['store_honeypot_value'] ) ? 0 : 1;
+		$settings['honeypot_value_max_length'] = max( 10, min( 200, absint( $settings['honeypot_value_max_length'] ) ) );
+		$settings['keep_recent_events']        = max( 10, absint( $settings['keep_recent_events'] ) );
+		$settings['purge_events_after_days']   = max( 0, absint( $settings['purge_events_after_days'] ) );
+		$settings['events_per_page']           = max( 5, min( 200, absint( $settings['events_per_page'] ) ) );
+		$settings['custom_rules_enabled']      = empty( $settings['custom_rules_enabled'] ) ? 0 : 1;
+		$settings['custom_rules']              = isset( $settings['custom_rules'] ) ? sanitize_text_field( $settings['custom_rules'] ) : '';
+
+		return $settings;
 	}
 }
