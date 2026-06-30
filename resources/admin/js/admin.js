@@ -77,6 +77,15 @@
 					return;
 			}
 
+			// Select tag generator output on focus.
+			$( document ).on(
+				'focus',
+				'.insert-box input.tag.code',
+				function () {
+					$( this ).select();
+				}
+			);
+
 			initialData = syncDirty();
 
 			$form.on(

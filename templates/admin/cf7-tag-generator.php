@@ -40,7 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 
 	<div class="insert-box">
-		<input type="text" name="honeypot" class="tag code" readonly="readonly" onfocus="this.select()" />
+		<input type="text" name="honeypot" class="tag code" readonly="readonly" />
 		<div class="submitbox">
 			<input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr__( 'Insert Tag', 'simple-honeypot-cf7' ); ?>" />
 		</div>
