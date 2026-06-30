@@ -109,8 +109,8 @@ final class Rules {
 			return 'email';
 		}
 
-		// IPv4-like: must start with a digit and contain a dot.
-		if ( preg_match( '/^\d[\d\.\*\/]+$/', $pattern ) && false !== strpos( $pattern, '.' ) ) {
+		// IPv4-like: must start with a digit or asterisk and contain a dot.
+		if ( preg_match( '/^[\d\*][\d\.\*\/]+$/', $pattern ) && false !== strpos( $pattern, '.' ) ) {
 			return 'ip';
 		}
 
