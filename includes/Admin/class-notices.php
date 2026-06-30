@@ -136,14 +136,14 @@ final class Notices {
 			$message = sprintf(
 				/* translators: %d: number of days */
 				esc_html__( 'No events older than %d days were found to delete.', 'simple-honeypot-cf7' ),
-				esc_html( $days )
+				$days
 			);
 		} else {
 			$message = sprintf(
 				/* translators: 1: number of deleted events, 2: number of days */
 				esc_html( _n( 'Deleted %1$d event older than %2$d days.', 'Deleted %1$d events older than %2$d days.', $removed, 'simple-honeypot-cf7' ) ),
-				esc_html( $removed ),
-				esc_html( $days )
+				$removed,
+				$days
 			);
 		}
 
