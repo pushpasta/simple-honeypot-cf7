@@ -46,8 +46,10 @@ final class Importer {
 			);
 		}
 
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- MIME type is checked, not used for output.
-		if ( ! empty( $_FILES['import_file']['type'] ) && 'application/json' !== $_FILES['import_file']['type'] ) {
+		$file_name = isset( $_FILES['import_file']['name'] ) ? wp_unslash( $_FILES['import_file']['name'] ) : '';
+		$file_type = wp_check_filetype( $file_name, array( 'json' => 'application/json' ) );
+
+		if ( empty( $file_type['type'] ) ) {
 			return array(
 				'success' => false,
 				'error'   => __( 'Only JSON files are supported.', 'simple-honeypot-cf7' ),
