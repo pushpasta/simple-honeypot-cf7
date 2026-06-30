@@ -8,6 +8,7 @@
 namespace SimpleHoneypotCF7\Frontend;
 
 use SimpleHoneypotCF7\Settings;
+use SimpleHoneypotCF7\Support\Contact_Form_7;
 use SimpleHoneypotCF7\Support\Template;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -163,18 +164,6 @@ final class Form_Tag {
 	 * @return array
 	 */
 	private function existing_field_names( $contact_form ) {
-		if ( ! $contact_form || ! method_exists( $contact_form, 'scan_form_tags' ) ) {
-			return array();
-		}
-
-		$names = array();
-
-		foreach ( $contact_form->scan_form_tags() as $form_tag ) {
-			if ( ! empty( $form_tag->name ) ) {
-				$names[] = $form_tag->name;
-			}
-		}
-
-		return $names;
+		return Contact_Form_7::get_field_names( $contact_form );
 	}
 }

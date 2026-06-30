@@ -8,6 +8,7 @@
 namespace SimpleHoneypotCF7\Frontend;
 
 use SimpleHoneypotCF7\Settings;
+use SimpleHoneypotCF7\Support\Contact_Form_7;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -93,18 +94,6 @@ final class Posted_Data_Filter {
 	 * @return array List of valid field names.
 	 */
 	private function get_valid_field_names( $contact_form ) {
-		$names = array();
-
-		if ( ! $contact_form || ! method_exists( $contact_form, 'scan_form_tags' ) ) {
-			return $names;
-		}
-
-		foreach ( $contact_form->scan_form_tags() as $tag ) {
-			if ( ! empty( $tag->name ) ) {
-				$names[] = $tag->name;
-			}
-		}
-
-		return $names;
+		return Contact_Form_7::get_field_names( $contact_form );
 	}
 }

@@ -32,4 +32,26 @@ final class Contact_Form_7 {
 
 		return is_plugin_active( 'contact-form-7/wp-contact-form-7.php' );
 	}
+
+	/**
+	 * Collect field names from a Contact Form 7 form.
+	 *
+	 * @param mixed $contact_form Contact Form 7 form object.
+	 * @return array List of field names.
+	 */
+	public static function get_field_names( $contact_form ) {
+		if ( ! $contact_form || ! method_exists( $contact_form, 'scan_form_tags' ) ) {
+			return array();
+		}
+
+		$names = array();
+
+		foreach ( $contact_form->scan_form_tags() as $tag ) {
+			if ( ! empty( $tag->name ) ) {
+				$names[] = $tag->name;
+			}
+		}
+
+		return $names;
+	}
 }
