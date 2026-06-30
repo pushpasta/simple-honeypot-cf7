@@ -264,6 +264,13 @@ final class Rules {
 	}
 
 	/**
+	 * Compiled wildcard regex cache.
+	 *
+	 * @var string[]
+	 */
+	private static $wildcard_cache = array();
+
+	/**
 	 * Match pattern with wildcard support against target.
 	 *
 	 * @param string $pattern Pattern containing optional * wildcards.
@@ -275,10 +282,12 @@ final class Rules {
 			return false;
 		}
 
-		$regex = preg_quote( $pattern, '/' );
-		$regex = str_replace( '\*', '.*', $regex );
-		$regex = '/^' . $regex . '$/i';
+		if ( ! isset( self::$wildcard_cache[ $pattern ] ) ) {
+			$regex                            = preg_quote( $pattern, '/' );
+			$regex                            = str_replace( '\*', '.*', $regex );
+			self::$wildcard_cache[ $pattern ] = '/^' . $regex . '$/i';
+		}
 
-		return 1 === preg_match( $regex, $target );
+		return 1 === preg_match( self::$wildcard_cache[ $pattern ], $target );
 	}
 }
