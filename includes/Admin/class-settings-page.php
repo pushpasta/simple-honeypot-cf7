@@ -334,6 +334,14 @@ final class Settings_Page {
 	 * @return array
 	 */
 	private function settings_from_post( array $settings, array $post ) {
+		$boolean_keys = array( 'time_check_enabled', 'pow_enabled', 'store_honeypot_value' );
+
+		foreach ( $boolean_keys as $key ) {
+			if ( ! isset( $post[ $key ] ) ) {
+				$post[ $key ] = 0;
+			}
+		}
+
 		return Settings::sanitize_global( array_intersect_key( $post, array_flip( Settings::settings_tab_keys() ) ) + $settings );
 	}
 
@@ -345,6 +353,10 @@ final class Settings_Page {
 	 * @return array
 	 */
 	private function rules_from_post( array $settings, array $post ) {
+		if ( ! isset( $post['custom_rules_enabled'] ) ) {
+			$post['custom_rules_enabled'] = 0;
+		}
+
 		return Settings::sanitize_global( array_intersect_key( $post, array_flip( Settings::rules_tab_keys() ) ) + $settings );
 	}
 
