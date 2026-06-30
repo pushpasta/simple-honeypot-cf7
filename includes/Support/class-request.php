@@ -39,6 +39,10 @@ final class Request {
 	public static function user_agent() {
 		$ua = empty( $_SERVER['HTTP_USER_AGENT'] ) ? '' : sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
 
-		return mb_substr( $ua, 0, 256 );
+		if ( function_exists( 'mb_substr' ) ) {
+			return mb_substr( $ua, 0, 256 );
+		}
+
+		return substr( $ua, 0, 256 );
 	}
 }
