@@ -114,12 +114,14 @@ final class Spam_Checker {
 			}
 		}
 
-		if ( ! empty( $settings['pow_enabled'] ) && is_ssl() && ! $this->check_pow( $form_id ) ) {
-			$reasons[] = Reason_Factory::create( 'pow_failed', __( 'Proof-of-Work validation failed.', 'simple-honeypot-cf7' ) );
-		}
+		if ( ! $spam ) {
+			if ( ! empty( $settings['pow_enabled'] ) && is_ssl() && ! $this->check_pow( $form_id ) ) {
+				$reasons[] = Reason_Factory::create( 'pow_failed', __( 'Proof-of-Work validation failed.', 'simple-honeypot-cf7' ) );
+			}
 
-		foreach ( Rules::check( $settings, $posted_data, Request::remote_ip(), $email_fields ) as $rule_reason ) {
-			$reasons[] = $rule_reason;
+			foreach ( Rules::check( $settings, $posted_data, Request::remote_ip(), $email_fields ) as $rule_reason ) {
+				$reasons[] = $rule_reason;
+			}
 		}
 
 		if ( empty( $reasons ) ) {
