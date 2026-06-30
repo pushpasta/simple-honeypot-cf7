@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <table class="widefat striped simple-honeypot-cf7-table">
+	<caption class="screen-reader-text"><?php esc_html_e( 'Form settings overview', 'simple-honeypot-cf7' ); ?></caption>
 	<thead>
 		<tr>
 			<?php /* translators: table column header for contact form name */ ?>

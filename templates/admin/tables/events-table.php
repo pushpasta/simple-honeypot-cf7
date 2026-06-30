@@ -20,6 +20,7 @@ if ( empty( $events ) ) :
 endif;
 ?>
 <table class="widefat striped simple-honeypot-cf7-table">
+	<caption class="screen-reader-text"><?php esc_html_e( 'Spam events', 'simple-honeypot-cf7' ); ?></caption>
 	<thead>
 		<tr>
 			<?php /* translators: table column header */ ?>

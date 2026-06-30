@@ -20,6 +20,7 @@ if ( empty( $forms ) ) :
 endif;
 ?>
 <table class="widefat striped simple-honeypot-cf7-table simple-honeypot-cf7-breakdown">
+	<caption class="screen-reader-text"><?php esc_html_e( 'Spam events by form', 'simple-honeypot-cf7' ); ?></caption>
 	<thead>
 		<tr>
 			<?php /* translators: table column header for contact form name */ ?>

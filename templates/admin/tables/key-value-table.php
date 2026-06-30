@@ -22,6 +22,7 @@ endif;
 arsort( $items );
 ?>
 <table class="widefat striped simple-honeypot-cf7-table simple-honeypot-cf7-breakdown">
+	<caption class="screen-reader-text"><?php echo esc_html( $label ); ?></caption>
 	<thead>
 		<tr>
 			<th><?php echo esc_html( $label ); ?></th>
