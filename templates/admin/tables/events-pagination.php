@@ -98,7 +98,7 @@ for ( $i = 1; $i <= $pagination['total_pages']; $i++ ) {
 
 				<span class="paging-input">
 					<label for="events_page_input" class="screen-reader-text"><?php esc_html_e( 'Current Page', 'simple-honeypot-cf7' ); ?></label>
-					<input id="events_page_input" class="current-page" type="number" min="1" max="<?php echo esc_attr( $pagination['total_pages'] ); ?>" value="<?php echo esc_attr( $pagination['current_page'] ); ?>" size="2" aria-describedby="events-page-description" />
+					<input id="events_page_input" class="current-page" type="number" min="1" max="<?php echo esc_attr( $pagination['total_pages'] ); ?>" value="<?php echo esc_attr( $pagination['current_page'] ); ?>" size="2" />
 					<span class="tablenav-paging-text">
 						<?php
 						echo ' of ';
