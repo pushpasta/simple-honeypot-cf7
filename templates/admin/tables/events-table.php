@@ -71,7 +71,14 @@ endif;
 						?>
 						<ul class="simple-honeypot-cf7-reasons-list">
 							<?php foreach ( $reasons as $reason ) : ?>
-								<li><?php echo esc_html( isset( $reason['message'] ) ? $reason['message'] : '' ); ?></li>
+								<?php
+								$message    = isset( $reason['message'] ) ? $reason['message'] : '';
+								$value      = isset( $reason['value'] ) ? $reason['value'] : '';
+								$full       = '' !== $value ? $value : $message;
+								$max_length = max( 10, min( 200, absint( $settings['honeypot_value_max_length'] ) ) );
+								$truncated  = mb_strlen( $message ) > $max_length;
+								?>
+							<li<?php echo $truncated ? ' title="' . esc_attr( $full ) . '"' : ''; ?>><?php echo esc_html( $truncated ? mb_substr( $message, 0, $max_length ) . '…' : $message ); ?></li>
 							<?php endforeach; ?>
 						</ul>
 					<?php else : ?>
