@@ -404,36 +404,6 @@ final class Settings_Page {
 	}
 
 	/**
-	 * Handle admin_post request to purge old events.
-	 *
-	 * @return void
-	 */
-	public function purge_events() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have permission to purge events.', 'simple-honeypot-cf7' ) );
-		}
-
-		check_admin_referer( SIMPLE_HONEYPOT_CF7_BASE . '_purge_events' );
-
-		$days    = isset( $_GET['days'] ) ? absint( $_GET['days'] ) : 90;
-		$days    = max( 1, $days );
-		$before  = Event_Logger::count();
-		$removed = Event_Logger::purge_old( $days );
-
-		set_transient(
-			SIMPLE_HONEYPOT_CF7_BASE . '_purge_notice',
-			array(
-				'removed' => $removed,
-				'days'    => $days,
-			),
-			60
-		);
-
-		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=simple-honeypot-cf7&tab=tools' ) );
-		exit;
-	}
-
-	/**
 	 * Get the nonce-protected export URL.
 	 *
 	 * @return string
