@@ -95,6 +95,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</label>
 					</td>
 				</tr>
+				<tr>
+					<th scope="row"><label for="honeypot_value_max_length"><?php esc_html_e( 'Max value length', 'simple-honeypot-cf7' ); ?></label></th>
+					<td>
+						<input type="range" id="honeypot_value_max_length" name="honeypot_value_max_length" min="10" max="200" step="10" value="<?php echo esc_attr( $settings['honeypot_value_max_length'] ); ?>" />
+						<span id="honeypot-value-max-length-value"><?php echo esc_html( $settings['honeypot_value_max_length'] ); ?></span>
+						<?php esc_html_e( 'characters', 'simple-honeypot-cf7' ); ?>
+						<p class="description"><?php esc_html_e( 'Maximum length of stored and displayed honeypot values. Shorter values reduce database size.', 'simple-honeypot-cf7' ); ?></p>
+					</td>
+				</tr>
 			</table>
 		</div>
 	</div>
@@ -131,5 +140,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 
 	<?php submit_button( __( 'Save', 'simple-honeypot-cf7' ) ); ?>
+
+	<script>
+	(function() {
+		var range = document.getElementById('honeypot_value_max_length');
+		var output = document.getElementById('honeypot-value-max-length-value');
+		if (range && output) {
+			range.addEventListener('input', function() {
+				output.textContent = this.value;
+			});
+		}
+	})();
+	</script>
 
 </form>
