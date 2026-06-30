@@ -91,8 +91,6 @@ final class Importer {
 
 		$merged = Settings::sanitize_global( $merged );
 
-		$merged['custom_rules'] = Settings::sanitize_rules( $merged['custom_rules'] );
-
 		Settings::update_settings( $merged );
 
 		if ( ! empty( $data['form_settings'] ) && is_array( $data['form_settings'] ) && Contact_Form_7::is_active() ) {

@@ -331,11 +331,15 @@ final class Settings {
 		$settings['time_check_enabled']        = empty( $settings['time_check_enabled'] ) ? 0 : 1;
 		$settings['min_time_seconds']          = max( 0, absint( $settings['min_time_seconds'] ) );
 		$settings['max_age_minutes']           = max( 10, absint( $settings['max_age_minutes'] ) );
+		$settings['custom_rules_enabled']      = empty( $settings['custom_rules_enabled'] ) ? 0 : 1;
+		$settings['custom_rules']              = self::sanitize_rules( $settings['custom_rules'] ?? '' );
 		$settings['pow_enabled']               = empty( $settings['pow_enabled'] ) ? 0 : 1;
 		$settings['pow_complexity']            = max( 4, min( 20, absint( $settings['pow_complexity'] ) ) );
 		$settings['store_honeypot_value']      = empty( $settings['store_honeypot_value'] ) ? 0 : 1;
 		$settings['honeypot_value_max_length'] = max( 10, min( 200, absint( $settings['honeypot_value_max_length'] ) ) );
 		$settings['keep_recent_events']        = max( 10, absint( $settings['keep_recent_events'] ) );
+		$settings['purge_events_after_days']   = max( 0, absint( $settings['purge_events_after_days'] ) );
+		$settings['events_per_page']           = max( 5, min( 200, absint( $settings['events_per_page'] ) ) );
 
 		return $settings;
 	}

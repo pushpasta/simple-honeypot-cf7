@@ -334,12 +334,7 @@ final class Settings_Page {
 	 * @return array
 	 */
 	private function settings_from_post( array $settings, array $post ) {
-		$settings = Settings::sanitize_global( $post + $settings );
-
-		$settings['purge_events_after_days'] = max( 0, absint( isset( $post['purge_events_after_days'] ) ? $post['purge_events_after_days'] : $settings['purge_events_after_days'] ) );
-		$settings['events_per_page']         = max( 5, min( 200, absint( isset( $post['events_per_page'] ) ? $post['events_per_page'] : $settings['events_per_page'] ) ) );
-
-		return $settings;
+		return Settings::sanitize_global( $post + $settings );
 	}
 
 	/**
@@ -350,10 +345,7 @@ final class Settings_Page {
 	 * @return array
 	 */
 	private function rules_from_post( array $settings, array $post ) {
-		$settings['custom_rules_enabled'] = empty( $post['custom_rules_enabled'] ) ? 0 : 1;
-		$settings['custom_rules']         = Settings::sanitize_rules( isset( $post['custom_rules'] ) ? $post['custom_rules'] : $settings['custom_rules'] );
-
-		return $settings;
+		return Settings::sanitize_global( $post + $settings );
 	}
 
 	/**
