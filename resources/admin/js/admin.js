@@ -1,11 +1,11 @@
 ( function ( $ ) {
 	'use strict';
 
-	var initialData = '';
-	var formDirty   = false;
+	let initialData = '';
+	let formDirty   = false;
 
 	function syncDirty() {
-		var $form = $( '.simple-honeypot-cf7-admin form' );
+		const $form = $( '.simple-honeypot-cf7-admin form' );
 		if ( ! $form.length ) {
 			return '';
 		}
@@ -13,8 +13,8 @@
 	}
 
 	function validateRules( value ) {
-		var lines  = value.split( /\r?\n/ );
-		var errors = [];
+		const lines  = value.split( /\r?\n/ );
+		const errors = [];
 
 		$.each(
 			lines,
@@ -25,7 +25,7 @@
 					return;
 				}
 
-				var typed = line;
+				let typed = line;
 				if ( /^(ip|email):/i.test( typed ) ) {
 					typed = typed.replace( /^(ip|email):/i, '' );
 				}
@@ -34,8 +34,8 @@
 					return;
 				}
 
-				var isEmail = false;
-				var isIp    = false;
+				let isEmail = false;
+				let isIp    = false;
 
 				if ( typed.indexOf( '@' ) !== -1 ) {
 					isEmail = true;
@@ -55,7 +55,7 @@
 	}
 
 	function showFieldError( $field, message ) {
-		var $err = $field.siblings( '.simple-honeypot-cf7-field-error' );
+		let $err = $field.siblings( '.simple-honeypot-cf7-field-error' );
 		if ( ! $err.length ) {
 			$err = $( '<p class="simple-honeypot-cf7-field-error"></p>' );
 			$field.after( $err );
@@ -71,7 +71,7 @@
 
 	$(
 		function () {
-			var $form = $( '.simple-honeypot-cf7-admin form' );
+			const $form = $( '.simple-honeypot-cf7-admin form' );
 
 			if ( ! $form.length ) {
 					return;
@@ -108,9 +108,9 @@
 			$form.on(
 				'submit',
 				function ( e ) {
-					var valid      = true;
-					var $submitter = $( document.activeElement );
-					var isImport   = $submitter.is( '#simple-honeypot-cf7-import-btn' );
+					let valid        = true;
+					const $submitter = $( document.activeElement );
+					const isImport   = $submitter.is( '#simple-honeypot-cf7-import-btn' );
 
 					// Guard: import with no file.
 					if ( isImport && ( ! $importFile.length || ! $importFile[ 0 ].files.length ) ) {
@@ -120,17 +120,17 @@
 
 					$form.find( 'input[type="number"]' ).each(
 						function () {
-							var $input = $( this );
-							var val    = $input.val();
+							const $input = $( this );
+							const val    = $input.val();
 
 							if ( '' === val ) {
 									return;
 							}
 
-							var num   = parseInt( val, 10 );
-							var min   = $input.attr( 'min' );
-							var max   = $input.attr( 'max' );
-							var label = $input.closest( 'tr' ).find( 'label' ).text();
+							const num   = parseInt( val, 10 );
+							const min   = $input.attr( 'min' );
+							const max   = $input.attr( 'max' );
+							const label = $input.closest( 'tr' ).find( 'label' ).text();
 
 							if ( min !== undefined && num < parseInt( min, 10 ) ) {
 								showFieldError( $input, label + ': ' + simpleHoneypotCf7.valueTooLow.replace( '%s', min ) );
@@ -143,9 +143,9 @@
 					);
 
 					// Validate rules textarea.
-					var $rules = $form.find( '.simple-honeypot-cf7-rules' );
+					const $rules = $form.find( '.simple-honeypot-cf7-rules' );
 					if ( $rules.length && ! $rules.prop( 'disabled' ) ) {
-						var errors = validateRules( $rules.val() );
+						const errors = validateRules( $rules.val() );
 						if ( errors.length ) {
 							showFieldError( $rules, simpleHoneypotCf7.invalidRules.replace( '%s', errors.join( ', ' ) ) );
 							valid = false;
@@ -169,7 +169,7 @@
 				'change',
 				'.simple-honeypot-cf7-custom-rules-toggle input',
 				function () {
-					var $ta = $( this ).closest( '.simple-honeypot-cf7-custom-rules-group' )
+					const $ta = $( this ).closest( '.simple-honeypot-cf7-custom-rules-group' )
 					.find( '.simple-honeypot-cf7-rules' );
 					$ta.prop( 'disabled', ! this.checked ).toggleClass( 'simple-honeypot-cf7-rules-disabled', ! this.checked );
 				}
@@ -179,16 +179,16 @@
 			$form.find( '.simple-honeypot-cf7-custom-rules-toggle input:not(:checked)' ).trigger( 'change' );
 
 			// Import: enable button only when file selected.
-			var $importFile       = $( '#simple-honeypot-cf7-import-file' );
-			var $importBtn        = $( '#simple-honeypot-cf7-import-btn' );
-			var $importLabel      = $importFile.next( 'label' );
-			var importDefaultText = $importLabel.text();
+			const $importFile       = $( '#simple-honeypot-cf7-import-file' );
+			const $importBtn        = $( '#simple-honeypot-cf7-import-btn' );
+			const $importLabel      = $importFile.next( 'label' );
+			const importDefaultText = $importLabel.text();
 
 			if ( $importFile.length && $importBtn.length ) {
 				$importFile.on(
 					'change',
 					function () {
-						var hasFile = this.files.length > 0;
+						const hasFile = this.files.length > 0;
 						$importBtn.prop( 'disabled', ! hasFile );
 						$importLabel.text( hasFile ? this.files[ 0 ].name : importDefaultText );
 						$importLabel.attr( 'title', hasFile ? this.files[ 0 ].name : '' );
@@ -198,9 +198,9 @@
 			}
 
 			// Confirm dialog system.
-			var $pendingTrigger = null;
-			var $confirmDialog  = null;
-			var countdownTimer  = null;
+			let $pendingTrigger = null;
+			let $confirmDialog  = null;
+			let countdownTimer  = null;
 
 			function getConfirmDialog() {
 				if ( $confirmDialog ) {
@@ -228,17 +228,17 @@
 			}
 
 			function openConfirmDialog( $trigger ) {
-				var $dialog  = getConfirmDialog();
-				var isDanger = $trigger.data( 'confirm-danger' ) !== undefined;
-				var $header  = $dialog.find( '.simple-honeypot-cf7-confirm-header' );
-				var $yes     = $dialog.find( '.simple-honeypot-cf7-confirm-yes' );
+				const $dialog  = getConfirmDialog();
+				const isDanger = $trigger.data( 'confirm-danger' ) !== undefined;
+				const $header  = $dialog.find( '.simple-honeypot-cf7-confirm-header' );
+				const $yes     = $dialog.find( '.simple-honeypot-cf7-confirm-yes' );
 
-				var message   = $trigger.data( 'confirm' );
-				var daysInput = $trigger.data( 'confirm-days' );
+				let message     = $trigger.data( 'confirm' );
+				const daysInput = $trigger.data( 'confirm-days' );
 
 				if ( daysInput ) {
-					var daysValue = $( '#' + daysInput ).val() || '90';
-					message       = message.replace( '%d', daysValue );
+					const daysValue = $( '#' + daysInput ).val() || '90';
+					message         = message.replace( '%d', daysValue );
 					$dialog.find( '.simple-honeypot-cf7-confirm-message' ).html( message );
 				} else {
 					$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( message );
@@ -258,7 +258,7 @@
 			}
 
 			function startCountdown( $button, seconds ) {
-				var remaining = seconds;
+				let remaining = seconds;
 				clearInterval( countdownTimer );
 				$button.text( simpleHoneypotCf7.confirmYes + ' (' + remaining + 's)' );
 
@@ -277,7 +277,7 @@
 			}
 
 			function closeConfirmDialog() {
-				var $dialog = getConfirmDialog();
+				const $dialog = getConfirmDialog();
 				$dialog[ 0 ].close();
 				clearInterval( countdownTimer );
 				$pendingTrigger = null;
@@ -302,11 +302,11 @@
 						return;
 					}
 
-					var action = $pendingTrigger.data( 'action' );
+					const action = $pendingTrigger.data( 'action' );
 
 					if ( action ) {
 						// REST API action (danger zone).
-						var payload = { action: action };
+						const payload = { action: action };
 
 						if ( 'purge_events' === action ) {
 							payload.days = parseInt( $( '#shp4cf7_purge_days' ).val(), 10 ) || 90;
@@ -336,7 +336,7 @@
 						);
 					} else if ( $pendingTrigger.attr( 'href' ) ) {
 						// Direct navigation (e.g. purge link).
-						var href = $pendingTrigger.attr( 'href' );
+						const href = $pendingTrigger.attr( 'href' );
 						closeConfirmDialog();
 						window.location.href = href;
 					} else {
