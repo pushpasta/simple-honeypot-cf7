@@ -57,9 +57,10 @@ final class Template {
 	private function path( $template ) {
 		$template = ltrim( str_replace( '\\', '/', $template ), '/' );
 		$file     = SIMPLE_HONEYPOT_CF7_PATH . 'templates/' . $template;
+		$real     = realpath( $file );
 
-		if ( is_readable( $file ) ) {
-			return $file;
+		if ( false !== $real && 0 === strpos( $real, realpath( SIMPLE_HONEYPOT_CF7_PATH . 'templates' ) ) && is_readable( $real ) ) {
+			return $real;
 		}
 
 		// phpcs:ignore WordPress.PHP.error_log_error_log,WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Developer-facing diagnostics for missing templates.
