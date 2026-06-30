@@ -276,7 +276,7 @@ final class Settings_Page {
 
 		$result = array(
 			'message' => '',
-			'type'    => 'notice-success',
+			'type'    => 'success',
 		);
 
 		if ( empty( $get['updated'] ) ) {
@@ -307,7 +307,7 @@ final class Settings_Page {
 
 		if ( 'import-failed' === $updated ) {
 			$result['message'] = isset( $get['import_error'] ) ? sanitize_text_field( $get['import_error'] ) : __( 'Import failed. Please verify the file and try again.', 'simple-honeypot-cf7' );
-			$result['type']    = 'notice-error';
+			$result['type']    = 'error';
 			return $result;
 		}
 
@@ -318,7 +318,7 @@ final class Settings_Page {
 
 		if ( 'action-failed' === $updated ) {
 			$result['message'] = __( 'The action could not be completed. Please try again.', 'simple-honeypot-cf7' );
-			$result['type']    = 'notice-error';
+			$result['type']    = 'error';
 			return $result;
 		}
 
