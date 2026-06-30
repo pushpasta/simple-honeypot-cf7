@@ -67,8 +67,9 @@ final class Reporter {
 
 		$purge_days = absint( $settings['purge_events_after_days'] );
 
-		if ( $purge_days > 0 ) {
+		if ( $purge_days > 0 && false === get_transient( 'simple_honeypot_cf7_purge_old' ) ) {
 			Event_Logger::purge_old( $purge_days );
+			set_transient( 'simple_honeypot_cf7_purge_old', '1', HOUR_IN_SECONDS );
 		}
 
 		Event_Logger::purge_excess( $settings['keep_recent_events'] );
