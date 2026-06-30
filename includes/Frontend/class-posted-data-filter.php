@@ -20,6 +20,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Posted_Data_Filter {
 
 	/**
+	 * Register Contact Form 7 hooks.
+	 *
+	 * @return void
+	 */
+	public function register_hooks() {
+		add_filter( 'wpcf7_posted_data', array( $this, 'filter' ), 20, 1 );
+	}
+
+	/**
 	 * Filter Contact Form 7 posted data.
 	 *
 	 * @param array $posted_data Posted form data.

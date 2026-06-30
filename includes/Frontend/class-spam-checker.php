@@ -32,6 +32,15 @@ final class Spam_Checker {
 	private $reporter;
 
 	/**
+	 * Register Contact Form 7 hooks.
+	 *
+	 * @return void
+	 */
+	public function register_hooks() {
+		add_filter( 'wpcf7_spam', array( $this, 'check' ), 10, 2 );
+	}
+
+	/**
 	 * Check spam conditions.
 	 *
 	 * @param bool  $spam       Existing Contact Form 7 spam status.

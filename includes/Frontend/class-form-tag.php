@@ -35,6 +35,16 @@ final class Form_Tag {
 	}
 
 	/**
+	 * Register Contact Form 7 hooks.
+	 *
+	 * @return void
+	 */
+	public function register_hooks() {
+		add_action( 'wpcf7_init', array( $this, 'register' ) );
+		add_filter( 'wpcf7_form_hidden_fields', array( $this, 'add_pow_field' ), 10, 1 );
+	}
+
+	/**
 	 * Register the Contact Form 7 form tag.
 	 *
 	 * @return void

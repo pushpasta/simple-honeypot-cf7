@@ -60,11 +60,9 @@ final class Plugin {
 
 		$admin->register_hooks();
 		$frontend_assets->register_hooks();
+		$form_tag->register_hooks();
+		$spam_checker->register_hooks();
+		$posted_data_filter->register_hooks();
 		$updater->register_hooks();
-
-		add_action( 'wpcf7_init', array( $form_tag, 'register' ) );
-		add_filter( 'wpcf7_spam', array( $spam_checker, 'check' ), 10, 2 );
-		add_filter( 'wpcf7_posted_data', array( $posted_data_filter, 'filter' ), 20, 1 );
-		add_filter( 'wpcf7_form_hidden_fields', array( $form_tag, 'add_pow_field' ), 10, 1 );
 	}
 }
