@@ -49,7 +49,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<span>
 					<?php esc_html_e( 'Rules', 'simple-honeypot-cf7' ); ?>
 					<?php if ( ! empty( $parsed_rules ) ) : ?>
-						<span class="simple-honeypot-cf7-badge simple-honeypot-cf7-badge--<?php echo ! empty( $settings['custom_rules_enabled'] ) ? 'active' : 'inactive'; ?>"><?php echo ! empty( $settings['custom_rules_enabled'] ) ? esc_html__( 'Active', 'simple-honeypot-cf7' ) : esc_html__( 'Inactive', 'simple-honeypot-cf7' ); ?></span>
+						<span class="simple-honeypot-cf7-badge simple-honeypot-cf7-badge--<?php echo esc_attr( ! empty( $settings['custom_rules_enabled'] ) ? 'active' : 'inactive' ); ?>"><?php echo ! empty( $settings['custom_rules_enabled'] ) ? esc_html__( 'Active', 'simple-honeypot-cf7' ) : esc_html__( 'Inactive', 'simple-honeypot-cf7' ); ?></span>
 					<?php endif; ?>
 				</span>
 			</div>
