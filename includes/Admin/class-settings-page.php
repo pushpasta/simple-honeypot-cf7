@@ -196,13 +196,13 @@ final class Settings_Page {
 
 		if ( 'tools' === $tab ) {
 			return array(
-				'export_url' => wp_nonce_url( admin_url( 'admin-post.php?action=' . SIMPLE_HONEYPOT_CF7_BASE . '_export_settings' ), SIMPLE_HONEYPOT_CF7_BASE . '_export_settings' ),
+				'export_url' => $this->export_url(),
 			);
 		}
 
 		return array(
 			'settings'   => Settings::get_settings(),
-			'export_url' => wp_nonce_url( admin_url( 'admin-post.php?action=' . SIMPLE_HONEYPOT_CF7_BASE . '_export_settings' ), SIMPLE_HONEYPOT_CF7_BASE . '_export_settings' ),
+			'export_url' => $this->export_url(),
 		);
 	}
 
@@ -444,6 +444,18 @@ final class Settings_Page {
 
 		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=simple-honeypot-cf7&tab=tools' ) );
 		exit;
+	}
+
+	/**
+	 * Get the nonce-protected export URL.
+	 *
+	 * @return string
+	 */
+	private function export_url() {
+		return wp_nonce_url(
+			admin_url( 'admin-post.php?action=' . SIMPLE_HONEYPOT_CF7_BASE . '_export_settings' ),
+			SIMPLE_HONEYPOT_CF7_BASE . '_export_settings'
+		);
 	}
 
 	/**
