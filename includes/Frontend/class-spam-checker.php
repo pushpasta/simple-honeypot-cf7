@@ -48,8 +48,11 @@ final class Spam_Checker {
 	 * @return bool
 	 */
 	public function check( $spam, $submission = null ) {
+		if ( ! class_exists( '\WPCF7_ContactForm' ) ) {
+			return $spam;
+		}
 		$contact_form = \WPCF7_ContactForm::get_current();
-		if ( ! $contact_form || ! class_exists( '\WPCF7_ContactForm' ) ) {
+		if ( ! $contact_form ) {
 			return $spam;
 		}
 
