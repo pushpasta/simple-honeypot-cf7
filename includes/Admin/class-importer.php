@@ -82,13 +82,8 @@ final class Importer {
 		$global = $data['global_settings'];
 		$merged = wp_parse_args( $global, Settings::get_settings() );
 
-		$merged['time_check_enabled']   = empty( $merged['time_check_enabled'] ) ? 0 : 1;
-		$merged['min_time_seconds']     = max( 0, absint( $merged['min_time_seconds'] ) );
-		$merged['max_age_minutes']      = max( 10, absint( $merged['max_age_minutes'] ) );
-		$merged['pow_enabled']          = empty( $merged['pow_enabled'] ) ? 0 : 1;
-		$merged['pow_complexity']       = max( 4, min( 20, absint( $merged['pow_complexity'] ) ) );
-		$merged['store_honeypot_value'] = empty( $merged['store_honeypot_value'] ) ? 0 : 1;
-		$merged['keep_recent_events']   = max( 10, absint( $merged['keep_recent_events'] ) );
+		$merged = Settings::sanitize_global( $merged );
+
 		$merged['custom_rules_enabled'] = empty( $merged['custom_rules_enabled'] ) ? 0 : 1;
 		$merged['custom_rules']         = Settings::sanitize_rules( $merged['custom_rules'] );
 

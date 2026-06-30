@@ -321,6 +321,24 @@ final class Settings {
 	}
 
 	/**
+	 * Sanitize global settings from untrusted input.
+	 *
+	 * @param array $settings Unslashed settings data.
+	 * @return array Sanitized settings.
+	 */
+	public static function sanitize_global( array $settings ) {
+		$settings['time_check_enabled']   = empty( $settings['time_check_enabled'] ) ? 0 : 1;
+		$settings['min_time_seconds']     = max( 0, absint( $settings['min_time_seconds'] ) );
+		$settings['max_age_minutes']      = max( 10, absint( $settings['max_age_minutes'] ) );
+		$settings['pow_enabled']          = empty( $settings['pow_enabled'] ) ? 0 : 1;
+		$settings['pow_complexity']       = max( 4, min( 20, absint( $settings['pow_complexity'] ) ) );
+		$settings['store_honeypot_value'] = empty( $settings['store_honeypot_value'] ) ? 0 : 1;
+		$settings['keep_recent_events']   = max( 10, absint( $settings['keep_recent_events'] ) );
+
+		return $settings;
+	}
+
+	/**
 	 * Delete stored form settings for all Contact Form 7 forms.
 	 *
 	 * @return void

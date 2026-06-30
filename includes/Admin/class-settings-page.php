@@ -334,13 +334,8 @@ final class Settings_Page {
 	 * @return array
 	 */
 	private function settings_from_post( array $settings, array $post ) {
-		$settings['time_check_enabled']      = empty( $post['time_check_enabled'] ) ? 0 : 1;
-		$settings['min_time_seconds']        = max( 0, absint( isset( $post['min_time_seconds'] ) ? $post['min_time_seconds'] : $settings['min_time_seconds'] ) );
-		$settings['max_age_minutes']         = max( 10, absint( isset( $post['max_age_minutes'] ) ? $post['max_age_minutes'] : $settings['max_age_minutes'] ) );
-		$settings['pow_enabled']             = empty( $post['pow_enabled'] ) ? 0 : 1;
-		$settings['pow_complexity']          = max( 4, min( 20, absint( isset( $post['pow_complexity'] ) ? $post['pow_complexity'] : $settings['pow_complexity'] ) ) );
-		$settings['store_honeypot_value']    = empty( $post['store_honeypot_value'] ) ? 0 : 1;
-		$settings['keep_recent_events']      = max( 10, absint( isset( $post['keep_recent_events'] ) ? $post['keep_recent_events'] : $settings['keep_recent_events'] ) );
+		$settings = Settings::sanitize_global( $post + $settings );
+
 		$settings['purge_events_after_days'] = max( 0, absint( isset( $post['purge_events_after_days'] ) ? $post['purge_events_after_days'] : $settings['purge_events_after_days'] ) );
 		$settings['events_per_page']         = max( 5, min( 200, absint( isset( $post['events_per_page'] ) ? $post['events_per_page'] : $settings['events_per_page'] ) ) );
 
