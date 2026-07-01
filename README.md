@@ -4,7 +4,7 @@
 
 Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
 
-![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-2.1.0-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
+![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-2.1.1-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
 
 ![Stars](https://img.shields.io/github/stars/pushpasta/simple-honeypot-cf7?style=plastic) ![Forks](https://img.shields.io/github/forks/pushpasta/simple-honeypot-cf7?style=plastic) ![Watchers](https://img.shields.io/github/watchers/pushpasta/simple-honeypot-cf7?style=plastic) ![Last Commit](https://img.shields.io/github/last-commit/pushpasta/simple-honeypot-cf7?style=plastic) ![Downloads](https://img.shields.io/github/downloads/pushpasta/simple-honeypot-cf7/total?style=plastic)
 
@@ -15,7 +15,7 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 | Tags | contact form 7, cf7, honeypot, antispam, spam protection, bot protection, proof of work, hashcash |
 | Requires at least | 6.7 |
 | Tested up to | 7.0 |
-| Stable tag | 2.1.0 |
+| Stable tag | 2.1.1 |
 | Requires PHP | 7.4 |
 | Requires Plugins | contact-form-7 |
 | License | GNU GPLv3 |
@@ -180,6 +180,13 @@ Detection reason and details recorded for each blocked submission, visible in re
 * Memoize compiled wildcard regex patterns.
 * Skip migration checks when database version is current.
 
+### 2.1.1
+
+### Fixed
+* Checkbox settings (time check, proof of work, store honeypot value, custom rules) now save correctly when unchecked.
+* Import initializes all settings keys to defaults, preventing stale checkbox values from persisting.
+* Strip non-setting keys from settings output to prevent data leaks in export.
+
 ### 2.0.1
 
 ### Fixed
@@ -272,6 +279,9 @@ Detection reason and details recorded for each blocked submission, visible in re
 * Initial release.
 
 ## Upgrade Notice
+
+### 2.1.1
+* Fixes checkbox settings not saving when unchecked and import/export data leaks. Recommended update for all users.
 
 ### 2.1.0
 * Security, performance, and compatibility fixes. Recommended update for all users.
