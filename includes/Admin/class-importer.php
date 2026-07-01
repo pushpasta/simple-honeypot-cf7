@@ -119,6 +119,10 @@ final class Importer {
 	 * @return array Validated settings.
 	 */
 	private function validate_global_settings( array $settings ) {
+		$defaults = Settings::default_settings();
+
+		$settings = array_merge( $defaults, $settings );
+
 		$settings['time_check_enabled']        = empty( $settings['time_check_enabled'] ) ? 0 : 1;
 		$settings['min_time_seconds']          = max( 0, absint( $settings['min_time_seconds'] ) );
 		$settings['max_age_minutes']           = max( 10, absint( $settings['max_age_minutes'] ) );
