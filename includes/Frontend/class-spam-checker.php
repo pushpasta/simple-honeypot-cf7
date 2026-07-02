@@ -90,37 +90,28 @@ final class Spam_Checker {
 		if ( ! $spam && empty( $reasons ) ) {
 			$tokens = Token::posted_tokens( $form_id );
 
-			if ( count( $tokens ) < count( $honeypot_tags ) ) {
+			if ( empty( $tokens ) ) {
 				$reasons[] = Reason_Factory::create( 'missing_token', __( 'Honeypot validation token was missing.', 'simple-honeypot-cf7' ) );
-			}
+			} else {
+				$token_data = Token::validate_form_token( $tokens[0], $form_id );
 
-			$time_checked  = false;
-			$seen_dynamics = array();
-
-			foreach ( $tokens as $token ) {
-				$data = Token::validate( $token, $form_id );
-
-				if ( empty( $data ) ) {
+				if ( empty( $token_data ) ) {
 					$reasons[] = Reason_Factory::create( 'invalid_token', __( 'Honeypot validation token was invalid or expired.', 'simple-honeypot-cf7' ) );
-					continue;
+				} else {
+					$this->check_submission_time( $reasons, $form_id, $token_data, $settings );
+
+					$dynamic_names = $token_data['dynamic_names'];
+
+					foreach ( $honeypot_tags as $index => $tag ) {
+						$dynamic_name = isset( $dynamic_names[ $index ] ) ? $dynamic_names[ $index ] : '';
+
+						if ( '' === $dynamic_name ) {
+							continue;
+						}
+
+						$this->check_honeypot_value( $reasons, $dynamic_name, $tag->name );
+					}
 				}
-
-				$dynamic = empty( $data['dynamic_name'] ) ? '' : $data['dynamic_name'];
-
-				if ( '' !== $dynamic && in_array( $dynamic, $seen_dynamics, true ) ) {
-					continue;
-				}
-
-				if ( '' !== $dynamic ) {
-					$seen_dynamics[] = $dynamic;
-				}
-
-				if ( ! $time_checked ) {
-					$this->check_submission_time( $reasons, $form_id, $data, $settings );
-					$time_checked = true;
-				}
-
-				$this->check_honeypot_value( $reasons, $data );
 			}
 		}
 
@@ -142,21 +133,21 @@ final class Spam_Checker {
 	/**
 	 * Validate submission timing.
 	 *
-	 * @param array $reasons  Reasons passed by reference.
-	 * @param int   $form_id  Contact Form 7 form ID.
-	 * @param array $data     Token data.
-	 * @param array $settings Plugin settings.
+	 * @param array $reasons    Reasons passed by reference.
+	 * @param int   $form_id    Contact Form 7 form ID.
+	 * @param array $token_data Token data from validate_form_token().
+	 * @param array $settings   Plugin settings.
 	 * @return void
 	 */
-	private function check_submission_time( array &$reasons, $form_id, array $data, array $settings ) {
+	private function check_submission_time( array &$reasons, $form_id, array $token_data, array $settings ) {
 		if ( ! Settings::is_time_check_enabled( $form_id ) ) {
 			return;
 		}
 
-		$created_at = isset( $data['created_at'] ) ? (int) $data['created_at'] : 0;
+		$created_at = isset( $token_data['created_at'] ) ? (int) $token_data['created_at'] : 0;
 
 		if ( $created_at <= 0 ) {
-			$reasons[] = Reason_Factory::create( 'missing_time', __( 'Honeypot timing data was missing.', 'simple-honeypot-cf7' ), empty( $data['field_name'] ) ? '' : $data['field_name'], empty( $data['value'] ) ? '' : $data['value'] );
+			$reasons[] = Reason_Factory::create( 'missing_time', __( 'Honeypot timing data was missing.', 'simple-honeypot-cf7' ) );
 			return;
 		}
 
@@ -166,7 +157,7 @@ final class Spam_Checker {
 		$max_age  = max( 10, absint( $settings['max_age_minutes'] ) ) * MINUTE_IN_SECONDS;
 
 		if ( $created_at > $now ) {
-			$reasons[] = Reason_Factory::create( 'future_time', __( 'Honeypot timing data was in the future.', 'simple-honeypot-cf7' ), empty( $data['field_name'] ) ? '' : $data['field_name'], empty( $data['value'] ) ? '' : $data['value'] );
+			$reasons[] = Reason_Factory::create( 'future_time', __( 'Honeypot timing data was in the future.', 'simple-honeypot-cf7' ) );
 			return;
 		}
 
@@ -177,9 +168,7 @@ final class Spam_Checker {
 					/* translators: %d: elapsed seconds. */
 					__( 'Form was submitted with stale honeypot timing data after %d seconds.', 'simple-honeypot-cf7' ),
 					$elapsed
-				),
-				empty( $data['field_name'] ) ? '' : $data['field_name'],
-				empty( $data['value'] ) ? '' : $data['value']
+				)
 			);
 			return;
 		}
@@ -192,9 +181,7 @@ final class Spam_Checker {
 					__( 'Form was submitted too quickly: %1$d seconds elapsed, %2$d seconds required.', 'simple-honeypot-cf7' ),
 					$elapsed,
 					$min_time
-				),
-				empty( $data['field_name'] ) ? '' : $data['field_name'],
-				empty( $data['value'] ) ? '' : $data['value']
+				)
 			);
 		}
 	}
@@ -250,16 +237,17 @@ final class Spam_Checker {
 	/**
 	 * Validate the dynamic honeypot field value.
 	 *
-	 * @param array $reasons Reasons passed by reference.
-	 * @param array $data    Token data.
+	 * @param array  $reasons      Reasons passed by reference.
+	 * @param string $dynamic_name Dynamic field name.
+	 * @param string $field_name   Original honeypot field name.
 	 * @return void
 	 */
-	private function check_honeypot_value( array &$reasons, array $data ) {
-		$dynamic_name = empty( $data['dynamic_name'] ) ? '' : sanitize_key( $data['dynamic_name'] );
-		$field_name   = empty( $data['field_name'] ) ? __( 'unknown field', 'simple-honeypot-cf7' ) : sanitize_key( $data['field_name'] );
+	private function check_honeypot_value( array &$reasons, $dynamic_name, $field_name ) {
+		$dynamic_name = sanitize_key( $dynamic_name );
+		$field_name   = empty( $field_name ) ? __( 'unknown field', 'simple-honeypot-cf7' ) : sanitize_key( $field_name );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading Contact Form 7 submission data.
-		if ( '' === $dynamic_name || ! array_key_exists( $dynamic_name, $_POST ) ) {
+		if ( ! array_key_exists( $dynamic_name, $_POST ) ) {
 			$reasons[] = Reason_Factory::create(
 				'honeypot_missing',
 				sprintf(
@@ -267,8 +255,8 @@ final class Spam_Checker {
 					__( 'Expected honeypot field was missing for "%s".', 'simple-honeypot-cf7' ),
 					$field_name
 				),
-				empty( $data['field_name'] ) ? '' : $data['field_name'],
-				empty( $data['value'] ) ? '' : $data['value']
+				$field_name,
+				''
 			);
 			return;
 		}
@@ -291,7 +279,7 @@ final class Spam_Checker {
 					$field_name,
 					$this->short_value( $value )
 				),
-				empty( $data['field_name'] ) ? '' : $data['field_name'],
+				$field_name,
 				$value
 			);
 		}

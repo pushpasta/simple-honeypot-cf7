@@ -83,13 +83,6 @@ final class Form_Tag {
 	private $rendered_names = array();
 
 	/**
-	 * Per-form pre-generated tokens for cache-compatible hidden fields.
-	 *
-	 * @var array<int,list<string>>
-	 */
-	private static $pre_generated_tokens = array();
-
-	/**
 	 * Per-form pre-generated dynamic names for cache-compatible hidden fields.
 	 *
 	 * @var array<int,list<string>>
@@ -130,12 +123,10 @@ final class Form_Tag {
 		$field_index = $this->field_indices[ $form_id ];
 		++$this->field_indices[ $form_id ];
 
-		// Use pre-generated tokens when available (for page-cache compatibility).
-		if ( isset( self::$pre_generated_tokens[ $form_id ] )
-			&& isset( self::$pre_generated_tokens[ $form_id ][ $field_index ] ) ) {
-			$token             = self::$pre_generated_tokens[ $form_id ][ $field_index ];
-			$dynamic_name      = self::$pre_generated_dynamic_names[ $form_id ][ $field_index ];
-			$tokens_field_name = self::$pre_generated_tokens_field[ $form_id ];
+		// Use pre-generated dynamic names when available (for page-cache compatibility).
+		if ( isset( self::$pre_generated_dynamic_names[ $form_id ] )
+			&& isset( self::$pre_generated_dynamic_names[ $form_id ][ $field_index ] ) ) {
+			$dynamic_name = self::$pre_generated_dynamic_names[ $form_id ][ $field_index ];
 		} else {
 			$existing_names = $this->existing_field_names( $contact_form );
 
@@ -145,10 +136,6 @@ final class Form_Tag {
 
 			$dynamic_name                       = Token::dynamic_name( $form_id, $field_index, $existing_names );
 			$this->rendered_names[ $form_id ][] = $dynamic_name;
-
-			$max_age           = max( 10, absint( $settings['max_age_minutes'] ) ) * MINUTE_IN_SECONDS;
-			$token             = Token::generate( $form_id, $field_name, $dynamic_name, $max_age );
-			$tokens_field_name = Token::tokens_field_name( $form_id );
 		}
 
 		$class = method_exists( $tag, 'get_class_option' ) ? $tag->get_class_option( 'wpcf7-form-control wpcf7-text' ) : 'wpcf7-form-control wpcf7-text';
@@ -156,12 +143,10 @@ final class Form_Tag {
 		$html = $this->template->get(
 			'frontend/honeypot-field.php',
 			array(
-				'class'             => $class,
-				'dynamic_name'      => $dynamic_name,
-				'hiding_style'      => Token::hiding_style( $form_id, $field_index ),
-				'tag_name'          => $tag_name,
-				'token'             => $token,
-				'tokens_field_name' => $tokens_field_name,
+				'class'        => $class,
+				'dynamic_name' => $dynamic_name,
+				'hiding_style' => Token::hiding_style( $form_id, $field_index ),
+				'tag_name'     => $tag_name,
 			)
 		);
 
@@ -169,11 +154,11 @@ final class Form_Tag {
 	}
 
 	/**
-	 * Inject honeypot token fields into CF7's hidden-fields-container.
+	 * Inject a single honeypot token into CF7's hidden-fields-container.
 	 *
-	 * Pre-generates tokens so they are part of CF7's form structure.
-	 * This ensures tokens survive page caching (WP Rocket, etc.) where
-	 * the cached HTML may not include dynamically rendered tag output.
+	 * Pre-generates one form-level token containing timing data and all dynamic
+	 * field names. This ensures the token survives page caching (WP Rocket, etc.)
+	 * where the cached HTML may not include dynamically rendered tag output.
 	 *
 	 * @param array<string,string> $hidden_fields Existing hidden fields.
 	 * @return array<string,string>
@@ -209,22 +194,20 @@ final class Form_Tag {
 		$max_age           = max( 10, absint( $settings['max_age_minutes'] ) ) * MINUTE_IN_SECONDS;
 		$tokens_field_name = Token::tokens_field_name( $form_id );
 		$existing_names    = Contact_Form_7::get_field_names( $contact_form );
-		$tokens            = array();
 		$dynamic_names     = array();
 
 		foreach ( $honeypot_tags as $index => $tag ) {
-			$field_name       = sanitize_key( $tag->name );
 			$dynamic_name     = Token::dynamic_name( $form_id, $index, $existing_names );
 			$dynamic_names[]  = $dynamic_name;
 			$existing_names[] = $dynamic_name;
-			$tokens[]         = Token::generate( $form_id, $field_name, $dynamic_name, $max_age );
 		}
 
-		self::$pre_generated_tokens[ $form_id ]        = $tokens;
+		$token = Token::generate_form_token( $form_id, $dynamic_names, $max_age );
+
 		self::$pre_generated_dynamic_names[ $form_id ] = $dynamic_names;
 		self::$pre_generated_tokens_field[ $form_id ]  = $tokens_field_name;
 
-		$hidden_fields[ $tokens_field_name ] = $tokens;
+		$hidden_fields[ $tokens_field_name ] = $token;
 
 		return $hidden_fields;
 	}

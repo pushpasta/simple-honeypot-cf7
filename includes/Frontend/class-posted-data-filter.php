@@ -48,11 +48,15 @@ final class Posted_Data_Filter {
 		$valid_names = $this->get_valid_field_names( $contact_form );
 
 		// Add dynamic honeypot field names so they are not removed.
-		foreach ( Token::posted_tokens( $form_id ) as $token ) {
-			$data = Token::validate( $token, $form_id );
+		$tokens = Token::posted_tokens( $form_id );
 
-			if ( ! empty( $data['dynamic_name'] ) ) {
-				$valid_names[] = sanitize_key( $data['dynamic_name'] );
+		if ( ! empty( $tokens ) ) {
+			$token_data = Token::validate_form_token( $tokens[0], $form_id );
+
+			if ( ! empty( $token_data['dynamic_names'] ) ) {
+				foreach ( $token_data['dynamic_names'] as $dynamic_name ) {
+					$valid_names[] = sanitize_key( $dynamic_name );
+				}
 			}
 		}
 
@@ -74,26 +78,31 @@ final class Posted_Data_Filter {
 			}
 		}
 
-		foreach ( Token::posted_tokens( $form_id ) as $token ) {
-			$data = Token::validate( $token, $form_id );
+		$tokens = Token::posted_tokens( $form_id );
 
-			if ( empty( $data['dynamic_name'] ) ) {
-				continue;
-			}
+		if ( ! empty( $tokens ) ) {
+			$token_data = Token::validate_form_token( $tokens[0], $form_id );
 
-			$dynamic_name = sanitize_key( $data['dynamic_name'] );
+			if ( ! empty( $token_data['dynamic_names'] ) ) {
+				$honeypot_tags = $this->get_honeypot_tags( $contact_form );
 
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading Contact Form 7 submission data.
-			$value = isset( $_POST[ $dynamic_name ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $dynamic_name ] ) ) : '';
+				foreach ( $token_data['dynamic_names'] as $index => $dynamic_name ) {
+					$dynamic_name = sanitize_key( $dynamic_name );
 
-			if ( mb_strlen( $value ) > 200 ) {
-				$value = mb_substr( $value, 0, 200 );
-			}
+					// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading Contact Form 7 submission data.
+					$value = isset( $_POST[ $dynamic_name ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $dynamic_name ] ) ) : '';
 
-			unset( $posted_data[ $dynamic_name ] );
+					if ( mb_strlen( $value ) > 200 ) {
+						$value = mb_substr( $value, 0, 200 );
+					}
 
-			if ( ! empty( $settings['store_honeypot_value'] ) && '' !== $value ) {
-				$posted_data[ 'honeypot_' . sanitize_key( $data['field_name'] ) ] = $value;
+					unset( $posted_data[ $dynamic_name ] );
+
+					if ( ! empty( $settings['store_honeypot_value'] ) && '' !== $value ) {
+						$field_name                               = isset( $honeypot_tags[ $index ] ) ? sanitize_key( $honeypot_tags[ $index ]->name ) : $dynamic_name;
+						$posted_data[ 'honeypot_' . $field_name ] = $value;
+					}
+				}
 			}
 		}
 
@@ -108,5 +117,28 @@ final class Posted_Data_Filter {
 	 */
 	private function get_valid_field_names( $contact_form ) {
 		return Contact_Form_7::get_field_names( $contact_form );
+	}
+
+	/**
+	 * Get honeypot tags from the contact form.
+	 *
+	 * @param mixed $contact_form Contact Form 7 form object.
+	 * @return array List of honeypot form tags.
+	 */
+	private function get_honeypot_tags( $contact_form ) {
+		if ( ! $contact_form || ! method_exists( $contact_form, 'scan_form_tags' ) ) {
+			return array();
+		}
+
+		$tags = $contact_form->scan_form_tags();
+
+		return array_values(
+			array_filter(
+				$tags,
+				static function ( $tag ) {
+					return isset( $tag->type ) && 'honeypot' === $tag->type;
+				}
+			)
+		);
 	}
 }

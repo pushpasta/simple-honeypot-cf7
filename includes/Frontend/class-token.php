@@ -41,6 +41,53 @@ final class Token {
 	);
 
 	/**
+	 * Derive a site-specific AES key from the WordPress auth salt.
+	 *
+	 * @return string 16-byte key for AES-128.
+	 */
+	private static function encryption_key() {
+		return substr( wp_hash( wp_salt( 'auth' ), 'auth' ), 0, 16 );
+	}
+
+	/**
+	 * Encrypt a payload using AES-128-CTR.
+	 *
+	 * @param string $plaintext Data to encrypt.
+	 * @return string Base64url-encoded ciphertext.
+	 */
+	private static function encrypt( $plaintext ) {
+		$key       = self::encryption_key();
+		$iv        = substr( wp_hash( $key . '|iv' ), 0, 16 );
+		$encrypted = openssl_encrypt( $plaintext, 'aes-128-ctr', $key, OPENSSL_RAW_DATA, $iv );
+
+		if ( false === $encrypted ) {
+			return '';
+		}
+
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Used to encode encrypted ciphertext for transport.
+		return rtrim( base64_encode( $encrypted ), '=' );
+	}
+
+	/**
+	 * Decrypt a payload encrypted with encrypt().
+	 *
+	 * @param string $ciphertext Base64url-encoded ciphertext.
+	 * @return string|false Decrypted plaintext, or false on failure.
+	 */
+	private static function decrypt( $ciphertext ) {
+		$key = self::encryption_key();
+		$iv  = substr( wp_hash( $key . '|iv' ), 0, 16 );
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Used to decode encrypted ciphertext for decryption.
+		$decoded = base64_decode( strtr( $ciphertext, '-_', '+/' ), true );
+
+		if ( false === $decoded ) {
+			return false;
+		}
+
+		return openssl_decrypt( $decoded, 'aes-128-ctr', $key, OPENSSL_RAW_DATA, $iv );
+	}
+
+	/**
 	 * Generate a self-contained signed token.
 	 *
 	 * @param int    $form_id      Contact Form 7 form ID.
@@ -55,24 +102,35 @@ final class Token {
 	}
 
 	/**
-	 * Token format: {created_at}.{form_id}.{field_name}.{dynamic_name}.{max_age}.{hmac_signature}
+	 * Generate a single form-level token that encodes timing data and all dynamic names.
 	 *
-	 * Validation steps:
-	 * 1. Split on '.' → expect 6 parts.
-	 * 2. Recompute HMAC over the first 5 parts; compare with constant-time hash_equals().
-	 * 3. Check expiration: token must not be from the future (+60s clock drift) or beyond max_age.
-	 * 4. If a form_id is provided, verify token belongs to that form.
+	 * Token format: {created_at}.{form_id}.{dynamic_names_csv}.{max_age}.{hmac_signature}
+	 *
+	 * @param int   $form_id       Contact Form 7 form ID.
+	 * @param array $dynamic_names List of dynamic field names for honeypot fields.
+	 * @param int   $max_age       Token lifetime in seconds.
+	 * @return string
 	 */
+	public static function generate_form_token( $form_id, array $dynamic_names, $max_age ) {
+		$payload   = implode( '.', array( time(), (int) $form_id, implode( ',', $dynamic_names ), (int) $max_age ) );
+		$encrypted = self::encrypt( $payload );
+
+		if ( '' === $encrypted ) {
+			return '';
+		}
+
+		return $encrypted . '.' . wp_hash( self::SIGN_PREFIX . $payload );
+	}
 
 	/**
-	 * Validate a token and return its data.
+	 * Validate a form-level token and return its data.
 	 *
 	 * @param string $token           Token string.
 	 * @param int    $current_form_id Current form ID for ownership check (0 to skip).
 	 * @return array Empty array on failure, or data array on success.
 	 */
-	public static function validate( $token, $current_form_id = 0 ) {
-		$cache_key = $token . '|' . (int) $current_form_id;
+	public static function validate_form_token( $token, $current_form_id = 0 ) {
+		$cache_key = 'form|' . $token . '|' . (int) $current_form_id;
 
 		if ( array_key_exists( $cache_key, self::$validate_cache ) ) {
 			return self::$validate_cache[ $cache_key ];
@@ -80,14 +138,20 @@ final class Token {
 
 		$parts = explode( '.', $token );
 
-		if ( count( $parts ) !== 6 ) {
+		if ( 2 !== count( $parts ) ) {
 			self::$validate_cache[ $cache_key ] = array();
 			return array();
 		}
 
-		list( $created_at, $form_id, $field_name, $dynamic_name, $max_age, $signature ) = $parts;
+		list( $encoded_payload, $signature ) = $parts;
 
-		$payload  = implode( '.', array( $created_at, $form_id, $field_name, $dynamic_name, $max_age ) );
+		$payload = self::decrypt( $encoded_payload );
+
+		if ( false === $payload ) {
+			self::$validate_cache[ $cache_key ] = array();
+			return array();
+		}
+
 		$expected = wp_hash( self::SIGN_PREFIX . $payload );
 
 		if ( ! hash_equals( $expected, $signature ) ) {
@@ -95,9 +159,17 @@ final class Token {
 			return array();
 		}
 
-		$created_at = (int) $created_at;
-		$max_age    = (int) $max_age;
-		$form_id    = (int) $form_id;
+		$token_parts = explode( '.', $payload );
+
+		if ( 4 !== count( $token_parts ) ) {
+			self::$validate_cache[ $cache_key ] = array();
+			return array();
+		}
+
+		$created_at        = (int) $token_parts[0];
+		$form_id           = (int) $token_parts[1];
+		$dynamic_names_csv = $token_parts[2];
+		$max_age           = (int) $token_parts[3];
 
 		$now = time();
 
@@ -112,11 +184,10 @@ final class Token {
 		}
 
 		$result = array(
-			'created_at'   => $created_at,
-			'form_id'      => $form_id,
-			'field_name'   => $field_name,
-			'dynamic_name' => $dynamic_name,
-			'max_age'      => $max_age,
+			'created_at'    => $created_at,
+			'form_id'       => $form_id,
+			'dynamic_names' => array_filter( explode( ',', $dynamic_names_csv ) ),
+			'max_age'       => $max_age,
 		);
 
 		self::$validate_cache[ $cache_key ] = $result;
@@ -375,12 +446,19 @@ final class Token {
 		$field = self::tokens_field_name( $form_id );
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Reading Contact Form 7 submission data.
-		if ( empty( $_POST[ $field ] ) || ! is_array( $_POST[ $field ] ) ) {
+		if ( empty( $_POST[ $field ] ) ) {
 			return array();
 		}
 
-		$tokens = array_map( 'wp_unslash', (array) $_POST[ $field ] );
+		$raw = wp_unslash( $_POST[ $field ] );
+
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		if ( is_array( $raw ) ) {
+			$tokens = array_map( 'sanitize_text_field', $raw );
+		} else {
+			$tokens = array( sanitize_text_field( (string) $raw ) );
+		}
 
 		return array_values(
 			array_filter(
