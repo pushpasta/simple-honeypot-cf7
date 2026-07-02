@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.0
 Requires Plugins: contact-form-7
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 License: GNU GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -83,6 +83,12 @@ All plugin data is removed from the database, including settings, statistics, an
 7. **Spam Status:** Detection reason and details recorded for each blocked submission, visible in record-keeping plugins like Flamingo.
 
 == Changelog ==
+
+= 2.1.2 =
+
+= Fixed =
+* Confirm dialog for "Restore to defaults" now registers on all admin pages.
+* Honeypot tokens added to CF7 hidden fields container for compatibility with page caching plugins.
 
 = 2.1.0 =
 
@@ -212,6 +218,9 @@ All plugin data is removed from the database, including settings, statistics, an
 * Initial release.
 
 == Upgrade Notice ==
+
+= 2.1.2 =
+* Fixes confirm dialog on admin pages and honeypot token compatibility with caching plugins. Recommended update for all users.
 
 = 2.1.1 =
 * Fixes checkbox settings not saving when unchecked and import/export data leaks. Recommended update for all users.
