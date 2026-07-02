@@ -71,133 +71,11 @@
 
 	$(
 		function () {
-			const $form = $( '.simple-honeypot-cf7-admin form' );
 
-			if ( ! $form.length ) {
-					return;
-			}
-
-			// Select tag generator output on focus.
-			$( document ).on(
-				'focus',
-				'.insert-box input.tag.code',
-				function () {
-					$( this ).select();
-				}
-			);
-
-			initialData = syncDirty();
-
-			$form.on(
-				'change input',
-				'input, select, textarea',
-				function () {
-					formDirty = syncDirty() !== initialData;
-				}
-			);
-
-			// Clear errors on input.
-			$form.on(
-				'input change',
-				'input[type="number"], input[type="text"], textarea',
-				function () {
-					clearFieldError( $( this ) );
-				}
-			);
-
-			$form.on(
-				'submit',
-				function ( e ) {
-					let valid        = true;
-					const $submitter = $( document.activeElement );
-					const isImport   = $submitter.is( '#simple-honeypot-cf7-import-btn' );
-
-					// Guard: import with no file.
-					if ( isImport && ( ! $importFile.length || ! $importFile[ 0 ].files.length ) ) {
-						showFieldError( $importFile.next( 'label' ), simpleHoneypotCf7.selectFile );
-						valid = false;
-					}
-
-					$form.find( 'input[type="number"]' ).each(
-						function () {
-							const $input = $( this );
-							const val    = $input.val();
-
-							if ( '' === val ) {
-									return;
-							}
-
-							const num   = parseInt( val, 10 );
-							const min   = $input.attr( 'min' );
-							const max   = $input.attr( 'max' );
-							const label = $input.closest( 'tr' ).find( 'label' ).text();
-
-							if ( min !== undefined && num < parseInt( min, 10 ) ) {
-								showFieldError( $input, label + ': ' + simpleHoneypotCf7.valueTooLow.replace( '%s', min ) );
-								valid = false;
-							} else if ( max !== undefined && num > parseInt( max, 10 ) ) {
-								showFieldError( $input, label + ': ' + simpleHoneypotCf7.valueTooHigh.replace( '%s', max ) );
-								valid = false;
-							}
-						}
-					);
-
-					// Validate rules textarea.
-					const $rules = $form.find( '.simple-honeypot-cf7-rules' );
-					if ( $rules.length && ! $rules.prop( 'disabled' ) ) {
-						const errors = validateRules( $rules.val() );
-						if ( errors.length ) {
-							showFieldError( $rules, simpleHoneypotCf7.invalidRules.replace( '%s', errors.join( ', ' ) ) );
-							valid = false;
-						}
-					}
-
-					if ( ! valid ) {
-						e.preventDefault();
-						formDirty = false;
-					} else {
-						formDirty = false;
-						if ( $submitter.is( 'input[type="submit"], button[type="submit"]' ) && ! isImport ) {
-							$submitter.prop( 'disabled', true );
-						}
-					}
-				}
-			);
-
-			// Rules toggle: disable/enable the textarea.
-			$form.on(
-				'change',
-				'.simple-honeypot-cf7-custom-rules-toggle input',
-				function () {
-					const $ta = $( this ).closest( '.simple-honeypot-cf7-custom-rules-group' )
-					.find( '.simple-honeypot-cf7-rules' );
-					$ta.prop( 'disabled', ! this.checked ).toggleClass( 'simple-honeypot-cf7-rules-disabled', ! this.checked );
-				}
-			);
-
-			// Apply initial disabled state on page load.
-			$form.find( '.simple-honeypot-cf7-custom-rules-toggle input:not(:checked)' ).trigger( 'change' );
-
-			// Import: enable button only when file selected.
-			const $importFile       = $( '#simple-honeypot-cf7-import-file' );
-			const $importBtn        = $( '#simple-honeypot-cf7-import-btn' );
-			const $importLabel      = $importFile.next( 'label' );
-			const importDefaultText = $importLabel.text();
-
-			if ( $importFile.length && $importBtn.length ) {
-				$importFile.on(
-					'change',
-					function () {
-						const hasFile = this.files.length > 0;
-						$importBtn.prop( 'disabled', ! hasFile );
-						$importLabel.text( hasFile ? this.files[ 0 ].name : importDefaultText );
-						$importLabel.attr( 'title', hasFile ? this.files[ 0 ].name : '' );
-						clearFieldError( $importFile );
-					}
-				);
-			}
-
-			// Confirm dialog system.
+			// Confirm dialog system — registered on all admin pages so
+			// elements outside the plugin settings form (e.g. the CF7
+			// editor "Restore to defaults" link) still receive a
+			// confirmation dialog before navigating away.
 			let $pendingTrigger = null;
 			let $confirmDialog  = null;
 			let countdownTimer  = null;
@@ -361,6 +239,134 @@
 					closeConfirmDialog();
 				}
 			);
+
+			// ── Plugin settings form (Simple Honeypot admin page only) ──
+
+			const $form = $( '.simple-honeypot-cf7-admin form' );
+
+			if ( ! $form.length ) {
+					return;
+			}
+
+			// Select tag generator output on focus.
+			$( document ).on(
+				'focus',
+				'.insert-box input.tag.code',
+				function () {
+					$( this ).select();
+				}
+			);
+
+			initialData = syncDirty();
+
+			$form.on(
+				'change input',
+				'input, select, textarea',
+				function () {
+					formDirty = syncDirty() !== initialData;
+				}
+			);
+
+			// Clear errors on input.
+			$form.on(
+				'input change',
+				'input[type="number"], input[type="text"], textarea',
+				function () {
+					clearFieldError( $( this ) );
+				}
+			);
+
+			$form.on(
+				'submit',
+				function ( e ) {
+					let valid        = true;
+					const $submitter = $( document.activeElement );
+					const isImport   = $submitter.is( '#simple-honeypot-cf7-import-btn' );
+
+					// Guard: import with no file.
+					if ( isImport && ( ! $importFile.length || ! $importFile[ 0 ].files.length ) ) {
+						showFieldError( $importFile.next( 'label' ), simpleHoneypotCf7.selectFile );
+						valid = false;
+					}
+
+					$form.find( 'input[type="number"]' ).each(
+						function () {
+							const $input = $( this );
+							const val    = $input.val();
+
+							if ( '' === val ) {
+									return;
+							}
+
+							const num   = parseInt( val, 10 );
+							const min   = $input.attr( 'min' );
+							const max   = $input.attr( 'max' );
+							const label = $input.closest( 'tr' ).find( 'label' ).text();
+
+							if ( min !== undefined && num < parseInt( min, 10 ) ) {
+								showFieldError( $input, label + ': ' + simpleHoneypotCf7.valueTooLow.replace( '%s', min ) );
+								valid = false;
+							} else if ( max !== undefined && num > parseInt( max, 10 ) ) {
+								showFieldError( $input, label + ': ' + simpleHoneypotCf7.valueTooHigh.replace( '%s', max ) );
+								valid = false;
+							}
+						}
+					);
+
+					// Validate rules textarea.
+					const $rules = $form.find( '.simple-honeypot-cf7-rules' );
+					if ( $rules.length && ! $rules.prop( 'disabled' ) ) {
+						const errors = validateRules( $rules.val() );
+						if ( errors.length ) {
+							showFieldError( $rules, simpleHoneypotCf7.invalidRules.replace( '%s', errors.join( ', ' ) ) );
+							valid = false;
+						}
+					}
+
+					if ( ! valid ) {
+						e.preventDefault();
+						formDirty = false;
+					} else {
+						formDirty = false;
+						if ( $submitter.is( 'input[type="submit"], button[type="submit"]' ) && ! isImport ) {
+							$submitter.prop( 'disabled', true );
+						}
+					}
+				}
+			);
+
+			// Rules toggle: disable/enable the textarea.
+			$form.on(
+				'change',
+				'.simple-honeypot-cf7-custom-rules-toggle input',
+				function () {
+					const $ta = $( this ).closest( '.simple-honeypot-cf7-custom-rules-group' )
+					.find( '.simple-honeypot-cf7-rules' );
+					$ta.prop( 'disabled', ! this.checked ).toggleClass( 'simple-honeypot-cf7-rules-disabled', ! this.checked );
+				}
+			);
+
+			// Apply initial disabled state on page load.
+			$form.find( '.simple-honeypot-cf7-custom-rules-toggle input:not(:checked)' ).trigger( 'change' );
+
+			// Import: enable button only when file selected.
+			const $importFile       = $( '#simple-honeypot-cf7-import-file' );
+			const $importBtn        = $( '#simple-honeypot-cf7-import-btn' );
+			const $importLabel      = $importFile.next( 'label' );
+			const importDefaultText = $importLabel.text();
+
+			if ( $importFile.length && $importBtn.length ) {
+				$importFile.on(
+					'change',
+					function () {
+						const hasFile = this.files.length > 0;
+						$importBtn.prop( 'disabled', ! hasFile );
+						$importLabel.text( hasFile ? this.files[ 0 ].name : importDefaultText );
+						$importLabel.attr( 'title', hasFile ? this.files[ 0 ].name : '' );
+						clearFieldError( $importFile );
+					}
+				);
+			}
 		}
 	);
 
