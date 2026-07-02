@@ -78,6 +78,16 @@ final class Spam_Checker {
 		$reasons      = array();
 
 		if ( ! $spam ) {
+			if ( ! empty( $settings['pow_enabled'] ) && is_ssl() && ! $this->check_pow( $form_id ) ) {
+				$reasons[] = Reason_Factory::create( 'pow_failed', __( 'Proof-of-Work validation failed.', 'simple-honeypot-cf7' ) );
+			}
+
+			foreach ( Rules::check( $settings, $posted_data, Request::remote_ip(), $email_fields ) as $rule_reason ) {
+				$reasons[] = $rule_reason;
+			}
+		}
+
+		if ( ! $spam && empty( $reasons ) ) {
 			$tokens = Token::posted_tokens( $form_id );
 
 			if ( count( $tokens ) < count( $honeypot_tags ) ) {
@@ -111,16 +121,6 @@ final class Spam_Checker {
 				}
 
 				$this->check_honeypot_value( $reasons, $data );
-			}
-		}
-
-		if ( ! $spam ) {
-			if ( ! empty( $settings['pow_enabled'] ) && is_ssl() && ! $this->check_pow( $form_id ) ) {
-				$reasons[] = Reason_Factory::create( 'pow_failed', __( 'Proof-of-Work validation failed.', 'simple-honeypot-cf7' ) );
-			}
-
-			foreach ( Rules::check( $settings, $posted_data, Request::remote_ip(), $email_fields ) as $rule_reason ) {
-				$reasons[] = $rule_reason;
 			}
 		}
 
