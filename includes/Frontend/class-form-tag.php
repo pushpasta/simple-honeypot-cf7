@@ -41,7 +41,8 @@ final class Form_Tag {
 	 */
 	public function register_hooks() {
 		add_action( 'wpcf7_init', array( $this, 'register' ) );
-		add_filter( 'wpcf7_form_hidden_fields', array( $this, 'add_pow_field' ), 10, 1 );
+		add_filter( 'wpcf7_form_hidden_fields', array( $this, 'add_token_fields' ), 10, 1 );
+		add_filter( 'wpcf7_form_hidden_fields', array( $this, 'add_pow_field' ), 11, 1 );
 	}
 
 	/**
@@ -82,6 +83,27 @@ final class Form_Tag {
 	private $rendered_names = array();
 
 	/**
+	 * Per-form pre-generated tokens for cache-compatible hidden fields.
+	 *
+	 * @var array<int,list<string>>
+	 */
+	private static $pre_generated_tokens = array();
+
+	/**
+	 * Per-form pre-generated dynamic names for cache-compatible hidden fields.
+	 *
+	 * @var array<int,list<string>>
+	 */
+	private static $pre_generated_dynamic_names = array();
+
+	/**
+	 * Per-form tokens field name for cache-compatible hidden fields.
+	 *
+	 * @var array<int,string>
+	 */
+	private static $pre_generated_tokens_field = array();
+
+	/**
 	 * Render a honeypot form tag.
 	 *
 	 * @param mixed $tag Contact Form 7 form tag.
@@ -108,19 +130,28 @@ final class Form_Tag {
 		$field_index = $this->field_indices[ $form_id ];
 		++$this->field_indices[ $form_id ];
 
-		$existing_names = $this->existing_field_names( $contact_form );
+		// Use pre-generated tokens when available (for page-cache compatibility).
+		if ( isset( self::$pre_generated_tokens[ $form_id ] )
+			&& isset( self::$pre_generated_tokens[ $form_id ][ $field_index ] ) ) {
+			$token             = self::$pre_generated_tokens[ $form_id ][ $field_index ];
+			$dynamic_name      = self::$pre_generated_dynamic_names[ $form_id ][ $field_index ];
+			$tokens_field_name = self::$pre_generated_tokens_field[ $form_id ];
+		} else {
+			$existing_names = $this->existing_field_names( $contact_form );
 
-		if ( isset( $this->rendered_names[ $form_id ] ) ) {
-			$existing_names = array_merge( $existing_names, $this->rendered_names[ $form_id ] );
+			if ( isset( $this->rendered_names[ $form_id ] ) ) {
+				$existing_names = array_merge( $existing_names, $this->rendered_names[ $form_id ] );
+			}
+
+			$dynamic_name                       = Token::dynamic_name( $form_id, $field_index, $existing_names );
+			$this->rendered_names[ $form_id ][] = $dynamic_name;
+
+			$max_age           = max( 10, absint( $settings['max_age_minutes'] ) ) * MINUTE_IN_SECONDS;
+			$token             = Token::generate( $form_id, $field_name, $dynamic_name, $max_age );
+			$tokens_field_name = Token::tokens_field_name( $form_id );
 		}
 
-		$dynamic_name                       = Token::dynamic_name( $form_id, $field_index, $existing_names );
-		$this->rendered_names[ $form_id ][] = $dynamic_name;
-
-		$max_age           = max( 10, absint( $settings['max_age_minutes'] ) ) * MINUTE_IN_SECONDS;
-		$token             = Token::generate( $form_id, $field_name, $dynamic_name, $max_age );
-		$tokens_field_name = Token::tokens_field_name( $form_id );
-		$class             = method_exists( $tag, 'get_class_option' ) ? $tag->get_class_option( 'wpcf7-form-control wpcf7-text' ) : 'wpcf7-form-control wpcf7-text';
+		$class = method_exists( $tag, 'get_class_option' ) ? $tag->get_class_option( 'wpcf7-form-control wpcf7-text' ) : 'wpcf7-form-control wpcf7-text';
 
 		$html = $this->template->get(
 			'frontend/honeypot-field.php',
@@ -135,6 +166,67 @@ final class Form_Tag {
 		);
 
 		return apply_filters( SIMPLE_HONEYPOT_CF7_BASE . '_html', $html, $tag );
+	}
+
+	/**
+	 * Inject honeypot token fields into CF7's hidden-fields-container.
+	 *
+	 * Pre-generates tokens so they are part of CF7's form structure.
+	 * This ensures tokens survive page caching (WP Rocket, etc.) where
+	 * the cached HTML may not include dynamically rendered tag output.
+	 *
+	 * @param array<string,string> $hidden_fields Existing hidden fields.
+	 * @return array<string,string>
+	 */
+	public function add_token_fields( $hidden_fields ) {
+		$contact_form = class_exists( '\WPCF7_ContactForm' ) ? \WPCF7_ContactForm::get_current() : null;
+		$form_id      = $contact_form && method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
+
+		if ( ! $form_id ) {
+			return $hidden_fields;
+		}
+
+		$tags = array();
+
+		if ( method_exists( $contact_form, 'scan_form_tags' ) ) {
+			$tags = $contact_form->scan_form_tags();
+		}
+
+		$honeypot_tags = array_values(
+			array_filter(
+				$tags,
+				static function ( $tag ) {
+					return isset( $tag->type ) && 'honeypot' === $tag->type;
+				}
+			)
+		);
+
+		if ( empty( $honeypot_tags ) ) {
+			return $hidden_fields;
+		}
+
+		$settings          = Settings::get_settings();
+		$max_age           = max( 10, absint( $settings['max_age_minutes'] ) ) * MINUTE_IN_SECONDS;
+		$tokens_field_name = Token::tokens_field_name( $form_id );
+		$existing_names    = Contact_Form_7::get_field_names( $contact_form );
+		$tokens            = array();
+		$dynamic_names     = array();
+
+		foreach ( $honeypot_tags as $index => $tag ) {
+			$field_name       = sanitize_key( $tag->name );
+			$dynamic_name     = Token::dynamic_name( $form_id, $index, $existing_names );
+			$dynamic_names[]  = $dynamic_name;
+			$existing_names[] = $dynamic_name;
+			$tokens[]         = Token::generate( $form_id, $field_name, $dynamic_name, $max_age );
+		}
+
+		self::$pre_generated_tokens[ $form_id ]        = $tokens;
+		self::$pre_generated_dynamic_names[ $form_id ] = $dynamic_names;
+		self::$pre_generated_tokens_field[ $form_id ]  = $tokens_field_name;
+
+		$hidden_fields[ $tokens_field_name ] = $tokens;
+
+		return $hidden_fields;
 	}
 
 	/**
