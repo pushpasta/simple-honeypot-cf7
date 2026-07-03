@@ -75,7 +75,9 @@ endif;
 								$message    = isset( $reason['message'] ) ? $reason['message'] : '';
 								$value      = isset( $reason['value'] ) ? $reason['value'] : '';
 								$full       = '' !== $value ? $value : $message;
-								$max_length = max( 10, min( 200, absint( $settings['honeypot_value_max_length'] ) ) );
+								$max_length = isset( $settings['honeypot_value_max_length'] )
+								? max( 10, min( 200, absint( $settings['honeypot_value_max_length'] ) ) )
+								: 100;
 								$truncated  = mb_strlen( $message ) > $max_length;
 								?>
 							<li<?php echo $truncated ? ' title="' . esc_attr( $full ) . '"' : ''; ?>><?php echo esc_html( $truncated ? mb_substr( $message, 0, $max_length ) . '…' : $message ); ?></li>
