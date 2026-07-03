@@ -76,9 +76,20 @@ $version_tooltip = sprintf(
 			<div class="postbox simple-honeypot-cf7-card">
 				<h2 class="hndle"><span class="dashicons dashicons-sos"></span><span><?php esc_html_e( 'Help & Resources', 'simple-honeypot-cf7' ); ?></span></h2>
 				<div class="inside">
+					<?php
+					$bug_report_url = add_query_arg(
+						array(
+							'template'       => 'bug_report.yml',
+							'wp_version'     => get_bloginfo( 'version' ),
+							'plugin_version' => 'v' . SIMPLE_HONEYPOT_CF7_VERSION,
+							'php_version'    => phpversion(),
+						),
+						'https://github.com/pushpasta/simple-honeypot-cf7/issues/new'
+					);
+					?>
 					<ul class="simple-honeypot-cf7-sidebar-links">
 						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/issues/new/choose" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-album"></span><?php esc_html_e( 'Open an issue', 'simple-honeypot-cf7' ); ?></a></li>
-						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/issues/new?template=bug_report.yml" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-warning"></span><?php esc_html_e( 'Report a bug', 'simple-honeypot-cf7' ); ?></a></li>
+						<li><a href="<?php echo esc_url( $bug_report_url ); ?>" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-warning"></span><?php esc_html_e( 'Report a bug', 'simple-honeypot-cf7' ); ?></a></li>
 						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/issues/new?template=feature_request.yml" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-lightbulb"></span><?php esc_html_e( 'Request a feature', 'simple-honeypot-cf7' ); ?></a></li>
 						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/wiki" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-book"></span><?php esc_html_e( 'Wiki', 'simple-honeypot-cf7' ); ?></a></li>
 						<li><a href="https://github.com/pushpasta/simple-honeypot-cf7/releases" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-archive"></span><?php esc_html_e( 'View releases', 'simple-honeypot-cf7' ); ?></a></li>
