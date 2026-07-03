@@ -190,28 +190,37 @@
 							payload.days = parseInt( $( '#shp4cf7_purge_days' ).val(), 10 ) || 90;
 						}
 
-						closeConfirmDialog();
+							closeConfirmDialog();
 
-						$.ajax(
-							{
-								url: simpleHoneypotCf7.restUrl,
-								method: 'POST',
-								contentType: 'application/json',
-								beforeSend: function ( xhr ) {
-									xhr.setRequestHeader( 'X-WP-Nonce', simpleHoneypotCf7.restNonce );
-								},
-								data: JSON.stringify( payload ),
-								dataType: 'json'
-							}
-						).done(
-							function () {
-								window.location.href = simpleHoneypotCf7.tabUrl + '&updated=' + action.replace( 'reset_', '' ).replace( '_', '-' );
-							}
-						).fail(
-							function () {
-								window.location.href = simpleHoneypotCf7.tabUrl + '&updated=action-failed';
-							}
-						);
+							const actionMap = {
+								'reset_stats':         'stats-reset',
+								'reset_settings':      'settings-reset',
+								'purge_events':        'purge-events',
+								'force_update_check':  'update-check-cleared'
+						};
+
+							const redirectKey = actionMap[ action ] || action;
+
+							$.ajax(
+								{
+									url: simpleHoneypotCf7.restUrl,
+									method: 'POST',
+									contentType: 'application/json',
+									beforeSend: function ( xhr ) {
+										xhr.setRequestHeader( 'X-WP-Nonce', simpleHoneypotCf7.restNonce );
+									},
+									data: JSON.stringify( payload ),
+									dataType: 'json'
+								}
+							).done(
+								function () {
+									window.location.href = simpleHoneypotCf7.tabUrl + '&updated=' + redirectKey;
+								}
+							).fail(
+								function () {
+									window.location.href = simpleHoneypotCf7.tabUrl + '&updated=action-failed';
+								}
+							);
 					} else if ( $pendingTrigger.attr( 'href' ) ) {
 						// Direct navigation (e.g. purge link).
 						const href = $pendingTrigger.attr( 'href' );
