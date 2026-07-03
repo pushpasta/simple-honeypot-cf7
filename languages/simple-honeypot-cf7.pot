@@ -2,14 +2,14 @@
 # This file is distributed under the GNU GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Simple Honeypot for Contact Form 7 2.1.2\n"
+"Project-Id-Version: Simple Honeypot for Contact Form 7 2.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/pushpasta/simple-honeypot-cf7/issues\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-02T18:27:23+02:00\n"
+"POT-Creation-Date: 2026-07-03T03:25:15+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-honeypot-cf7\n"
@@ -158,7 +158,7 @@ msgid_plural "Deleted %1$d events older than %2$d days."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Admin/class-rest-api.php:111
+#: includes/Admin/class-rest-api.php:116
 msgid "Invalid action."
 msgstr ""
 
@@ -209,15 +209,19 @@ msgstr ""
 msgid "The action could not be completed. Please try again."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:325
+#: includes/Admin/class-settings-page.php:326
+msgid "Update cache cleared. WordPress will check for new plugin versions on the next Updates screen visit."
+msgstr ""
+
+#: includes/Admin/class-settings-page.php:330
 msgid "Plugin settings have been saved."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:370
+#: includes/Admin/class-settings-page.php:375
 msgid "You do not have permission to export settings."
 msgstr ""
 
-#: includes/Admin/class-settings-page.php:410
+#: includes/Admin/class-settings-page.php:415
 msgid "Failed to encode settings."
 msgstr ""
 
@@ -227,60 +231,70 @@ msgstr ""
 msgid "Honeypot"
 msgstr ""
 
-#: includes/class-github-updater.php:221
+#. translators: %s: Plugin name.
+#: includes/class-github-updater.php:93
+#, php-format
+msgid "More information about %s"
+msgstr ""
+
+#: includes/class-github-updater.php:95
+msgid "View details"
+msgstr ""
+
+#: includes/class-github-updater.php:261
 msgid "Could not initialize filesystem."
 msgstr ""
 
 #. translators: 1: source directory, 2: destination directory
-#: includes/class-github-updater.php:238
+#: includes/class-github-updater.php:278
 #, php-format
 msgid "Could not move %1$s to %2$s"
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:84
-msgid "Honeypot validation token was missing."
-msgstr ""
-
-#: includes/Frontend/class-spam-checker.php:94
-msgid "Honeypot validation token was invalid or expired."
-msgstr ""
-
-#: includes/Frontend/class-spam-checker.php:119
+#: includes/Frontend/class-spam-checker.php:82
 msgid "Proof-of-Work validation failed."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:159
+#: includes/Frontend/class-spam-checker.php:94
+msgid "Honeypot validation token was missing."
+msgstr ""
+
+#: includes/Frontend/class-spam-checker.php:99
+msgid "Honeypot validation token was invalid or expired."
+msgstr ""
+
+#: includes/Frontend/class-spam-checker.php:150
 msgid "Honeypot timing data was missing."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:169
+#: includes/Frontend/class-spam-checker.php:160
 msgid "Honeypot timing data was in the future."
 msgstr ""
 
 #. translators: %d: elapsed seconds.
-#: includes/Frontend/class-spam-checker.php:178
+#: includes/Frontend/class-spam-checker.php:169
 #, php-format
 msgid "Form was submitted with stale honeypot timing data after %d seconds."
 msgstr ""
 
 #. translators: 1: elapsed seconds, 2: required seconds.
-#: includes/Frontend/class-spam-checker.php:192
+#: includes/Frontend/class-spam-checker.php:181
 #, php-format
 msgid "Form was submitted too quickly: %1$d seconds elapsed, %2$d seconds required."
 msgstr ""
 
-#: includes/Frontend/class-spam-checker.php:259
+#: includes/Frontend/class-spam-checker.php:247
 msgid "unknown field"
 msgstr ""
 
 #. translators: %s: honeypot field name.
-#: includes/Frontend/class-spam-checker.php:267
+#: includes/Frontend/class-spam-checker.php:255
 #, php-format
 msgid "Expected honeypot field was missing for \"%s\"."
 msgstr ""
 
 #. translators: 1: field name, 2: submitted value.
-#: includes/Frontend/class-spam-checker.php:290
+#: includes/Frontend/class-spam-checker.php:278
 #, php-format
 msgid "Honeypot field \"%1$s\" was filled with \"%2$s\"."
 msgstr ""
@@ -816,68 +830,88 @@ msgid "Upload a previously exported JSON file. Settings in the file will overwri
 msgstr ""
 
 #: templates/admin/tabs/tools.php:44
-msgid "Danger Zone"
+msgid "Updates"
 msgstr ""
 
 #: templates/admin/tabs/tools.php:46
-msgid "Destructive actions that cannot be undone. Use with caution."
+msgid "Force WordPress to check for plugin updates immediately instead of waiting for the next scheduled check."
 msgstr ""
 
 #: templates/admin/tabs/tools.php:49
-msgid "Purge old events"
+msgid "Force update check"
 msgstr ""
 
 #: templates/admin/tabs/tools.php:51
+msgid "This will clear the WordPress update cache and force a fresh check for all plugin updates."
+msgstr ""
+
+#: templates/admin/tabs/tools.php:51
+msgid "Force Update Check"
+msgstr ""
+
+#: templates/admin/tabs/tools.php:59
+msgid "Danger Zone"
+msgstr ""
+
+#: templates/admin/tabs/tools.php:61
+msgid "Destructive actions that cannot be undone. Use with caution."
+msgstr ""
+
+#: templates/admin/tabs/tools.php:64
+msgid "Purge old events"
+msgstr ""
+
+#: templates/admin/tabs/tools.php:66
 msgid "Delete events older than"
 msgstr ""
 
-#: templates/admin/tabs/tools.php:53
+#: templates/admin/tabs/tools.php:68
 msgid "days"
 msgstr ""
 
 #. translators: %d: number of days
-#: templates/admin/tabs/tools.php:55
+#: templates/admin/tabs/tools.php:70
 #, php-format
 msgid "This will permanently delete event data older than <strong>%d</strong> day(s)."
 msgstr ""
 
 #. translators: %d: number of days
-#: templates/admin/tabs/tools.php:55
+#: templates/admin/tabs/tools.php:70
 msgid "Purge Old Events"
 msgstr ""
 
-#: templates/admin/tabs/tools.php:56
+#: templates/admin/tabs/tools.php:71
 msgid "Delete events older than the specified number of days."
 msgstr ""
 
-#: templates/admin/tabs/tools.php:60
+#: templates/admin/tabs/tools.php:75
 msgid "Clear reporting data"
 msgstr ""
 
-#: templates/admin/tabs/tools.php:62
+#: templates/admin/tabs/tools.php:77
 msgid "This will clear all spam stats, breakdowns, and event logs. This cannot be undone."
 msgstr ""
 
-#: templates/admin/tabs/tools.php:62
+#: templates/admin/tabs/tools.php:77
 msgid "Clear Reporting Data"
 msgstr ""
 
-#: templates/admin/tabs/tools.php:63
+#: templates/admin/tabs/tools.php:78
 msgid "Clear all spam stats, breakdowns, and event logs. This cannot be undone."
 msgstr ""
 
-#: templates/admin/tabs/tools.php:67
+#: templates/admin/tabs/tools.php:82
 msgid "Reset all settings"
 msgstr ""
 
-#: templates/admin/tabs/tools.php:69
+#: templates/admin/tabs/tools.php:84
 msgid "This will reset all global settings to defaults. Reporting data and per-form settings will not be affected."
 msgstr ""
 
-#: templates/admin/tabs/tools.php:69
+#: templates/admin/tabs/tools.php:84
 msgid "Reset All Settings"
 msgstr ""
 
-#: templates/admin/tabs/tools.php:70
+#: templates/admin/tabs/tools.php:85
 msgid "Reset all global settings to their defaults. Reporting data and per-form settings are not affected."
 msgstr ""

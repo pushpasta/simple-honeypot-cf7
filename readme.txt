@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.0
 Requires Plugins: contact-form-7
-Stable tag: 2.1.2
+Stable tag: 2.2.0
 License: GNU GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -83,6 +83,15 @@ All plugin data is removed from the database, including settings, statistics, an
 7. **Spam Status:** Detection reason and details recorded for each blocked submission, visible in record-keeping plugins like Flamingo.
 
 == Changelog ==
+
+= 2.2.0 =
+
+= Added =
+* View details link in plugin description row for easy access to plugin information.
+* Force update check button in Tools tab to manually refresh plugin update cache.
+
+= Fixed =
+* Rules and proof-of-work now validated before token check, providing clearer error messages.
 
 = 2.1.2 =
 
@@ -218,6 +227,9 @@ All plugin data is removed from the database, including settings, statistics, an
 * Initial release.
 
 == Upgrade Notice ==
+
+= 2.2.0 =
+* New View details link and force update check button. Recommended update for all users.
 
 = 2.1.2 =
 * Fixes confirm dialog on admin pages and honeypot token compatibility with caching plugins. Recommended update for all users.
