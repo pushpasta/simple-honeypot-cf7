@@ -144,7 +144,10 @@ final class Settings_Page {
 			$settings = $this->rules_from_post( $settings, $post );
 		}
 
-		Settings::update_settings( $settings );
+		if ( 'settings' === $tab || 'rules' === $tab ) {
+			Settings::update_settings( $settings );
+		}
+
 		$this->redirect( $tab, 'rules' === $tab ? 'rules' : 'settings' );
 	}
 
