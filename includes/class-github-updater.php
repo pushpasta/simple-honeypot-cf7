@@ -59,6 +59,46 @@ final class GitHub_Updater {
 		add_filter( 'site_transient_update_plugins', array( $this, 'check_update' ) );
 		add_filter( 'plugins_api', array( $this, 'plugin_info' ), 10, 3 );
 		add_filter( 'upgrader_source_selection', array( $this, 'fix_source_name' ), 10, 4 );
+		add_filter( 'plugin_row_meta', array( $this, 'add_view_details_link' ), 10, 2 );
+	}
+
+	/**
+	 * Add a "View details" link to the plugin row meta.
+	 *
+	 * @param array  $meta        Existing plugin meta links.
+	 * @param string $plugin_file Plugin file path.
+	 * @return array
+	 */
+	public function add_view_details_link( $meta, $plugin_file ) {
+		if ( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME !== $plugin_file ) {
+			return $meta;
+		}
+
+		$url = add_query_arg(
+			array(
+				'tab'       => 'plugin-information',
+				'plugin'    => $this->slug,
+				'TB_iframe' => 'true',
+				'width'     => '600',
+				'height'    => '550',
+			),
+			self_admin_url( 'plugin-install.php' )
+		);
+
+		$plugin_name  = 'Simple Honeypot for Contact Form 7';
+		$details_link = sprintf(
+			'<a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s" data-title="%3$s">%4$s</a>',
+			esc_url( $url ),
+			/* translators: %s: Plugin name. */
+			esc_attr( sprintf( __( 'More information about %s', 'simple-honeypot-cf7' ), $plugin_name ) ),
+			esc_attr( $plugin_name ),
+			esc_html__( 'View details', 'simple-honeypot-cf7' )
+		);
+
+		// Insert before the last item (Donate link).
+		array_splice( $meta, -1, 0, $details_link );
+
+		return $meta;
 	}
 
 	/**
