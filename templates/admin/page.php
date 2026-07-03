@@ -62,7 +62,13 @@ $version_tooltip = sprintf(
 			extract( $tab_context, EXTR_SKIP );
 		}
 
-		require SIMPLE_HONEYPOT_CF7_PATH . 'templates/' . $tab_template;
+		$template_path = SIMPLE_HONEYPOT_CF7_PATH . 'templates/' . $tab_template;
+		$real_path     = realpath( $template_path );
+		$templates_dir = realpath( SIMPLE_HONEYPOT_CF7_PATH . 'templates' );
+
+		if ( false !== $real_path && 0 === strpos( $real_path, $templates_dir ) && is_readable( $real_path ) ) {
+			require $real_path;
+		}
 		?>
 		</div>
 
