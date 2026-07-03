@@ -281,7 +281,7 @@ final class GitHub_Updater {
 		$readme = apply_filters( self::FILTER_PREFIX . 'readme', null, $tag );
 
 		if ( null !== $readme ) {
-			set_site_transient( $transient_key, $readme, YEAR_IN_SECONDS );
+			set_site_transient( $transient_key, $readme, WEEK_IN_SECONDS );
 
 			return $readme;
 		}
@@ -302,7 +302,7 @@ final class GitHub_Updater {
 		$content = wp_remote_retrieve_body( $response );
 		$data    = $this->parse_readme( $content );
 
-		set_site_transient( $transient_key, $data, YEAR_IN_SECONDS );
+		set_site_transient( $transient_key, $data, WEEK_IN_SECONDS );
 
 		return $data;
 	}
