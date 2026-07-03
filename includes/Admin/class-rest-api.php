@@ -43,7 +43,7 @@ final class Rest_Api {
 					'action' => array(
 						'required'          => true,
 						'type'              => 'string',
-						'enum'              => array( 'reset_stats', 'reset_settings', 'purge_events' ),
+						'enum'              => array( 'reset_stats', 'reset_settings', 'purge_events', 'force_update_check' ),
 						'sanitize_callback' => 'sanitize_key',
 					),
 					'days'   => array(
@@ -104,6 +104,11 @@ final class Rest_Api {
 				);
 				break;
 
+			case 'force_update_check':
+				$this->clear_plugin_update_cache();
+				$this->set_notice_transient( 'update-check-cleared' );
+				break;
+
 			default:
 				return new \WP_REST_Response(
 					array(
@@ -125,5 +130,22 @@ final class Rest_Api {
 	 */
 	private function set_notice_transient( $type ) {
 		set_transient( SIMPLE_HONEYPOT_CF7_BASE . '_redirect_notice', $type, 60 );
+	}
+
+	/**
+	 * Clear the update cache entry for this plugin only.
+	 *
+	 * Deletes the cached GitHub release transient so the updater
+	 * re-fetches from the API on the next update check.
+	 *
+	 * @return void
+	 */
+	private function clear_plugin_update_cache() {
+		$release_key = SIMPLE_HONEYPOT_CF7_BASE . '_github_release';
+		$cached      = get_site_transient( $release_key );
+
+		if ( false !== $cached ) {
+			delete_site_transient( $release_key );
+		}
 	}
 }

@@ -322,6 +322,11 @@ final class Settings_Page {
 			return $result;
 		}
 
+		if ( 'update-check-cleared' === $updated ) {
+			$result['message'] = __( 'Update cache cleared. WordPress will check for new plugin versions on the next Updates screen visit.', 'simple-honeypot-cf7' );
+			return $result;
+		}
+
 		$result['message'] = __( 'Plugin settings have been saved.', 'simple-honeypot-cf7' );
 		return $result;
 	}

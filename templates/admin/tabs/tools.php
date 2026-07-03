@@ -40,6 +40,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </form>
 
+<div class="postbox simple-honeypot-cf7-card">
+	<h2 class="hndle"><span class="dashicons dashicons-update"></span><span><?php esc_html_e( 'Updates', 'simple-honeypot-cf7' ); ?></span></h2>
+	<div class="inside">
+		<p class="description"><?php esc_html_e( 'Force WordPress to check for plugin updates immediately instead of waiting for the next scheduled check.', 'simple-honeypot-cf7' ); ?></p>
+		<table class="form-table" role="presentation">
+			<tr>
+				<th scope="row"><?php esc_html_e( 'Force update check', 'simple-honeypot-cf7' ); ?></th>
+				<td>
+					<button type="button" class="button simple-honeypot-cf7-danger-action" data-action="force_update_check" data-confirm="<?php echo esc_attr__( 'This will clear the WordPress update cache and force a fresh check for all plugin updates.', 'simple-honeypot-cf7' ); ?>"><?php esc_html_e( 'Force Update Check', 'simple-honeypot-cf7' ); ?></button>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
 <div class="postbox simple-honeypot-cf7-card simple-honeypot-cf7-card--danger">
 	<h2 class="hndle"><span class="dashicons dashicons-warning"></span><span><?php esc_html_e( 'Danger Zone', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
