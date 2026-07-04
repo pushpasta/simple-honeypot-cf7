@@ -83,20 +83,6 @@ final class Form_Tag {
 	private $rendered_names = array();
 
 	/**
-	 * Per-form pre-generated dynamic names for cache-compatible hidden fields.
-	 *
-	 * @var array<int,list<string>>
-	 */
-	private static $pre_generated_dynamic_names = array();
-
-	/**
-	 * Per-form tokens field name for cache-compatible hidden fields.
-	 *
-	 * @var array<int,string>
-	 */
-	private static $pre_generated_tokens_field = array();
-
-	/**
 	 * Render a honeypot form tag.
 	 *
 	 * @param mixed $tag Contact Form 7 form tag.
@@ -123,20 +109,14 @@ final class Form_Tag {
 		$field_index = $this->field_indices[ $form_id ];
 		++$this->field_indices[ $form_id ];
 
-		// Use pre-generated dynamic names when available (for page-cache compatibility).
-		if ( isset( self::$pre_generated_dynamic_names[ $form_id ] )
-			&& isset( self::$pre_generated_dynamic_names[ $form_id ][ $field_index ] ) ) {
-			$dynamic_name = self::$pre_generated_dynamic_names[ $form_id ][ $field_index ];
-		} else {
-			$existing_names = $this->existing_field_names( $contact_form );
+		$existing_names = $this->existing_field_names( $contact_form );
 
-			if ( isset( $this->rendered_names[ $form_id ] ) ) {
-				$existing_names = array_merge( $existing_names, $this->rendered_names[ $form_id ] );
-			}
-
-			$dynamic_name                       = Token::dynamic_name( $form_id, $field_index, $existing_names );
-			$this->rendered_names[ $form_id ][] = $dynamic_name;
+		if ( isset( $this->rendered_names[ $form_id ] ) ) {
+			$existing_names = array_merge( $existing_names, $this->rendered_names[ $form_id ] );
 		}
+
+		$dynamic_name                       = Token::dynamic_name( $form_id, $field_index, $existing_names );
+		$this->rendered_names[ $form_id ][] = $dynamic_name;
 
 		$class = method_exists( $tag, 'get_class_option' ) ? $tag->get_class_option( 'wpcf7-form-control wpcf7-text' ) : 'wpcf7-form-control wpcf7-text';
 
@@ -154,11 +134,10 @@ final class Form_Tag {
 	}
 
 	/**
-	 * Inject a single honeypot token into CF7's hidden-fields-container.
+	 * Inject an empty token placeholder into CF7's hidden fields.
 	 *
-	 * Pre-generates one form-level token containing timing data and all dynamic
-	 * field names. This ensures the token survives page caching (WP Rocket, etc.)
-	 * where the cached HTML may not include dynamically rendered tag output.
+	 * The actual token is fetched via AJAX on first form interaction.
+	 * This ensures compatibility with full-page caching plugins.
 	 *
 	 * @param array<string,string> $hidden_fields Existing hidden fields.
 	 * @return array<string,string>
@@ -190,30 +169,18 @@ final class Form_Tag {
 			return $hidden_fields;
 		}
 
-		$settings          = Settings::get_settings();
-		$max_age           = max( 10, absint( $settings['max_age_minutes'] ) ) * MINUTE_IN_SECONDS;
 		$tokens_field_name = Token::tokens_field_name( $form_id );
-		$existing_names    = Contact_Form_7::get_field_names( $contact_form );
-		$dynamic_names     = array();
 
-		foreach ( $honeypot_tags as $index => $tag ) {
-			$dynamic_name     = Token::dynamic_name( $form_id, $index, $existing_names );
-			$dynamic_names[]  = $dynamic_name;
-			$existing_names[] = $dynamic_name;
-		}
-
-		$token = Token::generate_form_token( $form_id, $dynamic_names, $max_age );
-
-		self::$pre_generated_dynamic_names[ $form_id ] = $dynamic_names;
-		self::$pre_generated_tokens_field[ $form_id ]  = $tokens_field_name;
-
-		$hidden_fields[ $tokens_field_name ] = $token;
+		$hidden_fields[ $tokens_field_name ] = '';
 
 		return $hidden_fields;
 	}
 
 	/**
-	 * Inject the proof-of-work hidden field into CF7's hidden-fields-container.
+	 * Inject an empty PoW placeholder into CF7's hidden fields.
+	 *
+	 * The actual PoW challenge is fetched via AJAX on first form interaction.
+	 * This ensures compatibility with full-page caching plugins.
 	 *
 	 * @param array<string,string> $hidden_fields Existing hidden fields.
 	 * @return array<string,string>
@@ -233,11 +200,8 @@ final class Form_Tag {
 		}
 
 		$tokens_field_name = Token::tokens_field_name( $form_id );
-		$pow_challenge     = Token::pow_challenge( $form_id, $settings );
 
-		if ( ! empty( $pow_challenge ) ) {
-			$hidden_fields[ $tokens_field_name . '_pow' ] = $pow_challenge;
-		}
+		$hidden_fields[ $tokens_field_name . '_pow' ] = '';
 
 		return $hidden_fields;
 	}

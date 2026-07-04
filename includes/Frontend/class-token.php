@@ -258,10 +258,14 @@ final class Token {
 	 * @param int   $form_id        Contact Form 7 form ID.
 	 * @param int   $field_index    Index of this honeypot field within the form (0-based).
 	 * @param array $existing_names Optional list of field names already in use.
+	 * @param int   $tick           Optional tick override (defaults to current tick).
 	 * @return string
 	 */
-	public static function dynamic_name( $form_id, $field_index = 0, array $existing_names = array() ) {
-		$tick = (int) floor( time() / self::TICK_SECONDS );
+	public static function dynamic_name( $form_id, $field_index = 0, array $existing_names = array(), $tick = 0 ) {
+		if ( $tick <= 0 ) {
+			$tick = (int) floor( time() / self::TICK_SECONDS );
+		}
+
 		$hash = wp_hash( self::NAME_PREFIX . (int) $form_id . '|' . $tick . '|' . $field_index );
 
 		for ( $attempt = 0; $attempt < 3; $attempt++ ) {
@@ -289,6 +293,29 @@ final class Token {
 		$tick  = (int) floor( time() / self::TICK_SECONDS );
 		$index = hexdec( substr( wp_hash( SIMPLE_HONEYPOT_CF7_BASE . '|hide|' . (int) $form_id . '|' . $tick . '|' . $field_index ), 0, 2 ) ) % count( self::HIDING_STYLES );
 		return self::HIDING_STYLES[ $index ];
+	}
+
+	/**
+	 * Generate dynamic names for a specific tick and field count.
+	 *
+	 * Used by validators to try the previous tick's names when the current
+	 * tick's names don't match (cache boundary edge case).
+	 *
+	 * @param int   $form_id Contact Form 7 form ID.
+	 * @param int   $count   Number of honeypot fields.
+	 * @param int   $tick    Tick to generate names for.
+	 * @param array $existing_names Optional list of field names already in use.
+	 * @return array
+	 */
+	public static function generate_names_for_tick( $form_id, $count, $tick, array $existing_names = array() ) {
+		$names = array();
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			$names[]          = self::dynamic_name( $form_id, $i, $existing_names, $tick );
+			$existing_names[] = $names[ $i ];
+		}
+
+		return $names;
 	}
 
 	/**

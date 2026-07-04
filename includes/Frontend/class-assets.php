@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Enqueues scripts for Proof-of-Work on the frontend.
+ * Enqueues frontend scripts for token fetching and proof-of-work.
  */
 final class Assets {
 
@@ -28,7 +28,7 @@ final class Assets {
 	}
 
 	/**
-	 * Enqueue PoW script when enabled in settings.
+	 * Enqueue frontend scripts.
 	 *
 	 * @return void
 	 */
@@ -37,18 +37,21 @@ final class Assets {
 			return;
 		}
 
-		$settings = Settings::get_settings();
-
-		if ( empty( $settings['pow_enabled'] ) ) {
-			return;
-		}
-
 		wp_enqueue_script(
-			'simple-honeypot-cf7-frontend',
-			SIMPLE_HONEYPOT_CF7_URL . 'resources/frontend/js/frontend.js',
+			'simple-honeypot-cf7-token-fetch',
+			SIMPLE_HONEYPOT_CF7_URL . 'resources/frontend/js/token-fetch.js',
 			array(),
 			SIMPLE_HONEYPOT_CF7_VERSION,
 			true
+		);
+
+		wp_localize_script(
+			'simple-honeypot-cf7-token-fetch',
+			'shp4cf7',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'shp4cf7_token' ),
+			)
 		);
 	}
 }

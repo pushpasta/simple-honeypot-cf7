@@ -8,6 +8,7 @@
 namespace SimpleHoneypotCF7;
 
 use SimpleHoneypotCF7\Admin\Admin;
+use SimpleHoneypotCF7\Frontend\Ajax_Token;
 use SimpleHoneypotCF7\Frontend\Assets as Frontend_Assets;
 use SimpleHoneypotCF7\Frontend\Form_Tag;
 use SimpleHoneypotCF7\Frontend\Posted_Data_Filter;
@@ -52,6 +53,7 @@ final class Plugin {
 		load_plugin_textdomain( 'simple-honeypot-cf7', false, dirname( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ) . '/languages' );
 
 		$admin              = new Admin();
+		$ajax_token         = new Ajax_Token();
 		$frontend_assets    = new Frontend_Assets();
 		$form_tag           = new Form_Tag();
 		$spam_checker       = new Spam_Checker();
@@ -59,6 +61,7 @@ final class Plugin {
 		$updater            = new GitHub_Updater();
 
 		$admin->register_hooks();
+		$ajax_token->register_hooks();
 		$frontend_assets->register_hooks();
 		$form_tag->register_hooks();
 		$spam_checker->register_hooks();
