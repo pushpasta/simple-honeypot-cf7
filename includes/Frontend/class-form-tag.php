@@ -41,8 +41,7 @@ final class Form_Tag {
 	 */
 	public function register_hooks() {
 		add_action( 'wpcf7_init', array( $this, 'register' ) );
-		add_filter( 'wpcf7_form_hidden_fields', array( $this, 'add_token_fields' ), 10, 1 );
-		add_filter( 'wpcf7_form_hidden_fields', array( $this, 'add_pow_field' ), 11, 1 );
+		add_filter( 'wpcf7_form_elements', array( $this, 'inject_security_fields' ), 20, 1 );
 	}
 
 	/**
@@ -134,20 +133,20 @@ final class Form_Tag {
 	}
 
 	/**
-	 * Inject an empty token placeholder into CF7's hidden fields.
+	 * Inject token and PoW hidden fields into the form HTML.
 	 *
-	 * The actual token is fetched via AJAX on first form interaction.
-	 * This ensures compatibility with full-page caching plugins.
+	 * Uses wpcf7_form_elements so the inputs can carry CSS classes
+	 * that the client-side JS uses to locate and populate them.
 	 *
-	 * @param array<string,string> $hidden_fields Existing hidden fields.
-	 * @return array<string,string>
+	 * @param string $form_html The complete form HTML content.
+	 * @return string Modified form HTML.
 	 */
-	public function add_token_fields( $hidden_fields ) {
+	public function inject_security_fields( $form_html ) {
 		$contact_form = class_exists( '\WPCF7_ContactForm' ) ? \WPCF7_ContactForm::get_current() : null;
 		$form_id      = $contact_form && method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
 
 		if ( ! $form_id ) {
-			return $hidden_fields;
+			return $form_html;
 		}
 
 		$tags = array();
@@ -166,44 +165,19 @@ final class Form_Tag {
 		);
 
 		if ( empty( $honeypot_tags ) ) {
-			return $hidden_fields;
+			return $form_html;
 		}
 
 		$tokens_field_name = Token::tokens_field_name( $form_id );
+		$inputs            = '<input type="hidden" class="shp4cf7-token-field" name="' . esc_attr( $tokens_field_name ) . '" value="" />';
 
-		$hidden_fields[ $tokens_field_name ] = '';
-
-		return $hidden_fields;
-	}
-
-	/**
-	 * Inject an empty PoW placeholder into CF7's hidden fields.
-	 *
-	 * The actual PoW challenge is fetched via AJAX on first form interaction.
-	 * This ensures compatibility with full-page caching plugins.
-	 *
-	 * @param array<string,string> $hidden_fields Existing hidden fields.
-	 * @return array<string,string>
-	 */
-	public function add_pow_field( $hidden_fields ) {
 		$settings = Settings::get_settings();
 
-		if ( empty( $settings['pow_enabled'] ) || ! is_ssl() ) {
-			return $hidden_fields;
+		if ( ! empty( $settings['pow_enabled'] ) && is_ssl() ) {
+			$inputs .= '<input type="hidden" class="shp4cf7-pow-field" name="' . esc_attr( $tokens_field_name . '_pow' ) . '" value="" />';
 		}
 
-		$contact_form = class_exists( '\WPCF7_ContactForm' ) ? \WPCF7_ContactForm::get_current() : null;
-		$form_id      = $contact_form && method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
-
-		if ( ! $form_id ) {
-			return $hidden_fields;
-		}
-
-		$tokens_field_name = Token::tokens_field_name( $form_id );
-
-		$hidden_fields[ $tokens_field_name . '_pow' ] = '';
-
-		return $hidden_fields;
+		return $form_html . $inputs;
 	}
 
 	/**
