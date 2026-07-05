@@ -14,7 +14,7 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 
 == Description ==
 
-Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam reporting for Contact Form 7. Everything runs on your server — no external services, no visitor tracking.
+Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam reporting for Contact Form 7. Everything runs on your server — no external services, no visitor tracking. <strong>Requires JavaScript</strong> in the browser.
 
 = Features =
 
@@ -46,7 +46,11 @@ The plugin adds one or more hidden fields that are invisible to legitimate visit
 
 = What is Proof of Work and how does it help? =
 
-Proof of Work requires the visitor's browser to spend a small amount of CPU time computing a hash before the form can be submitted. At the default complexity, this takes roughly 50–100ms — imperceptible to humans — but forces automated spam tools to spend significant resources. It can be enabled or disabled in the settings with configurable difficulty. Requires JavaScript and a secure (HTTPS) connection.
+Proof of Work requires the visitor's browser to spend a small amount of CPU time computing a hash before the form can be submitted. At the default complexity, this takes roughly 50–100ms — imperceptible to humans — but forces automated spam tools to spend significant resources. It can be enabled or disabled in the settings with configurable difficulty. Requires a secure (HTTPS) connection.
+
+= Why does the plugin require JavaScript? =
+
+The plugin uses JavaScript to fetch anti-spam tokens and solve proof-of-work puzzles directly in the browser. This approach is fully compatible with full-page caching solutions and ensures tokens are always fresh. Visitors with JavaScript disabled will be unable to submit protected forms.
 
 = Does the plugin block submissions that are sent too quickly? =
 
