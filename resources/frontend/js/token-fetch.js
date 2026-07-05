@@ -1,12 +1,8 @@
 ( function () {
 	'use strict';
 
-	if ( typeof crypto === 'undefined' || typeof crypto.subtle === 'undefined' ) {
-		return;
-	}
-
 	var fetched = {};
-	var solving = {};
+	var ready   = {};
 
 	function countLeadingZeroBits( hex ) {
 		var bits = 0, i, byte, nibble, hexLen = hex.length;
@@ -55,6 +51,10 @@
 	}
 
 	async function solvePow( challenge, bits ) {
+		if ( typeof crypto === 'undefined' || typeof crypto.subtle === 'undefined' ) {
+			return -1;
+		}
+
 		var nonce = 0, buffer, hash, MAX_NONCE = 10000000;
 
 		while ( nonce < MAX_NONCE ) {
@@ -129,7 +129,7 @@
 
 					tokenField.value = r.data.token;
 
-					if ( r.data.pow ) {
+				if ( r.data.pow ) {
 						var powField = form.querySelector( '.shp4cf7-pow-field' );
 
 						if ( powField ) {
@@ -137,9 +137,27 @@
 							await solvePowField( powField );
 						}
 					}
+
+					ready[ formId ] = true;
 				}
 			);
 	}
+
+	document.addEventListener(
+		'submit',
+		function ( e ) {
+			var form = e.target.closest( '.wpcf7 form' );
+
+			if ( form ) {
+				var formIdInput = form.querySelector( 'input[name="wpcf7_contact_form_id"]' );
+
+				if ( formIdInput && ! ready[ formIdInput.value ] ) {
+					e.preventDefault();
+				}
+			}
+		},
+		true
+	);
 
 	document.addEventListener(
 		'focus',
