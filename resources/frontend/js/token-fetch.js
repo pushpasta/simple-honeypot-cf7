@@ -140,6 +140,11 @@
 
 					ready[ formId ] = true;
 				}
+			)
+			.catch(
+				function () {
+					fetched[ formId ] = false;
+				}
 			);
 	}
 
