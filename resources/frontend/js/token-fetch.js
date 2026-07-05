@@ -1,8 +1,7 @@
 ( function () {
 	'use strict';
 
-	var fetched = {};
-	var ready   = {};
+	var states = new WeakMap();
 
 	function countLeadingZeroBits( hex ) {
 		var bits = 0, i, byte, nibble, hexLen = hex.length;
@@ -51,11 +50,11 @@
 	}
 
 	async function solvePow( challenge, bits ) {
+		var nonce = 0, buffer, hash, MAX_NONCE = 10000000;
+
 		if ( typeof crypto === 'undefined' || typeof crypto.subtle === 'undefined' ) {
 			return -1;
 		}
-
-		var nonce = 0, buffer, hash, MAX_NONCE = 10000000;
 
 		while ( nonce < MAX_NONCE ) {
 			buffer = await sha256( challenge + '.' + nonce );
@@ -77,38 +76,140 @@
 			nonce;
 
 		if ( parts.length !== 5 ) {
-			return;
+			return false;
 		}
 
 		nonce = await solvePow( challenge, parseInt( parts[ 1 ], 10 ) );
 
-		if ( nonce >= 0 ) {
-			powField.value = challenge + '.' + nonce;
+		if ( nonce < 0 ) {
+			return false;
 		}
+
+		powField.value = challenge + '.' + nonce;
+		return true;
 	}
 
-	function fetchSecurityFields( form ) {
-		var formIdInput = form.querySelector( 'input[name="wpcf7_contact_form_id"]' );
-		var tokenField  = form.querySelector( '.shp4cf7-token-field' );
+	function getSecurityField( form, fieldName ) {
+		var field = form.elements.namedItem( fieldName ),
+			container;
 
-		if ( ! formIdInput || ! tokenField || tokenField.value ) {
-			return;
+		if ( field ) {
+			return field;
 		}
 
-		var formId = formIdInput.value;
+		container = form.querySelector( '.hidden-fields-container' );
 
-		if ( fetched[ formId ] ) {
-			return;
+		if ( ! container ) {
+			return null;
 		}
 
-		fetched[ formId ] = true;
+		field       = document.createElement( 'input' );
+		field.type  = 'hidden';
+		field.name  = fieldName;
+		field.value = '';
+		container.appendChild( field );
 
-		var data = new FormData();
+		return field;
+	}
+
+	function refreshHoneypotNames( form, response ) {
+		var wraps     = form.querySelectorAll( '.wpcf7-form-control-wrap[data-name]' ),
+			fields    = [],
+			nameCount = response.honeypot_names.length,
+			wrapCount = wraps.length,
+			i, j, input;
+
+		for ( i = 0; i < nameCount; i++ ) {
+			input = null;
+
+			for ( j = 0; j < wrapCount; j++ ) {
+				if ( wraps[ j ].getAttribute( 'data-name' ) === response.honeypot_names[ i ] ) {
+					input = wraps[ j ].querySelector( 'input, textarea' );
+					break;
+				}
+			}
+
+			if ( ! input || ! response.dynamic_names[ i ] ) {
+				return false;
+			}
+
+			fields.push( input );
+		}
+
+		for ( i = 0; i < nameCount; i++ ) {
+			fields[ i ].name = response.dynamic_names[ i ];
+		}
+
+		return nameCount > 0;
+	}
+
+	async function populateSecurityFields( form, response ) {
+		var tokenField, powField;
+
+		if ( ! response.token || ! response.token_field || ! refreshHoneypotNames( form, response ) ) {
+			return false;
+		}
+
+		tokenField = getSecurityField( form, response.token_field );
+
+		if ( ! tokenField ) {
+			return false;
+		}
+
+		tokenField.value = response.token;
+
+		if ( response.pow ) {
+			powField = getSecurityField( form, response.pow_field );
+
+			if ( ! powField ) {
+				return false;
+			}
+
+			powField.value = response.pow;
+
+			if ( ! await solvePowField( powField ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	function prepareForm( form ) {
+		var formIdInput = form.querySelector( 'input[name="_wpcf7"]' ),
+			state       = states.get( form ),
+			now         = Date.now(),
+			data;
+
+		if ( ! formIdInput || typeof shp4cf7 === 'undefined' || ! shp4cf7.ajaxUrl ) {
+			return Promise.reject();
+		}
+
+		if ( state && state.ready && state.readyUntil > now ) {
+			return Promise.resolve( true );
+		}
+
+		if ( state && state.ready ) {
+			state.ready   = false;
+			state.promise = null;
+		}
+
+		if ( state && state.promise ) {
+			return state.promise;
+		}
+
+		state = {
+			promise:   null,
+			ready:     false,
+			readyUntil: 0,
+		};
+		states.set( form, state );
+
+		data = new FormData();
 		data.append( 'action', 'shp4cf7_get_token' );
-		data.append( 'form_id', formId );
-		data.append( 'nonce', shp4cf7.nonce );
+		data.append( 'form_id', formIdInput.value );
 
-		fetch(
+		state.promise = fetch(
 			shp4cf7.ajaxUrl,
 			{
 				method: 'POST',
@@ -117,60 +218,81 @@
 			}
 		)
 			.then(
-				function ( r ) {
-					return r.json();
+				function ( response ) {
+					if ( ! response.ok ) {
+						throw new Error();
+					}
+
+					return response.json();
 				}
 			)
 			.then(
-				async function ( r ) {
-					if ( ! r.success ) {
-						return;
+				async function ( response ) {
+					if ( ! response.success || ! await populateSecurityFields( form, response.data ) ) {
+						throw new Error();
 					}
 
-					tokenField.value = r.data.token;
-
-					if ( r.data.pow ) {
-						var powField = form.querySelector( '.shp4cf7-pow-field' );
-
-						if ( powField ) {
-							powField.value = r.data.pow;
-							await solvePowField( powField );
-						}
-					}
-
-					ready[ formId ] = true;
+					state.ready      = true;
+					state.readyUntil = Date.now() + ( response.data.expires_in * 1000 );
+					return true;
 				}
 			)
 			.catch(
 				function () {
-					fetched[ formId ] = false;
+					state.promise = null;
+					throw new Error();
 				}
 			);
+
+		return state.promise;
 	}
 
 	document.addEventListener(
 		'submit',
-		function ( e ) {
-			var form = e.target.closest( '.wpcf7 form' );
+		function ( event ) {
+			var form = event.target.closest( '.wpcf7 form' ),
+				state, submitter;
 
-			if ( form ) {
-				var formIdInput = form.querySelector( 'input[name="wpcf7_contact_form_id"]' );
-
-				if ( formIdInput && ! ready[ formIdInput.value ] ) {
-					e.preventDefault();
-				}
+			if ( ! form ) {
+				return;
 			}
+
+			state = states.get( form );
+
+			if ( state && state.ready && state.readyUntil > Date.now() ) {
+				return;
+			}
+
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			submitter = event.submitter;
+
+			prepareForm( form )
+				.then(
+					function () {
+						form.requestSubmit( submitter );
+					}
+				)
+				.catch(
+					function () {
+						// Keep the form available so another submit can retry.
+					}
+				);
 		},
 		true
 	);
 
 	document.addEventListener(
 		'focus',
-		function ( e ) {
-			var form = e.target.closest( '.wpcf7 form' );
+		function ( event ) {
+			var form = event.target.closest( '.wpcf7 form' );
 
 			if ( form ) {
-				fetchSecurityFields( form );
+				prepareForm( form ).catch(
+					function () {
+						// A later interaction or submission will retry.
+					}
+				);
 			}
 		},
 		true

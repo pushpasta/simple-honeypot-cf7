@@ -43,8 +43,7 @@ final class Ajax_Token {
 	 * @return void
 	 */
 	public function handle() {
-		check_ajax_referer( 'shp4cf7_token', 'nonce' );
-
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Public endpoint returns short-lived signed form data.
 		$form_id = absint( $_POST['form_id'] ?? 0 );
 
 		if ( $form_id <= 0 ) {
@@ -57,19 +56,30 @@ final class Ajax_Token {
 			wp_send_json_error( array( 'message' => __( 'Form not found.', 'simple-honeypot-cf7' ) ), 404 );
 		}
 
-		$settings = Settings::get_form_settings( $form_id );
+		$settings = Settings::get_settings();
 		$max_age  = max( 10, absint( $settings['max_age_minutes'] ) ) * MINUTE_IN_SECONDS;
 
-		$dynamic_names = $this->get_dynamic_names( $contact_form, $form_id );
+		$honeypot_tags = $this->get_honeypot_tags( $contact_form );
+		$dynamic_names = $this->get_dynamic_names( $contact_form, $form_id, count( $honeypot_tags ) );
 		$token         = Token::generate_form_token( $form_id, $dynamic_names, $max_age );
+		$token_field   = Token::tokens_field_name( $form_id );
+		$expires_at    = time() + $max_age;
 
 		$result = array(
-			'token' => $token,
+			'dynamic_names'  => $dynamic_names,
+			'honeypot_names' => wp_list_pluck( $honeypot_tags, 'name' ),
+			'token'          => $token,
+			'token_field'    => $token_field,
 		);
 
 		if ( ! empty( $settings['pow_enabled'] ) && is_ssl() ) {
-			$result['pow'] = Token::pow_challenge( $form_id, $settings );
+			$result['pow']       = Token::pow_challenge( $form_id, $settings );
+			$result['pow_field'] = $token_field . '_pow';
+			$pow_expires_at      = ( (int) floor( time() / Token::POW_TICK ) + 2 ) * Token::POW_TICK;
+			$expires_at          = min( $expires_at, $pow_expires_at );
 		}
+
+		$result['expires_in'] = max( 1, $expires_at - time() - 5 );
 
 		wp_send_json_success( $result );
 	}
@@ -82,16 +92,39 @@ final class Ajax_Token {
 	 *
 	 * @param mixed $contact_form Contact Form 7 form object.
 	 * @param int   $form_id      Form ID.
+	 * @param int   $field_count  Number of honeypot fields.
 	 * @return array
 	 */
-	private function get_dynamic_names( $contact_form, $form_id ) {
+	private function get_dynamic_names( $contact_form, $form_id, $field_count ) {
+		if ( $field_count <= 0 ) {
+			return array();
+		}
+
+		$existing_names = Contact_Form_7::get_field_names( $contact_form );
+		$names          = array();
+
+		for ( $index = 0; $index < $field_count; $index++ ) {
+			$names[]          = Token::dynamic_name( $form_id, $index, $existing_names );
+			$existing_names[] = $names[ $index ];
+		}
+
+		return $names;
+	}
+
+	/**
+	 * Get the form's honeypot tags.
+	 *
+	 * @param mixed $contact_form Contact Form 7 form object.
+	 * @return array
+	 */
+	private function get_honeypot_tags( $contact_form ) {
 		$tags = array();
 
 		if ( $contact_form && method_exists( $contact_form, 'scan_form_tags' ) ) {
 			$tags = $contact_form->scan_form_tags();
 		}
 
-		$honeypot_tags = array_values(
+		return array_values(
 			array_filter(
 				$tags,
 				static function ( $tag ) {
@@ -99,19 +132,5 @@ final class Ajax_Token {
 				}
 			)
 		);
-
-		if ( empty( $honeypot_tags ) ) {
-			return array();
-		}
-
-		$existing_names = Contact_Form_7::get_field_names( $contact_form );
-		$names          = array();
-
-		foreach ( $honeypot_tags as $index => $tag ) {
-			$names[]          = Token::dynamic_name( $form_id, $index, $existing_names );
-			$existing_names[] = $names[ $index ];
-		}
-
-		return $names;
 	}
 }

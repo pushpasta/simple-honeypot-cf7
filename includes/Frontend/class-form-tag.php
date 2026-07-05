@@ -41,7 +41,7 @@ final class Form_Tag {
 	 */
 	public function register_hooks() {
 		add_action( 'wpcf7_init', array( $this, 'register' ) );
-		add_filter( 'wpcf7_form_elements', array( $this, 'inject_security_fields' ), 20, 1 );
+		add_filter( 'wpcf7_form_hidden_fields', array( $this, 'add_security_fields' ), 10, 1 );
 	}
 
 	/**
@@ -133,20 +133,19 @@ final class Form_Tag {
 	}
 
 	/**
-	 * Inject token and PoW hidden fields into the form HTML.
+	 * Add empty token and PoW placeholders to CF7's hidden fields.
 	 *
-	 * Uses wpcf7_form_elements so the inputs can carry CSS classes
-	 * that the client-side JS uses to locate and populate them.
+	 * The client populates these fields with fresh values via AJAX.
 	 *
-	 * @param string $form_html The complete form HTML content.
-	 * @return string Modified form HTML.
+	 * @param array<string,string> $hidden_fields Existing hidden fields.
+	 * @return array<string,string> Modified hidden fields.
 	 */
-	public function inject_security_fields( $form_html ) {
+	public function add_security_fields( $hidden_fields ) {
 		$contact_form = class_exists( '\WPCF7_ContactForm' ) ? \WPCF7_ContactForm::get_current() : null;
 		$form_id      = $contact_form && method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
 
 		if ( ! $form_id ) {
-			return $form_html;
+			return $hidden_fields;
 		}
 
 		$tags = array();
@@ -165,19 +164,19 @@ final class Form_Tag {
 		);
 
 		if ( empty( $honeypot_tags ) ) {
-			return $form_html;
+			return $hidden_fields;
 		}
 
-		$tokens_field_name = Token::tokens_field_name( $form_id );
-		$inputs            = '<input type="hidden" class="shp4cf7-token-field" name="' . esc_attr( $tokens_field_name ) . '" value="" />';
+		$tokens_field_name                   = Token::tokens_field_name( $form_id );
+		$hidden_fields[ $tokens_field_name ] = '';
 
 		$settings = Settings::get_settings();
 
 		if ( ! empty( $settings['pow_enabled'] ) && is_ssl() ) {
-			$inputs .= '<input type="hidden" class="shp4cf7-pow-field" name="' . esc_attr( $tokens_field_name . '_pow' ) . '" value="" />';
+			$hidden_fields[ $tokens_field_name . '_pow' ] = '';
 		}
 
-		return $form_html . $inputs;
+		return $hidden_fields;
 	}
 
 	/**

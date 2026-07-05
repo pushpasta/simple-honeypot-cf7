@@ -50,7 +50,6 @@ final class Assets {
 			'shp4cf7',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'shp4cf7_token' ),
 			)
 		);
 	}
