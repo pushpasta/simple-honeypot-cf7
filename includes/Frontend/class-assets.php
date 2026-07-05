@@ -19,6 +19,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Assets {
 
 	/**
+	 * Return the URL for an asset, using the minified version when available.
+	 *
+	 * @param string $relative_path Path relative to the plugin root, e.g. 'resources/frontend/js/token-fetch.js'.
+	 * @return string The URL to the asset.
+	 */
+	private static function get_asset_url( $relative_path ) {
+		$min_path = preg_replace( '/\.(css|js)$/', '.min.$1', $relative_path );
+
+		if ( defined( 'SIMPLE_HONEYPOT_CF7_PATH' ) && file_exists( SIMPLE_HONEYPOT_CF7_PATH . $min_path ) ) {
+			return SIMPLE_HONEYPOT_CF7_URL . $min_path;
+		}
+
+		return SIMPLE_HONEYPOT_CF7_URL . $relative_path;
+	}
+
+	/**
 	 * Register WordPress hooks.
 	 *
 	 * @return void
@@ -39,7 +55,7 @@ final class Assets {
 
 		wp_enqueue_script(
 			'simple-honeypot-cf7-token-fetch',
-			SIMPLE_HONEYPOT_CF7_URL . 'resources/frontend/js/token-fetch.js',
+			self::get_asset_url( 'resources/frontend/js/token-fetch.js' ),
 			array(),
 			SIMPLE_HONEYPOT_CF7_VERSION,
 			true
