@@ -48,8 +48,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="max_age_minutes"><?php esc_html_e( 'Token lifetime', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="number" class="small-text" id="max_age_minutes" name="max_age_minutes" min="10" step="1" value="<?php echo esc_attr( $settings['max_age_minutes'] ); ?>" placeholder="120" />
+						<input type="range" id="max_age_minutes" name="max_age_minutes" min="10" max="120" step="1" value="<?php echo esc_attr( $settings['max_age_minutes'] ); ?>" />
+						<span id="max-age-minutes-value"><?php echo esc_html( $settings['max_age_minutes'] ); ?></span>
 						<?php esc_html_e( 'minutes', 'simple-honeypot-cf7' ); ?>
+						<span id="max-age-minutes-label" class="simple-honeypot-cf7-badge"></span>
+						<p class="description"><?php esc_html_e( 'How long a form token stays valid. Shorter values improve anti-replay protection but may affect users with slow connections.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
 			</table>
@@ -143,12 +146,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<script>
 	(function() {
-		var range = document.getElementById('honeypot_value_max_length');
-		var output = document.getElementById('honeypot-value-max-length-value');
-		if (range && output) {
-			range.addEventListener('input', function() {
-				output.textContent = this.value;
+		var honeypotRange = document.getElementById('honeypot_value_max_length');
+		var honeypotOutput = document.getElementById('honeypot-value-max-length-value');
+		if (honeypotRange && honeypotOutput) {
+			honeypotRange.addEventListener('input', function() {
+				honeypotOutput.textContent = this.value;
 			});
+		}
+
+		var tokenRange = document.getElementById('max_age_minutes');
+		var tokenOutput = document.getElementById('max-age-minutes-value');
+		var tokenLabel = document.getElementById('max-age-minutes-label');
+		var tokenSteps = [10, 30, 60, 120];
+		var tokenLabels = { 10: 'Aggressive', 30: 'Recommended', 60: 'Moderate', 120: 'Max compatibility' };
+		var tokenColors = { 10: 'inactive', 30: 'active', 60: 'info', 120: 'inherited' };
+
+		function updateToken() {
+			var val = parseInt( this.value, 10 );
+			var closest = tokenSteps.reduce(function( prev, curr ) {
+				return Math.abs( curr - val ) < Math.abs( prev - val ) ? curr : prev;
+			});
+			this.value = closest;
+			tokenOutput.textContent = closest;
+			tokenLabel.textContent = tokenLabels[closest];
+			tokenLabel.className = 'simple-honeypot-cf7-badge simple-honeypot-cf7-badge--' + tokenColors[closest];
+		}
+
+		if (tokenRange) {
+			tokenRange.addEventListener( 'input', updateToken );
+			updateToken.call( tokenRange );
 		}
 	})();
 	</script>

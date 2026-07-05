@@ -72,7 +72,7 @@ final class Settings {
 		return array(
 			'time_check_enabled'        => 1,
 			'min_time_seconds'          => 4,
-			'max_age_minutes'           => 120,
+			'max_age_minutes'           => 30,
 			'custom_rules_enabled'      => 0,
 			'custom_rules'              => '',
 			'pow_enabled'               => 0,
@@ -364,7 +364,7 @@ final class Settings {
 	public static function sanitize_global( array $settings ) {
 		$settings['time_check_enabled']        = empty( $settings['time_check_enabled'] ) ? 0 : 1;
 		$settings['min_time_seconds']          = max( 0, absint( $settings['min_time_seconds'] ) );
-		$settings['max_age_minutes']           = max( 10, absint( $settings['max_age_minutes'] ) );
+		$settings['max_age_minutes']           = max( 10, min( 120, absint( $settings['max_age_minutes'] ) ) );
 		$settings['custom_rules_enabled']      = empty( $settings['custom_rules_enabled'] ) ? 0 : 1;
 		$settings['custom_rules']              = self::sanitize_rules( $settings['custom_rules'] ?? '' );
 		$settings['pow_enabled']               = empty( $settings['pow_enabled'] ) ? 0 : 1;
