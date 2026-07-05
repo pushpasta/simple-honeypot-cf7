@@ -129,7 +129,7 @@
 
 					tokenField.value = r.data.token;
 
-				if ( r.data.pow ) {
+					if ( r.data.pow ) {
 						var powField = form.querySelector( '.shp4cf7-pow-field' );
 
 						if ( powField ) {

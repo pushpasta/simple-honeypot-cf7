@@ -65,7 +65,7 @@ final class Posted_Data_Filter {
 				$current_tick  = (int) floor( time() / Token::TICK_SECONDS );
 				$prev_tick     = $current_tick - 1;
 				$honeypot_tags = $this->get_honeypot_tags( $contact_form );
-				$prev_names    = Token::generate_names_for_tick( $form_id, count( $honeypot_tags ), $prev_tick );
+				$prev_names    = Token::generate_names_for_tick( $form_id, count( $honeypot_tags ), $prev_tick, $valid_names );
 
 				foreach ( $prev_names as $prev_name ) {
 					$valid_names[] = sanitize_key( $prev_name );
@@ -98,16 +98,20 @@ final class Posted_Data_Filter {
 
 			if ( ! empty( $token_data['dynamic_names'] ) ) {
 				$honeypot_tags = $this->get_honeypot_tags( $contact_form );
+				$current_tick  = (int) floor( time() / Token::TICK_SECONDS );
+				$prev_names    = Token::generate_names_for_tick( $form_id, count( $honeypot_tags ), $current_tick - 1, $valid_names );
 
-				/*
-				 * Handle tick boundary: try both the token's names and
-				 * the previous tick's names when stripping dynamic fields.
-				 */
-				$current_tick = (int) floor( time() / Token::TICK_SECONDS );
-				$prev_names   = Token::generate_names_for_tick( $form_id, count( $honeypot_tags ), $current_tick - 1 );
-				$all_names    = array_merge( $token_data['dynamic_names'], $prev_names );
+				foreach ( $honeypot_tags as $index => $tag ) {
+					$dynamic_name = isset( $token_data['dynamic_names'][ $index ] ) ? $token_data['dynamic_names'][ $index ] : '';
 
-				foreach ( $all_names as $index => $dynamic_name ) {
+					if ( '' === $dynamic_name && isset( $prev_names[ $index ] ) ) {
+						$dynamic_name = $prev_names[ $index ];
+					}
+
+					if ( '' === $dynamic_name ) {
+						continue;
+					}
+
 					$dynamic_name = sanitize_key( $dynamic_name );
 
 					// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading Contact Form 7 submission data.
@@ -120,8 +124,7 @@ final class Posted_Data_Filter {
 					unset( $posted_data[ $dynamic_name ] );
 
 					if ( ! empty( $settings['store_honeypot_value'] ) && '' !== $value ) {
-						$field_name                               = isset( $honeypot_tags[ $index ] ) ? sanitize_key( $honeypot_tags[ $index ]->name ) : $dynamic_name;
-						$posted_data[ 'honeypot_' . $field_name ] = $value;
+						$posted_data[ 'honeypot_' . sanitize_key( $tag->name ) ] = $value;
 					}
 				}
 			}
