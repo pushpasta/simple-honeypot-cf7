@@ -139,8 +139,31 @@ final class Upgrader {
 			delete_post_meta( $form_id, '_simple_honeypot_cf7_settings' );
 		}
 
-		// 3. Drop old events table if it exists.
+		// 3. Migrate data from the old events table before dropping it.
+		//     The new table uses a different prefix (shp4cf7_events instead of
+		//     simple_honeypot_cf7_events), but the schema is identical.
+		$new_table = $wpdb->prefix . Event_Logger::TABLE;
 		$old_table = $wpdb->prefix . 'simple_honeypot_cf7_events';
+
+		$table_exists = $wpdb->get_var(
+			$wpdb->prepare( 'SHOW TABLES LIKE %s', $old_table ) // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		);
+
+		if ( null !== $table_exists && $old_table === $table_exists ) {
+			$old_row_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$old_table}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+			if ( $old_row_count > 0 ) {
+				// Ensure the new table exists (idempotent — dbDelta handles already-created).
+				Event_Logger::create_table();
+
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$wpdb->query(
+					"INSERT INTO {$new_table} (form_id, form_title, ip, user_agent, reasons, `time`)
+					 SELECT form_id, form_title, ip, user_agent, reasons, `time`
+					 FROM {$old_table}"
+				);
+			}
+		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$wpdb->query( "DROP TABLE IF EXISTS {$old_table}" );
