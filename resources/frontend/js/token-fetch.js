@@ -257,6 +257,11 @@
 				return;
 			}
 
+			// Only intercept forms that have honeypot security fields.
+			if ( ! form.querySelector( '[name^="' + shp4cf7.prefix + '"]' ) ) {
+				return;
+			}
+
 			state = states.get( form );
 
 			if ( state && state.ready && state.readyUntil > Date.now() ) {
@@ -287,7 +292,7 @@
 		function ( event ) {
 			var form = event.target.closest( '.wpcf7 form' );
 
-			if ( form ) {
+			if ( form && form.querySelector( '[name^="' + shp4cf7.prefix + '"]' ) ) {
 				prepareForm( form ).catch(
 					function () {
 						// A later interaction or submission will retry.

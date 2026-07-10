@@ -19,6 +19,7 @@ Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam rep
 = Features =
 
 * 🪤 Adds a `[honeypot]` form tag to Contact Form 7, supporting multiple fields per form.
+* ✅ Forms without `[honeypot]` fields continue working as normal — the plugin does not interfere.
 * 🔒 Server-side token validation — no database queries during validation.
 * 🧩 Dynamic field names that change regularly, cache-friendly and harder for bots to predict.
 * ⏱️ Timing checks flag submissions that arrive faster than a human could fill out the form.
@@ -71,6 +72,10 @@ By default, honeypot fields are removed from submitted data before it is stored.
 = Why was a submission marked as spam? =
 
 The Spam Log shows which rule triggered the detection, such as a filled honeypot field, a failed time check, a blocked keyword, or a custom IP or email rule.
+
+= Are existing forms without honeypots affected? =
+
+No. The plugin only runs on forms that include at least one `[honeypot]` tag. All other CF7 forms keep working exactly as before.
 
 = What happens when the plugin is uninstalled? =
 

@@ -66,6 +66,7 @@ final class Assets {
 			'shp4cf7',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'prefix'  => SIMPLE_HONEYPOT_CF7_BASE,
 			)
 		);
 	}
