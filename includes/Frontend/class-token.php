@@ -32,6 +32,7 @@ final class Token {
 	const FIELD_TYPES     = array( 'text', 'email', 'tel', 'url', 'number', 'date', 'textarea' );
 	const POW_TICK        = 300; // 5-minute PoW challenge window.
 	const POW_SIGN_PREFIX = SIMPLE_HONEYPOT_CF7_BASE . '|pow|sign|';
+	const CONSUMED_OPTION = SIMPLE_HONEYPOT_CF7_BASE . '_consumed';
 
 	const HIDING_STYLES = array(
 		'position:absolute!important;left:-10000px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important;',
@@ -513,5 +514,60 @@ final class Token {
 		}
 
 		return $token;
+	}
+
+	/**
+	 * Mark a token as consumed to prevent replay attacks.
+	 *
+	 * Stores a hashed fingerprint of the token with an expiry matching
+	 * the token's max_age. Once consumed, the same token cannot be used
+	 * for a second submission within that window.
+	 *
+	 * @param string $token   Raw token string.
+	 * @param int    $max_age Token lifetime in seconds.
+	 * @return void
+	 */
+	public static function consume( $token, $max_age ) {
+		$consumed = get_option( self::CONSUMED_OPTION, array() );
+		$hash     = wp_hash( $token );
+		$expires  = time() + $max_age;
+
+		// Prune expired entries on write.
+		$now      = time();
+		$consumed = array_filter(
+			$consumed,
+			static function ( $entry ) use ( $now ) {
+				return $entry['e'] > $now;
+			}
+		);
+
+		$consumed[ $hash ] = array( 'e' => $expires );
+		update_option( self::CONSUMED_OPTION, $consumed, 'no' );
+	}
+
+	/**
+	 * Check whether a token has already been consumed.
+	 *
+	 * @param string $token Raw token string.
+	 * @return bool
+	 */
+	public static function is_consumed( $token ) {
+		$consumed = get_option( self::CONSUMED_OPTION, array() );
+		$hash     = wp_hash( $token );
+		$now      = time();
+
+		// Prune expired entries on read.
+		$pruned = array_filter(
+			$consumed,
+			static function ( $entry ) use ( $now ) {
+				return $entry['e'] > $now;
+			}
+		);
+
+		if ( $pruned !== $consumed ) {
+			update_option( self::CONSUMED_OPTION, $pruned, 'no' );
+		}
+
+		return isset( $pruned[ $hash ] );
 	}
 }

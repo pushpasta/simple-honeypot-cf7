@@ -33,12 +33,23 @@ final class Spam_Checker {
 	private $reporter;
 
 	/**
+	 * Pending token consumption data.
+	 *
+	 * Set during spam checks, consumed only after all spam filters
+	 * have passed and before the mail is sent.
+	 *
+	 * @var array{0: string, 1: int}|null
+	 */
+	private $pending_consumption;
+
+	/**
 	 * Register Contact Form 7 hooks.
 	 *
 	 * @return void
 	 */
 	public function register_hooks() {
 		add_filter( 'wpcf7_spam', array( $this, 'check' ), 10, 2 );
+		add_action( 'wpcf7_before_send_mail', array( $this, 'maybe_consume_pending_token' ), 10, 1 );
 	}
 
 	/**
@@ -73,10 +84,11 @@ final class Spam_Checker {
 			return $spam;
 		}
 
-		$settings     = Settings::get_settings();
-		$posted_data  = $this->submission_posted_data( $submission );
-		$email_fields = $this->email_type_fields_from_tags( $tags );
-		$reasons      = array();
+		$settings                  = Settings::get_settings();
+		$posted_data               = $this->submission_posted_data( $submission );
+		$email_fields              = $this->email_type_fields_from_tags( $tags );
+		$reasons                   = array();
+		$this->pending_consumption = null;
 
 		if ( ! $spam ) {
 			if ( ! empty( $settings['pow_enabled'] ) && is_ssl() && ! $this->check_pow( $form_id ) ) {
@@ -98,7 +110,11 @@ final class Spam_Checker {
 
 				if ( empty( $token_data ) ) {
 					$reasons[] = Reason_Factory::create( 'invalid_token', __( 'Honeypot validation token was invalid or expired.', 'simple-honeypot-cf7' ) );
+				} elseif ( Token::is_consumed( $tokens[0] ) ) {
+					$reasons[] = Reason_Factory::create( 'reused_token', __( 'Honeypot token has already been used.', 'simple-honeypot-cf7' ) );
 				} else {
+					$this->pending_consumption = array( $tokens[0], $token_data['max_age'] );
+
 					$this->check_submission_time( $reasons, $form_id, $token_data, $settings );
 
 					$dynamic_names = $token_data['dynamic_names'];
@@ -353,5 +369,25 @@ final class Spam_Checker {
 	 */
 	private function check_pow( $form_id ) {
 		return Token::check_pow( $form_id );
+	}
+
+	/**
+	 * Consume the pending token just before the mail is sent.
+	 *
+	 * Fires after all spam filters have passed. This ensures the
+	 * token is only consumed once CF7 has committed to sending
+	 * the message — preventing replay attacks without burning
+	 * the token on false positives from later spam filters.
+	 *
+	 * @param \WPCF7_ContactForm $contact_form The current contact form.
+	 * @return void
+	 */
+	public function maybe_consume_pending_token( $contact_form ) {
+		if ( null === $this->pending_consumption ) {
+			return;
+		}
+
+		Token::consume( $this->pending_consumption[0], $this->pending_consumption[1] );
+		$this->pending_consumption = null;
 	}
 }
