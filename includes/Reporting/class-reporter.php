@@ -71,8 +71,6 @@ final class Reporter {
 			Event_Logger::purge_old( $purge_days );
 			set_transient( SIMPLE_HONEYPOT_CF7_BASE . '_purge_old', '1', HOUR_IN_SECONDS );
 		}
-
-		Event_Logger::purge_excess( $settings['keep_recent_events'] );
 	}
 
 	/**

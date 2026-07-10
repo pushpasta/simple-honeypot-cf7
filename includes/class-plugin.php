@@ -13,6 +13,7 @@ use SimpleHoneypotCF7\Frontend\Assets as Frontend_Assets;
 use SimpleHoneypotCF7\Frontend\Form_Tag;
 use SimpleHoneypotCF7\Frontend\Posted_Data_Filter;
 use SimpleHoneypotCF7\Frontend\Spam_Checker;
+use SimpleHoneypotCF7\Reporting\Cron_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -67,5 +68,6 @@ final class Plugin {
 		$spam_checker->register_hooks();
 		$posted_data_filter->register_hooks();
 		$updater->register_hooks();
+		Cron_Handler::register();
 	}
 }

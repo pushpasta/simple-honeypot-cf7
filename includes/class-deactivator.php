@@ -22,5 +22,10 @@ final class Deactivator {
 	 * @return void
 	 */
 	public static function deactivate() {
+		$timestamp = wp_next_scheduled( 'shp4cf7_purge_excess' );
+
+		if ( $timestamp ) {
+			wp_unschedule_event( $timestamp, 'shp4cf7_purge_excess' );
+		}
 	}
 }

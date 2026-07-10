@@ -28,6 +28,7 @@ final class Activator {
 		Settings::activate();
 		self::setup_events_table();
 		self::opt_in_auto_updates();
+		self::setup_purge_cron();
 	}
 
 	/**
@@ -38,6 +39,17 @@ final class Activator {
 	private static function setup_events_table() {
 		Event_Logger::create_table();
 		Event_Logger::migrate_from_options( Settings::STATS_OPTION );
+	}
+
+	/**
+	 * Schedule the hourly purge_excess cron event.
+	 *
+	 * @return void
+	 */
+	private static function setup_purge_cron() {
+		if ( ! wp_next_scheduled( 'shp4cf7_purge_excess' ) ) {
+			wp_schedule_event( time(), 'hourly', 'shp4cf7_purge_excess' );
+		}
 	}
 
 	/**

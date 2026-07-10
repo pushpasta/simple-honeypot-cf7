@@ -233,6 +233,9 @@ final class Event_Logger {
 	/**
 	 * Keep only the newest N events, delete the rest.
 	 *
+	 * Uses the auto-increment primary key for a fast index-only scan
+	 * instead of a subquery on `time`.
+	 *
 	 * @param int $keep Number of events to keep.
 	 * @return int Number of events deleted.
 	 */
@@ -242,8 +245,25 @@ final class Event_Logger {
 		$keep  = max( 10, absint( $keep ) );
 		$table = $wpdb->prefix . self::TABLE;
 
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$cutoff = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COALESCE(MIN(id), 0) FROM (SELECT id FROM {$table} ORDER BY id DESC LIMIT %d) AS newest",
+				$keep
+			)
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		$cutoff = (int) $cutoff;
+
+		if ( $cutoff <= 0 ) {
+			return 0;
+		}
+
+		// Delete everything older than the cutoff. The cutoff row and
+		// all newer rows are kept.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$deleted = $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE id NOT IN ( SELECT id FROM ( SELECT id FROM {$table} ORDER BY time DESC LIMIT %d ) AS keep_ids )", $keep ) );
+		$deleted = $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE id < %d", $cutoff ) );
 
 		return is_int( $deleted ) ? $deleted : 0;
 	}
