@@ -15,7 +15,7 @@ if ( ! isset( $pagination ) || $pagination['total_pages'] <= 1 ) {
 	return;
 }
 
-$page_url = admin_url( 'admin.php?page=simple-honeypot-cf7&tab=reports' );
+$page_url = admin_url( 'admin.php?page=simple-honeypot-cf7&tab=reports#shp4cf7-events' );
 
 $links = array();
 for ( $i = 1; $i <= $pagination['total_pages']; $i++ ) {

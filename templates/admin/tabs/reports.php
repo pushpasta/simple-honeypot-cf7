@@ -121,7 +121,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </div>
 
-<div class="postbox simple-honeypot-cf7-card">
+<div id="shp4cf7-events" class="postbox simple-honeypot-cf7-card">
 	<h2 class="hndle"><span class="dashicons dashicons-list-view"></span><span><?php esc_html_e( 'Recent Events', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
 		<?php
