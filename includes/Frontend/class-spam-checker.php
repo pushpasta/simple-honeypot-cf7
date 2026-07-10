@@ -119,28 +119,32 @@ final class Spam_Checker {
 
 					$dynamic_names = $token_data['dynamic_names'];
 
-					/*
-					 * Handle the tick boundary edge case: the cached form may have
-					 * been rendered in the previous tick. Try both the token's names
-					 * and the previous tick's names.
-					 */
-					$current_tick   = (int) floor( time() / Token::TICK_SECONDS );
-					$prev_tick      = $current_tick - 1;
-					$existing_names = Contact_Form_7::get_field_names( $contact_form );
-					$prev_names     = Token::generate_names_for_tick( $form_id, count( $honeypot_tags ), $prev_tick, $existing_names );
+					if ( count( $dynamic_names ) !== count( $honeypot_tags ) ) {
+						$reasons[] = Reason_Factory::create( 'token_mismatch', __( 'Honeypot token does not match the number of configured fields.', 'simple-honeypot-cf7' ) );
+					} else {
+						/*
+						 * Handle the tick boundary edge case: the cached form may have
+						 * been rendered in the previous tick. Try both the token's names
+						 * and the previous tick's names.
+						 */
+						$current_tick   = (int) floor( time() / Token::TICK_SECONDS );
+						$prev_tick      = $current_tick - 1;
+						$existing_names = Contact_Form_7::get_field_names( $contact_form );
+						$prev_names     = Token::generate_names_for_tick( $form_id, count( $honeypot_tags ), $prev_tick, $existing_names );
 
-					foreach ( $honeypot_tags as $index => $tag ) {
-						$dynamic_name = isset( $dynamic_names[ $index ] ) ? $dynamic_names[ $index ] : '';
+						foreach ( $honeypot_tags as $index => $tag ) {
+							$dynamic_name = isset( $dynamic_names[ $index ] ) ? $dynamic_names[ $index ] : '';
 
-						if ( '' === $dynamic_name && isset( $prev_names[ $index ] ) ) {
-							$dynamic_name = $prev_names[ $index ];
+							if ( '' === $dynamic_name && isset( $prev_names[ $index ] ) ) {
+								$dynamic_name = $prev_names[ $index ];
+							}
+
+							if ( '' === $dynamic_name ) {
+								continue;
+							}
+
+							$this->check_honeypot_value( $reasons, $dynamic_name, $tag->name );
 						}
-
-						if ( '' === $dynamic_name ) {
-							continue;
-						}
-
-						$this->check_honeypot_value( $reasons, $dynamic_name, $tag->name );
 					}
 				}
 			}
