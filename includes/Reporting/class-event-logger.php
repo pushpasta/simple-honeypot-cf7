@@ -195,7 +195,7 @@ final class Event_Logger {
 		$table = $wpdb->prefix . self::TABLE;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$row = $wpdb->get_row( "SELECT SUM( time >= CURDATE() ) AS today, SUM( time >= CURDATE() - INTERVAL 1 DAY AND time < CURDATE() ) AS yesterday, SUM( time >= CURDATE() - INTERVAL 7 DAY ) AS last_7_days, SUM( time >= DATE_FORMAT( CURDATE(), '%Y-%m-01' ) ) AS this_month, SUM( time >= DATE_FORMAT( CURDATE() - INTERVAL 1 MONTH, '%Y-%m-01' ) AND time < DATE_FORMAT( CURDATE(), '%Y-%m-01' ) ) AS last_month, COUNT(*) AS total FROM {$table}", ARRAY_A );
+		$row = $wpdb->get_row( "SELECT SUM( time >= UTC_DATE() ) AS today, SUM( time >= UTC_DATE() - INTERVAL 1 DAY AND time < UTC_DATE() ) AS yesterday, SUM( time >= UTC_DATE() - INTERVAL 7 DAY ) AS last_7_days, SUM( time >= DATE_FORMAT( UTC_DATE(), '%Y-%m-01' ) ) AS this_month, SUM( time >= DATE_FORMAT( UTC_DATE() - INTERVAL 1 MONTH, '%Y-%m-01' ) AND time < DATE_FORMAT( UTC_DATE(), '%Y-%m-01' ) ) AS last_month, COUNT(*) AS total FROM {$table}", ARRAY_A );
 
 		if ( ! is_array( $row ) ) {
 			return array(
