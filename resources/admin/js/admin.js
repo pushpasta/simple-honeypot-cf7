@@ -238,14 +238,6 @@
 				}
 			);
 
-			$( document ).on(
-				'click',
-				'.simple-honeypot-cf7-dialog-backdrop',
-				function () {
-					closeConfirmDialog();
-				}
-			);
-
 			// ── Plugin settings form (Simple Honeypot admin page only) ──
 
 			const $form = $( '.simple-honeypot-cf7-admin form' );
