@@ -134,7 +134,7 @@ final class Importer {
 
 		$settings['time_check_enabled']        = empty( $settings['time_check_enabled'] ) ? 0 : 1;
 		$settings['min_time_seconds']          = max( 0, absint( $settings['min_time_seconds'] ) );
-		$settings['max_age_minutes']           = max( 10, min( 120, absint( $settings['max_age_minutes'] ) ) );
+		$settings['max_age_minutes']           = max( 10, min( 90, absint( $settings['max_age_minutes'] ) ) );
 		$settings['pow_enabled']               = empty( $settings['pow_enabled'] ) ? 0 : 1;
 		$settings['pow_complexity']            = max( 4, min( 20, absint( $settings['pow_complexity'] ) ) );
 		$settings['store_honeypot_value']      = empty( $settings['store_honeypot_value'] ) ? 0 : 1;
