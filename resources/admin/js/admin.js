@@ -26,9 +26,6 @@
 				}
 
 				let typed = line;
-				if ( /^(ip|email):/i.test( typed ) ) {
-					typed = typed.replace( /^(ip|email):/i, '' );
-				}
 
 				if ( '' === typed ) {
 					return;
@@ -39,7 +36,7 @@
 
 				if ( typed.indexOf( '@' ) !== -1 ) {
 					isEmail = true;
-				} else if ( /^\d[\d.\*\/]+$/.test( typed ) && typed.indexOf( '.' ) !== -1 ) {
+				} else if ( /^[\d\*][\d.\*\/]+$/.test( typed ) && typed.indexOf( '.' ) !== -1 ) {
 					isIp = true;
 				} else if ( /^[0-9a-fA-F:\*\/]+$/.test( typed ) && ( typed.split( ':' ).length - 1 ) >= 2 ) {
 					isIp = true;
