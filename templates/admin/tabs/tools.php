@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<tr>
 				<th scope="row"><?php esc_html_e( 'Force update check', 'simple-honeypot-cf7' ); ?></th>
 				<td>
-					<button type="button" class="button simple-honeypot-cf7-danger-action" data-action="force_update_check" data-confirm="<?php echo esc_attr__( 'This will clear the WordPress update cache and force a fresh check for all plugin updates.', 'simple-honeypot-cf7' ); ?>"><?php esc_html_e( 'Force Update Check', 'simple-honeypot-cf7' ); ?></button>
+					<button type="button" class="button" data-action="force_update_check" data-confirm="<?php echo esc_attr__( 'This will clear the WordPress update cache and force a fresh check for all plugin updates.', 'simple-honeypot-cf7' ); ?>"><?php esc_html_e( 'Force Update Check', 'simple-honeypot-cf7' ); ?></button>
 				</td>
 			</tr>
 		</table>
@@ -67,21 +67,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<input type="number" id="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_purge_days' ); ?>" class="small-text" min="1" step="1" value="90" placeholder="90" />
 					<?php esc_html_e( 'days', 'simple-honeypot-cf7' ); ?>
 					<?php /* translators: %d: number of days */ ?>
-					<button type="button" class="button button-delete simple-honeypot-cf7-danger-action" data-action="purge_events" data-confirm="<?php echo esc_attr__( 'This will permanently delete event data older than <strong>%d</strong> day(s).', 'simple-honeypot-cf7' ); ?>" data-confirm-days="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_purge_days' ); ?>" data-confirm-danger="1"><?php esc_html_e( 'Purge Old Events', 'simple-honeypot-cf7' ); ?></button>
+					<button type="button" class="button button-delete" data-action="purge_events" data-confirm="<?php echo esc_attr__( 'This will permanently delete event data older than <strong>%d</strong> day(s).', 'simple-honeypot-cf7' ); ?>" data-confirm-days="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_purge_days' ); ?>" data-confirm-danger="1"><?php esc_html_e( 'Purge Old Events', 'simple-honeypot-cf7' ); ?></button>
 					<p class="description"><?php esc_html_e( 'Delete events older than the specified number of days.', 'simple-honeypot-cf7' ); ?></p>
 				</td>
 			</tr>
 			<tr>
 				<th scope="row"><?php esc_html_e( 'Clear reporting data', 'simple-honeypot-cf7' ); ?></th>
 				<td>
-					<button type="button" class="button button-delete simple-honeypot-cf7-danger-action" data-action="reset_stats" data-confirm="<?php echo esc_attr__( 'This will clear all spam stats, breakdowns, and event logs. This cannot be undone.', 'simple-honeypot-cf7' ); ?>" data-confirm-danger="1"><?php esc_html_e( 'Clear Reporting Data', 'simple-honeypot-cf7' ); ?></button>
+					<button type="button" class="button button-delete" data-action="reset_stats" data-confirm="<?php echo esc_attr__( 'This will clear all spam stats, breakdowns, and event logs. This cannot be undone.', 'simple-honeypot-cf7' ); ?>" data-confirm-danger="1"><?php esc_html_e( 'Clear Reporting Data', 'simple-honeypot-cf7' ); ?></button>
 					<p class="description"><?php esc_html_e( 'Clear all spam stats, breakdowns, and event logs. This cannot be undone.', 'simple-honeypot-cf7' ); ?></p>
 				</td>
 			</tr>
 			<tr>
 				<th scope="row"><?php esc_html_e( 'Reset all settings', 'simple-honeypot-cf7' ); ?></th>
 				<td>
-					<button type="button" class="button button-delete simple-honeypot-cf7-danger-action" data-action="reset_settings" data-confirm="<?php echo esc_attr__( 'This will reset all global settings to defaults. Reporting data and per-form settings will not be affected.', 'simple-honeypot-cf7' ); ?>" data-confirm-danger="1"><?php esc_html_e( 'Reset All Settings', 'simple-honeypot-cf7' ); ?></button>
+					<button type="button" class="button button-delete" data-action="reset_settings" data-confirm="<?php echo esc_attr__( 'This will reset all global settings to defaults. Reporting data and per-form settings will not be affected.', 'simple-honeypot-cf7' ); ?>" data-confirm-danger="1"><?php esc_html_e( 'Reset All Settings', 'simple-honeypot-cf7' ); ?></button>
 					<p class="description"><?php esc_html_e( 'Reset all global settings to their defaults. Reporting data and per-form settings are not affected.', 'simple-honeypot-cf7' ); ?></p>
 				</td>
 			</tr>
