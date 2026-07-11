@@ -122,7 +122,7 @@ final class Form_Panel {
 		delete_post_meta( $form_id, Settings::FORM_META );
 
 		set_transient(
-			SIMPLE_HONEYPOT_CF7_BASE . '_reset_notice',
+			SIMPLE_HONEYPOT_CF7_BASE . '_reset_notice_' . get_current_user_id(),
 			array(
 				'form_id' => $form_id,
 			),

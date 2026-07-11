@@ -81,12 +81,10 @@ final class Rest_Api {
 		switch ( $action ) {
 			case 'reset_stats':
 				Settings::reset_stats();
-				$this->set_notice_transient( 'stats-reset' );
 				break;
 
 			case 'reset_settings':
 				Settings::reset_settings();
-				$this->set_notice_transient( 'settings-reset' );
 				break;
 
 			case 'purge_events':
@@ -95,7 +93,7 @@ final class Rest_Api {
 				$removed = Event_Logger::purge_old( $days );
 
 				set_transient(
-					SIMPLE_HONEYPOT_CF7_BASE . '_purge_notice',
+					SIMPLE_HONEYPOT_CF7_BASE . '_purge_notice_' . get_current_user_id(),
 					array(
 						'removed' => $removed,
 						'days'    => $days,
@@ -106,7 +104,6 @@ final class Rest_Api {
 
 			case 'force_update_check':
 				$this->clear_plugin_update_cache();
-				$this->set_notice_transient( 'update-check-cleared' );
 				break;
 
 			default:
@@ -120,16 +117,6 @@ final class Rest_Api {
 		}
 
 		return new \WP_REST_Response( array( 'success' => true ), 200 );
-	}
-
-	/**
-	 * Set a notice transient for redirect-based feedback.
-	 *
-	 * @param string $type Notice type (e.g. 'stats-reset', 'settings-reset').
-	 * @return void
-	 */
-	private function set_notice_transient( $type ) {
-		set_transient( SIMPLE_HONEYPOT_CF7_BASE . '_redirect_notice', $type, 60 );
 	}
 
 	/**

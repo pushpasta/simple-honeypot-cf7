@@ -100,13 +100,14 @@ final class Notices {
 	 * @return void
 	 */
 	public function reset_form_notice() {
-		$notice = get_transient( SIMPLE_HONEYPOT_CF7_BASE . '_reset_notice' );
+		$key    = SIMPLE_HONEYPOT_CF7_BASE . '_reset_notice_' . get_current_user_id();
+		$notice = get_transient( $key );
 
 		if ( ! $notice || empty( $notice['form_id'] ) ) {
 			return;
 		}
 
-		delete_transient( SIMPLE_HONEYPOT_CF7_BASE . '_reset_notice' );
+		delete_transient( $key );
 
 		self::render(
 			__( 'Per-form settings for this form have been restored to defaults.', 'simple-honeypot-cf7' ),
@@ -121,13 +122,14 @@ final class Notices {
 	 * @return void
 	 */
 	public function purge_events_notice() {
-		$notice = get_transient( SIMPLE_HONEYPOT_CF7_BASE . '_purge_notice' );
+		$key    = SIMPLE_HONEYPOT_CF7_BASE . '_purge_notice_' . get_current_user_id();
+		$notice = get_transient( $key );
 
 		if ( ! $notice || ! is_array( $notice ) ) {
 			return;
 		}
 
-		delete_transient( SIMPLE_HONEYPOT_CF7_BASE . '_purge_notice' );
+		delete_transient( $key );
 
 		$removed = isset( $notice['removed'] ) ? absint( $notice['removed'] ) : 0;
 		$days    = isset( $notice['days'] ) ? absint( $notice['days'] ) : 0;
