@@ -101,49 +101,55 @@ final class Spam_Checker {
 		}
 
 		if ( ! $spam && empty( $reasons ) ) {
-			$tokens = Token::posted_tokens( $form_id );
-
-			if ( empty( $tokens ) ) {
+			if ( ! Token::has_token_field( $form_id ) ) {
 				$reasons[] = Reason_Factory::create( 'missing_token', __( 'Honeypot validation token was missing.', 'simple-honeypot-cf7' ) );
+			} elseif ( Token::token_field_empty( $form_id ) ) {
+				$reasons[] = Reason_Factory::create( 'empty_token', __( 'Honeypot validation token was empty.', 'simple-honeypot-cf7' ) );
 			} else {
-				$token_data = Token::validate_form_token( $tokens[0], $form_id );
+				$tokens = Token::posted_tokens( $form_id );
 
-				if ( empty( $token_data ) ) {
-					$reasons[] = Reason_Factory::create( 'invalid_token', __( 'Honeypot validation token was invalid or expired.', 'simple-honeypot-cf7' ) );
-				} elseif ( Token::is_consumed( $tokens[0] ) ) {
-					$reasons[] = Reason_Factory::create( 'reused_token', __( 'Honeypot token has already been used.', 'simple-honeypot-cf7' ) );
+				if ( empty( $tokens ) ) {
+					$reasons[] = Reason_Factory::create( 'invalid_token_format', __( 'Honeypot validation token was not in a valid format.', 'simple-honeypot-cf7' ) );
 				} else {
-					$this->pending_consumption = array( $tokens[0], $token_data['max_age'] );
+					$token_data = Token::validate_form_token( $tokens[0], $form_id );
 
-					$this->check_submission_time( $reasons, $form_id, $token_data, $settings );
-
-					$dynamic_names = $token_data['dynamic_names'];
-
-					if ( count( $dynamic_names ) !== count( $honeypot_tags ) ) {
-						$reasons[] = Reason_Factory::create( 'token_mismatch', __( 'Honeypot token does not match the number of configured fields.', 'simple-honeypot-cf7' ) );
+					if ( empty( $token_data ) ) {
+						$reasons[] = Reason_Factory::create( 'invalid_token', __( 'Honeypot validation token was invalid or expired.', 'simple-honeypot-cf7' ) );
+					} elseif ( Token::is_consumed( $tokens[0] ) ) {
+						$reasons[] = Reason_Factory::create( 'reused_token', __( 'Honeypot token has already been used.', 'simple-honeypot-cf7' ) );
 					} else {
-						/*
-						 * Handle the tick boundary edge case: the cached form may have
-						 * been rendered in the previous tick. Try both the token's names
-						 * and the previous tick's names.
-						 */
-						$current_tick   = (int) floor( time() / Token::TICK_SECONDS );
-						$prev_tick      = $current_tick - 1;
-						$existing_names = Contact_Form_7::get_field_names( $contact_form );
-						$prev_names     = Token::generate_names_for_tick( $form_id, count( $honeypot_tags ), $prev_tick, $existing_names );
+						$this->pending_consumption = array( $tokens[0], $token_data['max_age'] );
 
-						foreach ( $honeypot_tags as $index => $tag ) {
-							$dynamic_name = isset( $dynamic_names[ $index ] ) ? $dynamic_names[ $index ] : '';
+						$this->check_submission_time( $reasons, $form_id, $token_data, $settings );
 
-							if ( '' === $dynamic_name && isset( $prev_names[ $index ] ) ) {
-								$dynamic_name = $prev_names[ $index ];
+						$dynamic_names = $token_data['dynamic_names'];
+
+						if ( count( $dynamic_names ) !== count( $honeypot_tags ) ) {
+							$reasons[] = Reason_Factory::create( 'token_mismatch', __( 'Honeypot token does not match the number of configured fields.', 'simple-honeypot-cf7' ) );
+						} else {
+							/*
+							 * Handle the tick boundary edge case: the cached form may have
+							 * been rendered in the previous tick. Try both the token's names
+							 * and the previous tick's names.
+							 */
+							$current_tick   = (int) floor( time() / Token::TICK_SECONDS );
+							$prev_tick      = $current_tick - 1;
+							$existing_names = Contact_Form_7::get_field_names( $contact_form );
+							$prev_names     = Token::generate_names_for_tick( $form_id, count( $honeypot_tags ), $prev_tick, $existing_names );
+
+							foreach ( $honeypot_tags as $index => $tag ) {
+								$dynamic_name = isset( $dynamic_names[ $index ] ) ? $dynamic_names[ $index ] : '';
+
+								if ( '' === $dynamic_name && isset( $prev_names[ $index ] ) ) {
+									$dynamic_name = $prev_names[ $index ];
+								}
+
+								if ( '' === $dynamic_name ) {
+									continue;
+								}
+
+								$this->check_honeypot_value( $reasons, $dynamic_name, $tag->name );
 							}
-
-							if ( '' === $dynamic_name ) {
-								continue;
-							}
-
-							$this->check_honeypot_value( $reasons, $dynamic_name, $tag->name );
 						}
 					}
 				}

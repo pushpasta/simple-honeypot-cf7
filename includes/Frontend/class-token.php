@@ -471,6 +471,32 @@ final class Token {
 	}
 
 	/**
+	 * Check if the token field was submitted in the POST request.
+	 *
+	 * @param int $form_id Contact Form 7 form ID.
+	 * @return bool
+	 */
+	public static function has_token_field( $form_id = 0 ) {
+		$field = self::tokens_field_name( $form_id );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading Contact Form 7 submission data.
+		return isset( $_POST[ $field ] );
+	}
+
+	/**
+	 * Check if the token field was submitted but is empty.
+	 *
+	 * @param int $form_id Contact Form 7 form ID.
+	 * @return bool
+	 */
+	public static function token_field_empty( $form_id = 0 ) {
+		$field = self::tokens_field_name( $form_id );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading Contact Form 7 submission data.
+		return empty( $_POST[ $field ] );
+	}
+
+	/**
 	 * Return sanitised token values from the current POST request.
 	 *
 	 * @param int $form_id Contact Form 7 form ID.
