@@ -99,24 +99,24 @@
 	color: #646970;
 }
 
-.simple-honeypot-cf7-sidebar-stats {
+.simple-honeypot-cf7-stats-list {
 	display: grid;
 	grid-template-columns: auto 1fr;
 	gap: 4px 12px;
 	margin: 0;
 }
 
-.simple-honeypot-cf7-sidebar-stats dt {
+.simple-honeypot-cf7-stats-list dt {
 	font-weight: normal;
 }
 
-.simple-honeypot-cf7-sidebar-stats dd {
+.simple-honeypot-cf7-stats-list dd {
 	text-align: right;
 	margin: 0;
 	font-weight: 600;
 }
 
-.simple-honeypot-cf7-sidebar-stats dd strong {
+.simple-honeypot-cf7-stats-list dd strong {
 	font-weight: 700;
 }
 
@@ -187,7 +187,7 @@
 	color: #646970;
 }
 
-.simple-honeypot-cf7-breakdown-box .simple-honeypot-cf7-sidebar-stats {
+.simple-honeypot-cf7-breakdown-box .simple-honeypot-cf7-stats-list {
 	padding: 8px 14px 14px;
 }
 

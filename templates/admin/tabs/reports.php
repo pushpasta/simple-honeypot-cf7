@@ -70,7 +70,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="simple-honeypot-cf7-breakdown-box">
 					<h3><span class="dashicons dashicons-calendar"></span> <?php esc_html_e( 'By Time Period', 'simple-honeypot-cf7' ); ?></h3>
 					<p class="description"><?php esc_html_e( 'How many spam attempts were blocked each day.', 'simple-honeypot-cf7' ); ?></p>
-					<dl class="simple-honeypot-cf7-sidebar-stats">
+					<dl class="simple-honeypot-cf7-stats-list">
 						<dt><?php esc_html_e( 'Today', 'simple-honeypot-cf7' ); ?></dt>
 						<dd><?php echo esc_html( number_format_i18n( $spam_counts['today'] ) ); ?></dd>
 						<dt><?php esc_html_e( 'Yesterday', 'simple-honeypot-cf7' ); ?></dt>
@@ -89,7 +89,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<h3><span class="dashicons dashicons-flag"></span> <?php esc_html_e( 'By Reason', 'simple-honeypot-cf7' ); ?></h3>
 					<p class="description"><?php esc_html_e( 'What triggered the spam detection most often.', 'simple-honeypot-cf7' ); ?></p>
 					<?php arsort( $stats['reasons'] ); ?>
-					<dl class="simple-honeypot-cf7-sidebar-stats">
+					<dl class="simple-honeypot-cf7-stats-list">
 						<?php foreach ( $stats['reasons'] as $reason => $count ) : ?>
 							<dt><?php echo esc_html( $reason ); ?></dt>
 							<dd><?php echo esc_html( number_format_i18n( absint( $count ) ) ); ?></dd>
@@ -99,7 +99,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="simple-honeypot-cf7-breakdown-box">
 					<h3><span class="dashicons dashicons-forms"></span> <?php esc_html_e( 'By Form', 'simple-honeypot-cf7' ); ?></h3>
 					<p class="description"><?php esc_html_e( 'Which forms received the most spam.', 'simple-honeypot-cf7' ); ?></p>
-					<dl class="simple-honeypot-cf7-sidebar-stats">
+					<dl class="simple-honeypot-cf7-stats-list">
 						<?php foreach ( $stats['forms'] as $form_id => $form ) : ?>
 							<dt>
 								<?php
