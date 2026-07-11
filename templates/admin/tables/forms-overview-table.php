@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<table class="widefat striped simple-honeypot-cf7-table">
+<table class="widefat striped shp4cf7-table">
 	<caption class="screen-reader-text"><?php esc_html_e( 'Form settings overview', 'simple-honeypot-cf7' ); ?></caption>
 	<thead>
 		<tr>
@@ -29,21 +29,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</td>
 				<td>
 					<?php if ( ! $form['time_mode_custom'] ) : ?>
-						<span class="simple-honeypot-cf7-badge simple-honeypot-cf7-badge--inherited">
+						<span class="shp4cf7-badge shp4cf7-badge--inherited">
 						<?php
 						/* translators: %s: resolved mode (Enabled or Disabled) inherited from global settings */
 						printf( esc_html__( 'Uses global (%s)', 'simple-honeypot-cf7' ), esc_html( 'enabled' === $form['resolved_mode'] ? __( 'Enabled', 'simple-honeypot-cf7' ) : __( 'Disabled', 'simple-honeypot-cf7' ) ) );
 						?>
 					</span>
 				<?php elseif ( 'enabled' === $form['time_mode'] ) : ?>
-					<span class="simple-honeypot-cf7-badge simple-honeypot-cf7-badge--active"><?php esc_html_e( 'Enabled', 'simple-honeypot-cf7' ); ?></span>
+					<span class="shp4cf7-badge shp4cf7-badge--active"><?php esc_html_e( 'Enabled', 'simple-honeypot-cf7' ); ?></span>
 				<?php else : ?>
-					<span class="simple-honeypot-cf7-badge simple-honeypot-cf7-badge--inactive"><?php esc_html_e( 'Disabled', 'simple-honeypot-cf7' ); ?></span>
+					<span class="shp4cf7-badge shp4cf7-badge--inactive"><?php esc_html_e( 'Disabled', 'simple-honeypot-cf7' ); ?></span>
 					<?php endif; ?>
 				</td>
 				<td>
 					<?php if ( ! $form['min_time_custom'] ) : ?>
-						<span class="simple-honeypot-cf7-badge simple-honeypot-cf7-badge--inherited">
+						<span class="shp4cf7-badge shp4cf7-badge--inherited">
 							<?php
 							/* translators: %d: number of seconds inherited from global settings */
 							printf( esc_html__( 'Uses global (%d)', 'simple-honeypot-cf7' ), absint( $form['resolved_min'] ) );

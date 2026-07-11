@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<input type="hidden" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="save" />
 	<input type="hidden" name="tab" value="tools" />
 
-	<div class="postbox simple-honeypot-cf7-card">
+	<div class="postbox shp4cf7-card">
 		<h2 class="hndle"><span class="dashicons dashicons-upload"></span><span><?php esc_html_e( 'Import &amp; Export', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<p class="description"><?php esc_html_e( 'Export and import all plugin settings as a JSON file.', 'simple-honeypot-cf7' ); ?></p>
@@ -29,9 +29,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Import settings', 'simple-honeypot-cf7' ); ?></th>
 					<td>
-						<input type="file" id="simple-honeypot-cf7-import-file" name="import_file" accept=".json" class="simple-honeypot-cf7-import-file-input" />
-						<label for="simple-honeypot-cf7-import-file" class="button simple-honeypot-cf7-import-file-label"><?php esc_html_e( 'Choose File', 'simple-honeypot-cf7' ); ?></label>
-						<button type="submit" id="simple-honeypot-cf7-import-btn" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_import_settings' ); ?>" value="1" class="button button-primary" disabled><?php esc_html_e( 'Import Settings', 'simple-honeypot-cf7' ); ?></button>
+						<input type="file" id="shp4cf7-import-file" name="import_file" accept=".json" class="shp4cf7-import-file-input" />
+						<label for="shp4cf7-import-file" class="button shp4cf7-import-file-label"><?php esc_html_e( 'Choose File', 'simple-honeypot-cf7' ); ?></label>
+						<button type="submit" id="shp4cf7-import-btn" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_import_settings' ); ?>" value="1" class="button button-primary" disabled><?php esc_html_e( 'Import Settings', 'simple-honeypot-cf7' ); ?></button>
 						<p class="description"><?php esc_html_e( 'Upload a previously exported JSON file. Settings in the file will overwrite current values. Settings not in the file remain unchanged.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
@@ -40,7 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </form>
 
-<div class="postbox simple-honeypot-cf7-card">
+<div class="postbox shp4cf7-card">
 	<h2 class="hndle"><span class="dashicons dashicons-update"></span><span><?php esc_html_e( 'Updates', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
 		<p class="description"><?php esc_html_e( 'Force WordPress to check for plugin updates immediately instead of waiting for the next scheduled check.', 'simple-honeypot-cf7' ); ?></p>
@@ -55,7 +55,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </div>
 
-<div class="postbox simple-honeypot-cf7-card simple-honeypot-cf7-card--danger">
+<div class="postbox shp4cf7-card shp4cf7-card--danger">
 	<h2 class="hndle"><span class="dashicons dashicons-warning"></span><span><?php esc_html_e( 'Danger Zone', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
 		<p class="description"><?php esc_html_e( 'Destructive actions that cannot be undone. Use with caution.', 'simple-honeypot-cf7' ); ?></p>

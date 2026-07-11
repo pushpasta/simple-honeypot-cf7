@@ -9,47 +9,47 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="postbox simple-honeypot-cf7-card">
+<div class="postbox shp4cf7-card">
 	<h2 class="hndle"><span class="dashicons dashicons-chart-bar"></span><span><?php esc_html_e( 'Overview', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
-		<div class="simple-honeypot-cf7-report-grid">
-			<div class="simple-honeypot-cf7-stat">
-				<div class="simple-honeypot-cf7-stat-icon">
+		<div class="shp4cf7-report-grid">
+			<div class="shp4cf7-stat">
+				<div class="shp4cf7-stat-icon">
 					<span class="dashicons dashicons-calendar-alt"></span>
 				</div>
 				<strong><?php echo esc_html( wp_date( get_option( 'date_format' ), absint( $stats['run_since'] ) ) ); ?></strong>
 				<span><?php esc_html_e( 'Active Since', 'simple-honeypot-cf7' ); ?></span>
 			</div>
-			<div class="simple-honeypot-cf7-stat">
-				<div class="simple-honeypot-cf7-stat-icon">
+			<div class="shp4cf7-stat">
+				<div class="shp4cf7-stat-icon">
 					<span class="dashicons dashicons-shield"></span>
 				</div>
 				<strong><?php echo esc_html( number_format_i18n( absint( $stats['total'] ) ) ); ?></strong>
 				<span><?php esc_html_e( 'Spam Attempts Blocked', 'simple-honeypot-cf7' ); ?></span>
 			</div>
-			<div class="simple-honeypot-cf7-stat">
-				<div class="simple-honeypot-cf7-stat-icon">
+			<div class="shp4cf7-stat">
+				<div class="shp4cf7-stat-icon">
 					<span class="dashicons dashicons-forms"></span>
 				</div>
 				<strong><?php echo esc_html( number_format_i18n( count( $stats['forms'] ) ) ); ?></strong>
 				<span><?php esc_html_e( 'Forms Protected', 'simple-honeypot-cf7' ); ?></span>
 			</div>
-			<div class="simple-honeypot-cf7-stat">
-				<div class="simple-honeypot-cf7-stat-icon">
+			<div class="shp4cf7-stat">
+				<div class="shp4cf7-stat-icon">
 					<span class="dashicons dashicons-filter"></span>
 				</div>
 				<strong><?php echo esc_html( number_format_i18n( count( $stats['reasons'] ) ) ); ?></strong>
 				<span><?php esc_html_e( 'Unique Reasons', 'simple-honeypot-cf7' ); ?></span>
 			</div>
-			<div class="simple-honeypot-cf7-stat">
-				<div class="simple-honeypot-cf7-stat-icon">
+			<div class="shp4cf7-stat">
+				<div class="shp4cf7-stat-icon">
 					<span class="dashicons dashicons-shield-alt"></span>
 				</div>
 				<strong><?php echo empty( $parsed_rules ) ? '—' : esc_html( number_format_i18n( count( $parsed_rules ) ) ); ?></strong>
 				<span>
 					<?php esc_html_e( 'Rules', 'simple-honeypot-cf7' ); ?>
 					<?php if ( ! empty( $parsed_rules ) ) : ?>
-						<span class="simple-honeypot-cf7-badge simple-honeypot-cf7-badge--<?php echo esc_attr( ! empty( $settings['custom_rules_enabled'] ) ? 'active' : 'inactive' ); ?>"><?php echo ! empty( $settings['custom_rules_enabled'] ) ? esc_html__( 'Active', 'simple-honeypot-cf7' ) : esc_html__( 'Inactive', 'simple-honeypot-cf7' ); ?></span>
+						<span class="shp4cf7-badge shp4cf7-badge--<?php echo esc_attr( ! empty( $settings['custom_rules_enabled'] ) ? 'active' : 'inactive' ); ?>"><?php echo ! empty( $settings['custom_rules_enabled'] ) ? esc_html__( 'Active', 'simple-honeypot-cf7' ) : esc_html__( 'Inactive', 'simple-honeypot-cf7' ); ?></span>
 					<?php endif; ?>
 				</span>
 			</div>
@@ -57,20 +57,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </div>
 
-<div class="postbox simple-honeypot-cf7-card">
+<div class="postbox shp4cf7-card">
 	<h2 class="hndle"><span class="dashicons dashicons-chart-pie"></span><span><?php esc_html_e( 'Breakdown', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
 		<?php if ( 0 === $spam_counts['total'] ) : ?>
-			<div class="simple-honeypot-cf7-empty-state">
+			<div class="shp4cf7-empty-state">
 				<span class="dashicons dashicons-chart-pie"></span>
 				<p><?php esc_html_e( 'No data yet. Spam attempts will appear here once they are blocked.', 'simple-honeypot-cf7' ); ?></p>
 			</div>
 		<?php else : ?>
-			<div class="simple-honeypot-cf7-breakdown-grid">
-				<div class="simple-honeypot-cf7-breakdown-box">
+			<div class="shp4cf7-breakdown-grid">
+				<div class="shp4cf7-breakdown-box">
 					<h3><span class="dashicons dashicons-calendar"></span> <?php esc_html_e( 'By Time Period', 'simple-honeypot-cf7' ); ?></h3>
 					<p class="description"><?php esc_html_e( 'How many spam attempts were blocked each day.', 'simple-honeypot-cf7' ); ?></p>
-					<dl class="simple-honeypot-cf7-stats-list">
+					<dl class="shp4cf7-stats-list">
 						<dt><?php esc_html_e( 'Today', 'simple-honeypot-cf7' ); ?></dt>
 						<dd><?php echo esc_html( number_format_i18n( $spam_counts['today'] ) ); ?></dd>
 						<dt><?php esc_html_e( 'Yesterday', 'simple-honeypot-cf7' ); ?></dt>
@@ -85,21 +85,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<dd><strong><?php echo esc_html( number_format_i18n( $spam_counts['total'] ) ); ?></strong></dd>
 					</dl>
 				</div>
-				<div class="simple-honeypot-cf7-breakdown-box">
+				<div class="shp4cf7-breakdown-box">
 					<h3><span class="dashicons dashicons-flag"></span> <?php esc_html_e( 'By Reason', 'simple-honeypot-cf7' ); ?></h3>
 					<p class="description"><?php esc_html_e( 'What triggered the spam detection most often.', 'simple-honeypot-cf7' ); ?></p>
 					<?php arsort( $stats['reasons'] ); ?>
-					<dl class="simple-honeypot-cf7-stats-list">
+					<dl class="shp4cf7-stats-list">
 						<?php foreach ( $stats['reasons'] as $reason => $count ) : ?>
 							<dt><?php echo esc_html( $reason ); ?></dt>
 							<dd><?php echo esc_html( number_format_i18n( absint( $count ) ) ); ?></dd>
 						<?php endforeach; ?>
 					</dl>
 				</div>
-				<div class="simple-honeypot-cf7-breakdown-box">
+				<div class="shp4cf7-breakdown-box">
 					<h3><span class="dashicons dashicons-forms"></span> <?php esc_html_e( 'By Form', 'simple-honeypot-cf7' ); ?></h3>
 					<p class="description"><?php esc_html_e( 'Which forms received the most spam.', 'simple-honeypot-cf7' ); ?></p>
-					<dl class="simple-honeypot-cf7-stats-list">
+					<dl class="shp4cf7-stats-list">
 						<?php foreach ( $stats['forms'] as $form_id => $form ) : ?>
 							<dt>
 								<?php
@@ -121,7 +121,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </div>
 
-<div id="shp4cf7-events" class="postbox simple-honeypot-cf7-card">
+<div id="shp4cf7-events" class="postbox shp4cf7-card">
 	<h2 class="hndle"><span class="dashicons dashicons-list-view"></span><span><?php esc_html_e( 'Recent Events', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
 		<?php

@@ -5,7 +5,7 @@
 	let formDirty   = false;
 
 	function syncDirty() {
-		const $form = $( '.simple-honeypot-cf7-admin form' );
+		const $form = $( '.shp4cf7-admin form' );
 		if ( ! $form.length ) {
 			return '';
 		}
@@ -52,18 +52,18 @@
 	}
 
 	function showFieldError( $field, message ) {
-		let $err = $field.siblings( '.simple-honeypot-cf7-field-error' );
+		let $err = $field.siblings( '.shp4cf7-field-error' );
 		if ( ! $err.length ) {
-			$err = $( '<p class="simple-honeypot-cf7-field-error"></p>' );
+			$err = $( '<p class="shp4cf7-field-error"></p>' );
 			$field.after( $err );
 		}
 		$err.text( message ).addClass( 'is-visible' );
-		$field.addClass( 'simple-honeypot-cf7-field-invalid' );
+		$field.addClass( 'shp4cf7-field-invalid' );
 	}
 
 	function clearFieldError( $field ) {
-		$field.closest( 'td' ).find( '.simple-honeypot-cf7-field-error' ).removeClass( 'is-visible' );
-		$field.removeClass( 'simple-honeypot-cf7-field-invalid' );
+		$field.closest( 'td' ).find( '.shp4cf7-field-error' ).removeClass( 'is-visible' );
+		$field.removeClass( 'shp4cf7-field-invalid' );
 	}
 
 	$(
@@ -83,16 +83,16 @@
 				}
 
 				$confirmDialog = $(
-					'<dialog class="simple-honeypot-cf7-dialog">' +
-						'<div class="simple-honeypot-cf7-dialog-inner">' +
-							'<div class="simple-honeypot-cf7-confirm-header">' +
+					'<dialog class="shp4cf7-dialog">' +
+						'<div class="shp4cf7-dialog-inner">' +
+							'<div class="shp4cf7-confirm-header">' +
 								'<span class="dashicons dashicons-warning"></span>' +
 								'<strong>' + simpleHoneypotCf7.confirmTitle + '</strong>' +
 							'</div>' +
-							'<p class="simple-honeypot-cf7-confirm-message"></p>' +
-							'<div class="simple-honeypot-cf7-dialog-actions">' +
-								'<button type="button" class="button button-primary simple-honeypot-cf7-confirm-yes" disabled>' + simpleHoneypotCf7.confirmYes + '</button>' +
-								'<button type="button" class="button simple-honeypot-cf7-confirm-no">' + simpleHoneypotCf7.confirmNo + '</button>' +
+							'<p class="shp4cf7-confirm-message"></p>' +
+							'<div class="shp4cf7-dialog-actions">' +
+								'<button type="button" class="button button-primary shp4cf7-confirm-yes" disabled>' + simpleHoneypotCf7.confirmYes + '</button>' +
+								'<button type="button" class="button shp4cf7-confirm-no">' + simpleHoneypotCf7.confirmNo + '</button>' +
 							'</div>' +
 						'</div>' +
 					'</dialog>'
@@ -105,8 +105,8 @@
 			function openConfirmDialog( $trigger ) {
 				const $dialog  = getConfirmDialog();
 				const isDanger = $trigger.data( 'confirm-danger' ) !== undefined;
-				const $header  = $dialog.find( '.simple-honeypot-cf7-confirm-header' );
-				const $yes     = $dialog.find( '.simple-honeypot-cf7-confirm-yes' );
+				const $header  = $dialog.find( '.shp4cf7-confirm-header' );
+				const $yes     = $dialog.find( '.shp4cf7-confirm-yes' );
 
 				let message     = $trigger.data( 'confirm' );
 				const daysInput = $trigger.data( 'confirm-days' );
@@ -114,9 +114,9 @@
 				if ( daysInput ) {
 					const daysValue = $( '#' + daysInput ).val() || '90';
 					message         = message.replace( '%d', daysValue );
-					$dialog.find( '.simple-honeypot-cf7-confirm-message' ).html( message );
+					$dialog.find( '.shp4cf7-confirm-message' ).html( message );
 				} else {
-					$dialog.find( '.simple-honeypot-cf7-confirm-message' ).text( message );
+					$dialog.find( '.shp4cf7-confirm-message' ).text( message );
 				}
 
 				if ( isDanger ) {
@@ -171,7 +171,7 @@
 			// Confirm action.
 			$( document ).on(
 				'click',
-				'.simple-honeypot-cf7-confirm-yes',
+				'.shp4cf7-confirm-yes',
 				function () {
 					if ( $( this ).prop( 'disabled' ) || ! $pendingTrigger ) {
 						return;
@@ -232,7 +232,7 @@
 			// Cancel / close.
 			$( document ).on(
 				'click',
-				'.simple-honeypot-cf7-confirm-no',
+				'.shp4cf7-confirm-no',
 				function () {
 					closeConfirmDialog();
 				}
@@ -240,7 +240,7 @@
 
 			// ── Plugin settings form (Simple Honeypot admin page only) ──
 
-			const $form = $( '.simple-honeypot-cf7-admin form' );
+			const $form = $( '.shp4cf7-admin form' );
 
 			if ( ! $form.length ) {
 					return;
@@ -279,7 +279,7 @@
 				function ( e ) {
 					let valid        = true;
 					const $submitter = $( document.activeElement );
-					const isImport   = $submitter.is( '#simple-honeypot-cf7-import-btn' );
+					const isImport   = $submitter.is( '#shp4cf7-import-btn' );
 
 					// Guard: import with no file.
 					if ( isImport && ( ! $importFile.length || ! $importFile[ 0 ].files.length ) ) {
@@ -312,7 +312,7 @@
 					);
 
 					// Validate rules textarea.
-					const $rules = $form.find( '.simple-honeypot-cf7-rules' );
+					const $rules = $form.find( '.shp4cf7-rules' );
 					if ( $rules.length && ! $rules.prop( 'disabled' ) ) {
 						const errors = validateRules( $rules.val() );
 						if ( errors.length ) {
@@ -336,20 +336,20 @@
 			// Rules toggle: disable/enable the textarea.
 			$form.on(
 				'change',
-				'.simple-honeypot-cf7-custom-rules-toggle input',
+				'.shp4cf7-custom-rules-toggle input',
 				function () {
-					const $ta = $( this ).closest( '.simple-honeypot-cf7-custom-rules-group' )
-					.find( '.simple-honeypot-cf7-rules' );
-					$ta.prop( 'disabled', ! this.checked ).toggleClass( 'simple-honeypot-cf7-rules-disabled', ! this.checked );
+					const $ta = $( this ).closest( '.shp4cf7-custom-rules-group' )
+					.find( '.shp4cf7-rules' );
+					$ta.prop( 'disabled', ! this.checked ).toggleClass( 'shp4cf7-rules-disabled', ! this.checked );
 				}
 			);
 
 			// Apply initial disabled state on page load.
-			$form.find( '.simple-honeypot-cf7-custom-rules-toggle input:not(:checked)' ).trigger( 'change' );
+			$form.find( '.shp4cf7-custom-rules-toggle input:not(:checked)' ).trigger( 'change' );
 
 			// Import: enable button only when file selected.
-			const $importFile       = $( '#simple-honeypot-cf7-import-file' );
-			const $importBtn        = $( '#simple-honeypot-cf7-import-btn' );
+			const $importFile       = $( '#shp4cf7-import-file' );
+			const $importBtn        = $( '#shp4cf7-import-btn' );
 			const $importLabel      = $importFile.next( 'label' );
 			const importDefaultText = $importLabel.text();
 

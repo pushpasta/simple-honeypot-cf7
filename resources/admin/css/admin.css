@@ -5,11 +5,11 @@
 /* Tab Navigation
 	========================================================================== */
 
-.nav-tab-wrapper.simple-honeypot-cf7-nav-tabs {
+.nav-tab-wrapper.shp4cf7-nav-tabs {
 	border-bottom: none;
 }
 
-.simple-honeypot-cf7-nav-tabs .nav-tab {
+.shp4cf7-nav-tabs .nav-tab {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -18,7 +18,7 @@
 	transition: all 0.2s ease;
 }
 
-.simple-honeypot-cf7-nav-tabs .nav-tab .dashicons {
+.shp4cf7-nav-tabs .nav-tab .dashicons {
 	width: 16px;
 	height: 16px;
 	line-height: 1;
@@ -26,56 +26,56 @@
 	transition: opacity 0.2s ease;
 }
 
-.simple-honeypot-cf7-nav-tabs .nav-tab:hover .dashicons,
-.simple-honeypot-cf7-nav-tabs .nav-tab-active .dashicons {
+.shp4cf7-nav-tabs .nav-tab:hover .dashicons,
+.shp4cf7-nav-tabs .nav-tab-active .dashicons {
 	opacity: 1;
 }
 
-.simple-honeypot-cf7-nav-tabs .nav-tab-active {
+.shp4cf7-nav-tabs .nav-tab-active {
 	background: #fff;
 	border-bottom-color: #fff;
 	margin-bottom: -1px;
 	box-shadow: 0 1px 0 #fff;
 }
 
-.simple-honeypot-cf7-nav-tabs .nav-tab-active .dashicons {
+.shp4cf7-nav-tabs .nav-tab-active .dashicons {
 	color: #2271b1;
 }
 
 /* Layout: Main + Sidebar
 	========================================================================== */
 
-.simple-honeypot-cf7-layout {
+.shp4cf7-layout {
 	display: flex;
 	gap: 20px;
 }
 
-.simple-honeypot-cf7-main {
+.shp4cf7-main {
 	flex: 7;
 	min-width: 0;
 }
 
-.simple-honeypot-cf7-sidebar {
+.shp4cf7-sidebar {
 	flex: 2;
 	min-width: 0;
 }
 
-.simple-honeypot-cf7-sidebar .postbox {
+.shp4cf7-sidebar .postbox {
 	margin-top: 0;
 }
 
-.simple-honeypot-cf7-sidebar-links {
+.shp4cf7-sidebar-links {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 }
 
-.simple-honeypot-cf7-sidebar-links li {
+.shp4cf7-sidebar-links li {
 	margin: 0;
 	padding: 0;
 }
 
-.simple-honeypot-cf7-sidebar-links a {
+.shp4cf7-sidebar-links a {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -86,47 +86,47 @@
 	transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.simple-honeypot-cf7-sidebar-links a:hover {
+.shp4cf7-sidebar-links a:hover {
 	color: #135e96;
 	background-color: #f8f8f8;
 }
 
-.simple-honeypot-cf7-sidebar-links .dashicons {
+.shp4cf7-sidebar-links .dashicons {
 	font-size: 16px;
 	width: 16px;
 	height: 16px;
 	color: #646970;
 }
 
-.simple-honeypot-cf7-stats-list {
+.shp4cf7-stats-list {
 	display: grid;
 	grid-template-columns: auto 1fr;
 	gap: 4px 12px;
 	margin: 0;
 }
 
-.simple-honeypot-cf7-stats-list dt {
+.shp4cf7-stats-list dt {
 	font-weight: normal;
 }
 
-.simple-honeypot-cf7-stats-list dd {
+.shp4cf7-stats-list dd {
 	text-align: right;
 	margin: 0;
 	font-weight: 600;
 }
 
-.simple-honeypot-cf7-stats-list dd strong {
+.shp4cf7-stats-list dd strong {
 	font-weight: 700;
 }
 
 /* Import file picker
 	========================================================================== */
 
-.simple-honeypot-cf7-import-file-input {
+.shp4cf7-import-file-input {
 	display: none;
 }
 
-.simple-honeypot-cf7-import-file-label {
+.shp4cf7-import-file-label {
 	cursor: pointer;
 	max-width: 220px;
 	overflow: hidden;
@@ -136,7 +136,7 @@
 }
 
 @media screen and (max-width: 960px) {
-	.simple-honeypot-cf7-layout {
+	.shp4cf7-layout {
 		flex-direction: column;
 	}
 }
@@ -144,7 +144,7 @@
 /* Rules Group
 	========================================================================== */
 
-.simple-honeypot-cf7-custom-rules-toggle {
+.shp4cf7-custom-rules-toggle {
 	display: inline-block;
 	margin-bottom: 6px;
 }
@@ -152,19 +152,19 @@
 /* Breakdown grid
 	========================================================================== */
 
-.simple-honeypot-cf7-breakdown-grid {
+.shp4cf7-breakdown-grid {
 	display: flex;
 	gap: 20px;
 }
 
-.simple-honeypot-cf7-breakdown-box {
+.shp4cf7-breakdown-box {
 	width: 33.3%;
 	background: #fff;
 	border: 1px solid #dcdcde;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.simple-honeypot-cf7-breakdown-box h3 {
+.shp4cf7-breakdown-box h3 {
 	margin: 0;
 	padding: 10px 14px;
 	font-size: 14px;
@@ -174,28 +174,28 @@
 	cursor: default;
 }
 
-.simple-honeypot-cf7-breakdown-box h3 .dashicons {
+.shp4cf7-breakdown-box h3 .dashicons {
 	color: #2271b1;
 	opacity: 0.8;
 	margin-right: 4px;
 }
 
-.simple-honeypot-cf7-breakdown-box .description {
+.shp4cf7-breakdown-box .description {
 	margin: 0;
 	padding: 10px 14px 0;
 	color: #646970;
 }
 
-.simple-honeypot-cf7-breakdown-box .simple-honeypot-cf7-stats-list {
+.shp4cf7-breakdown-box .shp4cf7-stats-list {
 	padding: 8px 14px 14px;
 }
 
 @media screen and (max-width: 782px) {
-	.simple-honeypot-cf7-breakdown-grid {
+	.shp4cf7-breakdown-grid {
 		flex-direction: column;
 	}
 
-	.simple-honeypot-cf7-breakdown-box {
+	.shp4cf7-breakdown-box {
 		width: 100%;
 	}
 }
@@ -203,13 +203,13 @@
 /* Stats Cards
 	========================================================================== */
 
-.simple-honeypot-cf7-report-grid {
+.shp4cf7-report-grid {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 20px;
 }
 
-.simple-honeypot-cf7-stat {
+.shp4cf7-stat {
 	background: #fff;
 	border: 1px solid #e0e0e0;
 	border-left: 4px solid #2271b1;
@@ -219,12 +219,12 @@
 	position: relative;
 }
 
-.simple-honeypot-cf7-stat:hover {
+.shp4cf7-stat:hover {
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 	transform: translateY(-1px);
 }
 
-.simple-honeypot-cf7-stat strong {
+.shp4cf7-stat strong {
 	display: block;
 	font-weight: 600;
 	font-size: 28px;
@@ -233,11 +233,11 @@
 	margin-bottom: 4px;
 }
 
-.simple-honeypot-cf7-stat span {
+.shp4cf7-stat span {
 	color: #646970;
 }
 
-.simple-honeypot-cf7-stat-icon {
+.shp4cf7-stat-icon {
 	position: absolute;
 	top: 16px;
 	right: 16px;
@@ -250,7 +250,7 @@
 	justify-content: center;
 }
 
-.simple-honeypot-cf7-stat-icon .dashicons {
+.shp4cf7-stat-icon .dashicons {
 	color: #2271b1;
 	width: 20px;
 	height: 20px;
@@ -259,32 +259,32 @@
 /* Postbox / Card Styling
 	========================================================================== */
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-card {
+.shp4cf7-admin .shp4cf7-card {
 	margin-bottom: 24px;
 	border-radius: 4px;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 	transition: box-shadow 0.2s ease;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-card:hover {
+.shp4cf7-admin .shp4cf7-card:hover {
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .inside {
+.shp4cf7-admin .shp4cf7-card .inside {
 	padding: 0 16px 16px;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .hndle {
+.shp4cf7-admin .shp4cf7-card .hndle {
 	padding: 14px 16px;
 	border-bottom: 1px solid #f0f0f1;
 	cursor: default;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .hndle span {
+.shp4cf7-admin .shp4cf7-card .hndle span {
 	font-weight: 600;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-card h2.hndle {
+.shp4cf7-admin .shp4cf7-card h2.hndle {
 	font-size: 20px;
 	margin: 0;
 	padding: 14px 16px;
@@ -294,22 +294,22 @@
 	background: #f5f5f5;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .form-table th {
+.shp4cf7-admin .shp4cf7-card .form-table th {
 	width: 220px;
 	padding: 16px 10px 16px 0;
 	font-weight: 500;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .form-table td {
+.shp4cf7-admin .shp4cf7-card .form-table td {
 	padding: 12px 0;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .description {
+.shp4cf7-admin .shp4cf7-card .description {
 	margin-top: 6px;
 	color: #646970;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .inside > .description {
+.shp4cf7-admin .shp4cf7-card .inside > .description {
 	margin: 0 0 12px;
 	padding: 0;
 }
@@ -317,98 +317,98 @@
 /* Form Section Grouping
 	========================================================================== */
 
-.simple-honeypot-cf7-admin .form-table tr {
+.shp4cf7-admin .form-table tr {
 	transition: background-color 0.15s ease;
 }
 
-.simple-honeypot-cf7-admin .form-table tr:hover {
+.shp4cf7-admin .form-table tr:hover {
 	background-color: #f9f9f9;
 }
 
-.simple-honeypot-cf7-admin .form-table label {
+.shp4cf7-admin .form-table label {
 	cursor: pointer;
 }
 
-.simple-honeypot-cf7-admin input[type="checkbox"] {
+.shp4cf7-admin input[type="checkbox"] {
 	margin-right: 6px;
 }
 
-.simple-honeypot-cf7-admin #keep_recent_events {
+.shp4cf7-admin #keep_recent_events {
 	width: 120px;
 }
 
-.simple-honeypot-cf7-admin .form-table input[type="number"],
-.simple-honeypot-cf7-admin .form-table input[type="text"] {
+.shp4cf7-admin .form-table input[type="number"],
+.shp4cf7-admin .form-table input[type="text"] {
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.simple-honeypot-cf7-admin .form-table input[type="number"]:focus,
-.simple-honeypot-cf7-admin .form-table input[type="text"]:focus {
+.shp4cf7-admin .form-table input[type="number"]:focus,
+.shp4cf7-admin .form-table input[type="text"]:focus {
 	border-color: #2271b1;
 	box-shadow: 0 0 0 1px #2271b1;
 	outline: none;
 }
 
-.simple-honeypot-cf7-admin .form-table input[type="number"]:invalid,
-.simple-honeypot-cf7-admin .form-table input[type="text"]:invalid {
+.shp4cf7-admin .form-table input[type="number"]:invalid,
+.shp4cf7-admin .form-table input[type="text"]:invalid {
 	border-color: #dc3232;
 	box-shadow: 0 0 0 1px #dc3232;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-rules:invalid {
+.shp4cf7-admin .shp4cf7-rules:invalid {
 	border-color: #dc3232;
 	box-shadow: 0 0 0 1px #dc3232;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-field-error {
+.shp4cf7-admin .shp4cf7-field-error {
 	color: #dc3232;
 	font-size: 13px;
 	margin-top: 6px;
 	display: none;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-field-error.is-visible {
+.shp4cf7-admin .shp4cf7-field-error.is-visible {
 	display: block;
 }
 
-.simple-honeypot-cf7-field-invalid {
+.shp4cf7-field-invalid {
 	outline: 1px solid #dc3232;
 }
 
 /* Focus row highlighting - pure CSS */
-.simple-honeypot-cf7-admin .form-table tr:has(input[type="text"]:focus),
-.simple-honeypot-cf7-admin .form-table tr:has(input[type="number"]:focus),
-.simple-honeypot-cf7-admin .form-table tr:has(textarea:focus) {
+.shp4cf7-admin .form-table tr:has(input[type="text"]:focus),
+.shp4cf7-admin .form-table tr:has(input[type="number"]:focus),
+.shp4cf7-admin .form-table tr:has(textarea:focus) {
 	background-color: #f0f6fc;
 }
 
 /* Textarea Styling
 	========================================================================== */
 
-.simple-honeypot-cf7-rules {
+.shp4cf7-rules {
 	font-family: monospace;
 	line-height: 1.6;
 	border-radius: 4px;
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.simple-honeypot-cf7-rules:focus {
+.shp4cf7-rules:focus {
 	border-color: #2271b1;
 	box-shadow: 0 0 0 1px #2271b1;
 }
 
-.simple-honeypot-cf7-rules-disabled {
+.shp4cf7-rules-disabled {
 	opacity: 0.5;
 	filter: grayscale(0.5);
 	cursor: not-allowed;
 }
 
-.simple-honeypot-cf7-rules-disabled:focus {
+.shp4cf7-rules-disabled:focus {
 	border-color: #c3c4c7;
 	box-shadow: none;
 }
 
-.simple-honeypot-cf7-badge {
+.shp4cf7-badge {
 	display: inline-block;
 	padding: 2px 8px;
 	border-radius: 3px;
@@ -419,38 +419,38 @@
 	vertical-align: middle;
 	margin-right: 6px;
 }
-.simple-honeypot-cf7-badge--active {
+.shp4cf7-badge--active {
 	background: #d5f4e6;
 	color: #006b3f;
 }
-.simple-honeypot-cf7-badge--inactive {
+.shp4cf7-badge--inactive {
 	background: #fdeaea;
 	color: #b71c1c;
 }
-.simple-honeypot-cf7-badge--inherited {
+.shp4cf7-badge--inherited {
 	background: #f0f0f1;
 	color: #646970;
 }
-.simple-honeypot-cf7-badge--info {
+.shp4cf7-badge--info {
 	background: #e0f0fc;
 	color: #2271b1;
 }
 /* Table Styling
 	========================================================================== */
 
-.simple-honeypot-cf7-table {
+.shp4cf7-table {
 	margin-bottom: 24px;
 	border-collapse: collapse;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-report-grid ~ .simple-honeypot-cf7-table,
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-report-grid ~ h2 + .simple-honeypot-cf7-table,
-.simple-honeypot-cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) + .simple-honeypot-cf7-empty-state,
-.simple-honeypot-cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) + .simple-honeypot-cf7-table {
+.shp4cf7-admin .shp4cf7-report-grid ~ .shp4cf7-table,
+.shp4cf7-admin .shp4cf7-report-grid ~ h2 + .shp4cf7-table,
+.shp4cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) + .shp4cf7-empty-state,
+.shp4cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) + .shp4cf7-table {
 	max-width: none;
 }
 
-.simple-honeypot-cf7-table thead tr th {
+.shp4cf7-table thead tr th {
 	font-weight: 600;
 	font-size: 16px;
 	background: #f9f9f9;
@@ -462,40 +462,40 @@
 	z-index: 1;
 }
 
-.simple-honeypot-cf7-table tbody tr {
+.shp4cf7-table tbody tr {
 	transition: background-color 0.15s ease;
 }
 
-.simple-honeypot-cf7-table tbody tr:hover {
+.shp4cf7-table tbody tr:hover {
 	background-color: #f0f6fc;
 }
 
-.simple-honeypot-cf7-table tbody td {
+.shp4cf7-table tbody td {
 	padding: 10px;
 	border-bottom: 1px solid #f0f0f1;
 	vertical-align: top;
 }
 
-.simple-honeypot-cf7-table tbody tr:last-child td {
+.shp4cf7-table tbody tr:last-child td {
 	border-bottom: none;
 }
 
 /* Breakdown Tables
 	========================================================================== */
 
-.simple-honeypot-cf7-breakdown {
+.shp4cf7-breakdown {
 	table-layout: fixed;
 	width: 100%;
 	max-width: none;
 }
 
-.simple-honeypot-cf7-breakdown thead tr th:first-child,
-.simple-honeypot-cf7-breakdown tbody tr td:first-child {
+.shp4cf7-breakdown thead tr th:first-child,
+.shp4cf7-breakdown tbody tr td:first-child {
 	width: 60%;
 }
 
-.simple-honeypot-cf7-breakdown thead tr th:last-child,
-.simple-honeypot-cf7-breakdown tbody tr td:last-child {
+.shp4cf7-breakdown thead tr th:last-child,
+.shp4cf7-breakdown tbody tr td:last-child {
 	width: 40%;
 	text-align: left;
 	font-variant-numeric: tabular-nums;
@@ -504,49 +504,49 @@
 /* Events Table
 	========================================================================== */
 
-.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) {
+.shp4cf7-table:not(.shp4cf7-breakdown) {
 	table-layout: fixed;
 	width: 100%;
 }
 
-.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) thead tr th:nth-child(1),
-.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) tbody tr td:nth-child(1) {
+.shp4cf7-table:not(.shp4cf7-breakdown) thead tr th:nth-child(1),
+.shp4cf7-table:not(.shp4cf7-breakdown) tbody tr td:nth-child(1) {
 	width: 16%;
 }
 
-.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) thead tr th:nth-child(2),
-.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) tbody tr td:nth-child(2) {
+.shp4cf7-table:not(.shp4cf7-breakdown) thead tr th:nth-child(2),
+.shp4cf7-table:not(.shp4cf7-breakdown) tbody tr td:nth-child(2) {
 	width: 14%;
 }
 
-.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) thead tr th:nth-child(3),
-.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) tbody tr td:nth-child(3) {
+.shp4cf7-table:not(.shp4cf7-breakdown) thead tr th:nth-child(3),
+.shp4cf7-table:not(.shp4cf7-breakdown) tbody tr td:nth-child(3) {
 	width: 12%;
 	font-family: monospace;
 	word-break: break-word;
 }
 
-.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) thead tr th:nth-child(4),
-.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) tbody tr td:nth-child(4) {
+.shp4cf7-table:not(.shp4cf7-breakdown) thead tr th:nth-child(4),
+.shp4cf7-table:not(.shp4cf7-breakdown) tbody tr td:nth-child(4) {
 	width: 34%;
 	word-break: break-word;
 }
 
-.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) thead tr th:nth-child(5),
-.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) tbody tr td:nth-child(5) {
+.shp4cf7-table:not(.shp4cf7-breakdown) thead tr th:nth-child(5),
+.shp4cf7-table:not(.shp4cf7-breakdown) tbody tr td:nth-child(5) {
 	width: 24%;
 }
 
 /* Reasons List in Events Table
 	========================================================================== */
 
-.simple-honeypot-cf7-reasons-list {
+.shp4cf7-reasons-list {
 	margin: 0;
 	padding-left: 16px;
 	list-style: disc;
 }
 
-.simple-honeypot-cf7-reasons-list li {
+.shp4cf7-reasons-list li {
 	margin: 2px 0;
 	line-height: 1.4;
 }
@@ -554,7 +554,7 @@
 /* Empty State
 	========================================================================== */
 
-.simple-honeypot-cf7-empty-state {
+.shp4cf7-empty-state {
 	text-align: left;
 	padding: 20px;
 	color: #646970;
@@ -564,7 +564,7 @@
 	margin-bottom: 24px;
 }
 
-.simple-honeypot-cf7-empty-state .dashicons {
+.shp4cf7-empty-state .dashicons {
 	width: 24px;
 	height: 24px;
 	color: #8c8f94;
@@ -572,7 +572,7 @@
 	vertical-align: middle;
 }
 
-.simple-honeypot-cf7-empty-state p {
+.shp4cf7-empty-state p {
 	margin: 0;
 	display: inline;
 }
@@ -580,7 +580,7 @@
 /* CF7 Form Panel
 	========================================================================== */
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-form-panel-box {
+.shp4cf7-admin .shp4cf7-form-panel-box {
 	margin-top: 20px;
 	background: #f9f9f9;
 	border: 1px solid #e0e0e0;
@@ -588,43 +588,43 @@
 	padding: 16px;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-form-panel-box .form-table th {
+.shp4cf7-admin .shp4cf7-form-panel-box .form-table th {
 	width: 200px;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-form-panel-box .description {
+.shp4cf7-admin .shp4cf7-form-panel-box .description {
 	margin-top: 6px;
 }
 
 /* Button Styling
 	========================================================================== */
 
-.simple-honeypot-cf7-admin .button {
+.shp4cf7-admin .button {
 	transition: all 0.2s ease;
 }
 
-.simple-honeypot-cf7-admin .button:hover {
+.shp4cf7-admin .button:hover {
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.simple-honeypot-cf7-admin .button-primary {
+.shp4cf7-admin .button-primary {
 	box-shadow: 0 1px 0 #2271b1;
 }
 
-.simple-honeypot-cf7-admin .button-primary:hover {
+.shp4cf7-admin .button-primary:hover {
 	box-shadow: 0 1px 4px rgba(34, 113, 177, 0.3);
 }
 
-.simple-honeypot-cf7-admin .button-delete {
+.shp4cf7-admin .button-delete {
 	background: #dc3232;
 	border-color: #a00;
 	color: #fff;
 	box-shadow: 0 1px 0 #a00;
 }
 
-.simple-honeypot-cf7-admin .button-delete:hover,
-.simple-honeypot-cf7-admin .button-delete:focus,
-.simple-honeypot-cf7-admin .button-delete:active {
+.shp4cf7-admin .button-delete:hover,
+.shp4cf7-admin .button-delete:focus,
+.shp4cf7-admin .button-delete:active {
 	background: #fff;
 	color: #dc3232;
 	border-color: #dc3232;
@@ -634,7 +634,7 @@
 /* Section Headings
 	========================================================================== */
 
-.simple-honeypot-cf7-admin h2 {
+.shp4cf7-admin h2 {
 	font-size: 24px;
 	font-weight: 600;
 	margin: 24px 0 12px;
@@ -645,20 +645,20 @@
 /* Notice Styling
 	========================================================================== */
 
-.simple-honeypot-cf7-admin .notice {
+.shp4cf7-admin .notice {
 	margin: 16px 0;
 }
 
 /* Report Section Headings with Icon
 	========================================================================== */
 
-.simple-honeypot-cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) {
+.shp4cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 }
 
-.simple-honeypot-cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) .dashicons {
+.shp4cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) .dashicons {
 	color: #2271b1;
 	width: 24px;
 	height: 24px;
@@ -667,13 +667,13 @@
 /* Card Header with Icon
 	========================================================================== */
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .hndle {
+.shp4cf7-admin .shp4cf7-card .hndle {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 }
 
-.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .hndle .dashicons {
+.shp4cf7-admin .shp4cf7-card .hndle .dashicons {
 	color: #2271b1;
 	opacity: 0.8;
 }
@@ -681,7 +681,7 @@
 /* Stats Animation
 	========================================================================== */
 
-@keyframes simple-honeypot-fadeIn {
+@keyframes shp4cf7-fadeIn {
 	from {
 		opacity: 0;
 		transform: translateY(8px);
@@ -692,15 +692,15 @@
 	}
 }
 
-.simple-honeypot-cf7-stat {
-	animation: simple-honeypot-fadeIn 0.4s ease forwards;
+.shp4cf7-stat {
+	animation: shp4cf7-fadeIn 0.4s ease forwards;
 }
 
-.simple-honeypot-cf7-stat:nth-child(2) {
+.shp4cf7-stat:nth-child(2) {
 	animation-delay: 0.1s;
 }
 
-.simple-honeypot-cf7-stat:nth-child(3) {
+.shp4cf7-stat:nth-child(3) {
 	animation-delay: 0.2s;
 }
 
@@ -708,74 +708,74 @@
 	========================================================================== */
 
 @media screen and (max-width: 782px) {
-	.simple-honeypot-cf7-report-grid {
+	.shp4cf7-report-grid {
 		grid-template-columns: 1fr;
 	}
 
-	.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .form-table th {
+	.shp4cf7-admin .shp4cf7-card .form-table th {
 		width: auto;
 		display: block;
 		padding-bottom: 4px;
 	}
 
-	.simple-honeypot-cf7-admin .simple-honeypot-cf7-card .form-table td {
+	.shp4cf7-admin .shp4cf7-card .form-table td {
 		display: block;
 		padding-left: 0;
 	}
 
-	.simple-honeypot-cf7-admin .simple-honeypot-cf7-form-panel-box .form-table th {
+	.shp4cf7-admin .shp4cf7-form-panel-box .form-table th {
 		width: auto;
 	}
 
 
 
-	.simple-honeypot-cf7-nav-tabs .nav-tab .dashicons {
+	.shp4cf7-nav-tabs .nav-tab .dashicons {
 		display: none;
 	}
 
-	.simple-honeypot-cf7-table:not(.simple-honeypot-cf7-breakdown) {
+	.shp4cf7-table:not(.shp4cf7-breakdown) {
 		table-layout: auto;
 	}
 
-	.simple-honeypot-cf7-empty-state {
+	.shp4cf7-empty-state {
 		padding: 16px;
 	}
 }
 
-.simple-honeypot-cf7-nav-tabs {
+.shp4cf7-nav-tabs {
 	border-bottom: none;
 }
 
-.simple-honeypot-cf7-nav-tabs .nav-tab {
+.shp4cf7-nav-tabs .nav-tab {
 	padding: 6px 10px;
 }
 
 /* Danger Zone Card
 ========================================================================== */
 
-.simple-honeypot-cf7-card--danger {
+.shp4cf7-card--danger {
 	border: 2px solid #dc3232 !important;
 	border-radius: 4px;
 }
 
-.simple-honeypot-cf7-card--danger .hndle {
+.shp4cf7-card--danger .hndle {
 	border-bottom-color: #f5c6c6 !important;
 }
 
-.simple-honeypot-cf7-card--danger .hndle .dashicons {
+.shp4cf7-card--danger .hndle .dashicons {
 	color: #dc3232 !important;
 }
 
-.simple-honeypot-cf7-card--danger .button-delete {
+.shp4cf7-card--danger .button-delete {
 	background: #dc3232 !important;
 	border-color: #b71c1c !important;
 	color: #fff !important;
 	box-shadow: 0 1px 0 #b71c1c !important;
 }
 
-.simple-honeypot-cf7-card--danger .button-delete:hover,
-.simple-honeypot-cf7-card--danger .button-delete:focus,
-.simple-honeypot-cf7-card--danger .button-delete:active {
+.shp4cf7-card--danger .button-delete:hover,
+.shp4cf7-card--danger .button-delete:focus,
+.shp4cf7-card--danger .button-delete:active {
 	background: #fff !important;
 	color: #dc3232 !important;
 	border-color: #dc3232 !important;
@@ -785,16 +785,16 @@
 /* Subtle Page Background Enhancement
 	========================================================================== */
 
-.simple-honeypot-cf7-admin {
+.shp4cf7-admin {
 	padding-top: 12px;
 }
 
-.simple-honeypot-cf7-admin > h1 {
+.shp4cf7-admin > h1 {
 	font-weight: 600;
 	margin-bottom: 4px;
 }
 
-.simple-honeypot-cf7-admin > .description {
+.shp4cf7-admin > .description {
 	color: #646970;
 	margin-bottom: 16px;
 }
@@ -802,7 +802,7 @@
 /* Code / Monospace Fields
 	========================================================================== */
 
-.simple-honeypot-cf7-admin code {
+.shp4cf7-admin code {
 	background: #f0f0f1;
 	padding: 2px 6px;
 	border-radius: 3px;
@@ -811,7 +811,7 @@
 /* Inline Help
 	========================================================================== */
 
-.simple-honeypot-cf7-admin .form-table .description code {
+.shp4cf7-admin .form-table .description code {
 	background: transparent;
 	padding: 0;
 }
@@ -819,7 +819,7 @@
 /* Confirm Dialog
 ========================================================================== */
 
-.simple-honeypot-cf7-dialog {
+.shp4cf7-dialog {
 	border: 1px solid #c3c4c7;
 	border-radius: 8px;
 	padding: 0;
@@ -829,67 +829,67 @@
 	background: #fff;
 }
 
-.simple-honeypot-cf7-dialog::backdrop {
+.shp4cf7-dialog::backdrop {
 	background: rgba(0, 0, 0, 0.4);
 }
 
-.simple-honeypot-cf7-dialog-inner {
+.shp4cf7-dialog-inner {
 	padding: 24px;
 }
 
-.simple-honeypot-cf7-confirm-header {
+.shp4cf7-confirm-header {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 	margin: 0 0 12px;
 }
 
-.simple-honeypot-cf7-confirm-header .dashicons {
+.shp4cf7-confirm-header .dashicons {
 	color: #dc3232;
 	font-size: 24px;
 	width: 24px;
 	height: 24px;
 }
 
-.simple-honeypot-cf7-confirm-header strong {
+.shp4cf7-confirm-header strong {
 	font-size: 16px;
 	font-weight: 600;
 	color: #1d2327;
 }
 
-.simple-honeypot-cf7-confirm-message {
+.shp4cf7-confirm-message {
 	margin: 0 0 20px;
 	font-size: 14px;
 	line-height: 1.6;
 	color: #1d2327;
 }
 
-.simple-honeypot-cf7-dialog-actions {
+.shp4cf7-dialog-actions {
 	display: flex;
 	gap: 8px;
 	justify-content: flex-end;
 }
 
-.simple-honeypot-cf7-dialog-actions .button {
+.shp4cf7-dialog-actions .button {
 	min-width: 80px;
 	text-align: center;
 }
 
-.simple-honeypot-cf7-confirm-yes {
+.shp4cf7-confirm-yes {
 	background: #dc3232;
 	border-color: #a00;
 	color: #fff;
 }
 
-.simple-honeypot-cf7-confirm-yes:hover,
-.simple-honeypot-cf7-confirm-yes:focus {
+.shp4cf7-confirm-yes:hover,
+.shp4cf7-confirm-yes:focus {
 	background: #a00;
 	border-color: #8c0000;
 	color: #fff;
 }
 
 @media screen and (max-width: 782px) {
-	.simple-honeypot-cf7-dialog {
+	.shp4cf7-dialog {
 		max-width: calc(100% - 32px);
 		margin: 16px;
 	}

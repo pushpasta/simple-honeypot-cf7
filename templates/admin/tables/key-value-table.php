@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( empty( $items ) ) :
 	?>
-	<div class="simple-honeypot-cf7-empty-state">
+	<div class="shp4cf7-empty-state">
 		<span class="dashicons dashicons-chart-pie"></span>
 		<p><?php esc_html_e( 'No data yet. Spam attempts will appear here once they are blocked.', 'simple-honeypot-cf7' ); ?></p>
 	</div>
@@ -21,7 +21,7 @@ endif;
 
 arsort( $items );
 ?>
-<table class="widefat striped simple-honeypot-cf7-table simple-honeypot-cf7-breakdown">
+<table class="widefat striped shp4cf7-table shp4cf7-breakdown">
 	<caption class="screen-reader-text"><?php echo esc_html( $label ); ?></caption>
 	<thead>
 		<tr>

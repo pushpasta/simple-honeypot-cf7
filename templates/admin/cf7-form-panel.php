@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="simple-honeypot-cf7-form-panel-box">
+<div class="shp4cf7-form-panel-box">
 	<table class="form-table" role="presentation">
 		<tr>
 			<th scope="row"><label for="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_form_time_mode' ); ?>"><?php esc_html_e( 'Timing check', 'simple-honeypot-cf7' ); ?></label></th>
@@ -31,8 +31,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</td>
 		</tr>
 	</table>
-	<p class="simple-honeypot-cf7-form-panel-reset">
-		<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=' . SIMPLE_HONEYPOT_CF7_BASE . '_reset_form_settings&form_id=' . $form_id ), SIMPLE_HONEYPOT_CF7_BASE . '_reset_form_settings' ) ); ?>" class="button simple-honeypot-cf7-reset-form-settings" data-confirm="<?php echo esc_attr__( 'This will restore this form\'s settings to defaults.', 'simple-honeypot-cf7' ); ?>">
+	<p class="shp4cf7-form-panel-reset">
+		<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=' . SIMPLE_HONEYPOT_CF7_BASE . '_reset_form_settings&form_id=' . $form_id ), SIMPLE_HONEYPOT_CF7_BASE . '_reset_form_settings' ) ); ?>" class="button shp4cf7-reset-form-settings" data-confirm="<?php echo esc_attr__( 'This will restore this form\'s settings to defaults.', 'simple-honeypot-cf7' ); ?>">
 			<?php esc_html_e( 'Restore to defaults', 'simple-honeypot-cf7' ); ?>
 		</a>
 	</p>

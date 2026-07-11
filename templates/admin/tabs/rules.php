@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<input type="hidden" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="save" />
 	<input type="hidden" name="tab" value="rules" />
 
-	<div class="postbox simple-honeypot-cf7-card">
+	<div class="postbox shp4cf7-card">
 		<h2 class="hndle"><span class="dashicons dashicons-shield"></span><span><?php esc_html_e( 'Rule sources', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<?php if ( count( $parsed_rules ) > \SimpleHoneypotCF7\Settings::RULES_SOFT_LIMIT ) : ?>
@@ -35,12 +35,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Rules', 'simple-honeypot-cf7' ); ?></th>
 					<td>
-						<div class="simple-honeypot-cf7-custom-rules-group">
-							<label class="simple-honeypot-cf7-custom-rules-toggle">
+						<div class="shp4cf7-custom-rules-group">
+							<label class="shp4cf7-custom-rules-toggle">
 								<input type="checkbox" name="custom_rules_enabled" value="1" <?php checked( $settings['custom_rules_enabled'], 1 ); ?> />
 								<?php esc_html_e( 'Enable rules.', 'simple-honeypot-cf7' ); ?>
 							</label>
-							<textarea class="large-text code simple-honeypot-cf7-rules" name="custom_rules" rows="16" placeholder="<?php echo esc_attr( "# Blocked by IT dept\n192.168.1.*\n10.0.0.0/24\n2001:db8::/32\n*@temporary-mail.com\nspammer@example.com" ); ?>"><?php echo esc_textarea( $settings['custom_rules'] ); ?></textarea>
+							<textarea class="large-text code shp4cf7-rules" name="custom_rules" rows="16" placeholder="<?php echo esc_attr( "# Blocked by IT dept\n192.168.1.*\n10.0.0.0/24\n2001:db8::/32\n*@temporary-mail.com\nspammer@example.com" ); ?>"><?php echo esc_textarea( $settings['custom_rules'] ); ?></textarea>
 							<p class="description">
 								<?php
 								/* translators: * characters are literal wildcard symbols and must not be translated. */

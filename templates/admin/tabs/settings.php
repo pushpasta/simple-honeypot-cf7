@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<input type="hidden" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="save" />
 	<input type="hidden" name="tab" value="settings" />
 
-	<div class="postbox simple-honeypot-cf7-card">
+	<div class="postbox shp4cf7-card">
 		<h2 class="hndle"><span class="dashicons dashicons-clock"></span><span><?php esc_html_e( 'Time Check', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<p class="description"><?php esc_html_e( 'Blocks submissions that arrive faster than a human could reasonably fill out the form.', 'simple-honeypot-cf7' ); ?></p>
@@ -40,7 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 
-	<div class="postbox simple-honeypot-cf7-card">
+	<div class="postbox shp4cf7-card">
 		<h2 class="hndle"><span class="dashicons dashicons-lock"></span><span><?php esc_html_e( 'Token', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<p class="description"><?php esc_html_e( 'Each form generates a unique token to verify the submission originated from your site.', 'simple-honeypot-cf7' ); ?></p>
@@ -51,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<input type="range" id="max_age_minutes" name="max_age_minutes" min="10" max="90" step="1" value="<?php echo esc_attr( $settings['max_age_minutes'] ); ?>" />
 						<span id="max-age-minutes-value"><?php echo esc_html( $settings['max_age_minutes'] ); ?></span>
 						<?php esc_html_e( 'minutes', 'simple-honeypot-cf7' ); ?>
-						<span id="max-age-minutes-label" class="simple-honeypot-cf7-badge"></span>
+						<span id="max-age-minutes-label" class="shp4cf7-badge"></span>
 						<p class="description"><?php esc_html_e( 'How long a form token stays valid. Shorter values improve anti-replay protection but may affect users with slow connections.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
@@ -59,7 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 
-	<div class="postbox simple-honeypot-cf7-card">
+	<div class="postbox shp4cf7-card">
 		<h2 class="hndle"><span class="dashicons dashicons-shield"></span><span><?php esc_html_e( 'Proof of Work', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<p class="description"><?php esc_html_e( 'Requires the visitor\'s browser to solve a small computational puzzle before submitting. Adds friction for bots while remaining imperceptible to humans. Requires JavaScript and HTTPS.', 'simple-honeypot-cf7' ); ?></p>
@@ -77,7 +77,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<th scope="row"><label for="pow_complexity"><?php esc_html_e( 'Puzzle complexity', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
 						<input type="range" id="pow_complexity" name="pow_complexity" min="4" max="20" step="1" value="<?php echo esc_attr( $settings['pow_complexity'] ); ?>" />
-						<span><span id="pow-complexity-value"><?php echo esc_html( $settings['pow_complexity'] ); ?></span> <?php esc_html_e( 'leading zero bits', 'simple-honeypot-cf7' ); ?> <span id="pow-complexity-label" class="simple-honeypot-cf7-badge"><?php esc_html_e( 'Recommended', 'simple-honeypot-cf7' ); ?></span></span>
+						<span><span id="pow-complexity-value"><?php echo esc_html( $settings['pow_complexity'] ); ?></span> <?php esc_html_e( 'leading zero bits', 'simple-honeypot-cf7' ); ?> <span id="pow-complexity-label" class="shp4cf7-badge"><?php esc_html_e( 'Recommended', 'simple-honeypot-cf7' ); ?></span></span>
 						<p class="description"><?php esc_html_e( 'Each additional bit doubles the work required. 4–7 is fast but less reliable, 8–11 offers moderate protection, 12–15 is recommended, and 16–20 provides strong protection but may lag on slow devices.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
@@ -85,7 +85,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 
-	<div class="postbox simple-honeypot-cf7-card">
+	<div class="postbox shp4cf7-card">
 		<h2 class="hndle"><span class="dashicons dashicons-database"></span><span><?php esc_html_e( 'Data', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<table class="form-table" role="presentation">
@@ -111,7 +111,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 
-	<div class="postbox simple-honeypot-cf7-card">
+	<div class="postbox shp4cf7-card">
 		<h2 class="hndle"><span class="dashicons dashicons-database"></span><span><?php esc_html_e( 'Recent Events', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<p class="description"><?php esc_html_e( 'Control how many recent blocked submissions are retained in the database.', 'simple-honeypot-cf7' ); ?></p>
@@ -169,7 +169,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			this.value = closest;
 			tokenOutput.textContent = closest;
 			tokenLabel.textContent = tokenLabels[closest];
-			tokenLabel.className = 'simple-honeypot-cf7-badge simple-honeypot-cf7-badge--' + tokenColors[closest];
+			tokenLabel.className = 'shp4cf7-badge shp4cf7-badge--' + tokenColors[closest];
 		}
 
 		if (tokenRange) {
@@ -193,7 +193,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			for (var i = 0; i < powLabels.length; i++) {
 				if (val >= powLabels[i].min && val <= powLabels[i].max) {
 					powLabel.textContent = powLabels[i].text;
-					powLabel.className = 'simple-honeypot-cf7-badge simple-honeypot-cf7-badge--' + powLabels[i].css;
+					powLabel.className = 'shp4cf7-badge shp4cf7-badge--' + powLabels[i].css;
 					break;
 				}
 			}

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( empty( $events ) ) :
 	?>
-	<div class="simple-honeypot-cf7-empty-state">
+	<div class="shp4cf7-empty-state">
 		<span class="dashicons dashicons-list-view"></span>
 		<p><?php esc_html_e( 'No events recorded yet. Blocked spam attempts will appear here.', 'simple-honeypot-cf7' ); ?></p>
 	</div>
@@ -19,7 +19,7 @@ if ( empty( $events ) ) :
 	return;
 endif;
 ?>
-<table class="widefat striped simple-honeypot-cf7-table">
+<table class="widefat striped shp4cf7-table">
 	<caption class="screen-reader-text"><?php esc_html_e( 'Spam events', 'simple-honeypot-cf7' ); ?></caption>
 	<thead>
 		<tr>
@@ -72,7 +72,7 @@ endif;
 					$reasons = (array) ( isset( $event['reasons'] ) ? $event['reasons'] : array() );
 					if ( ! empty( $reasons ) ) :
 						?>
-						<ul class="simple-honeypot-cf7-reasons-list">
+						<ul class="shp4cf7-reasons-list">
 							<?php foreach ( $reasons as $reason ) : ?>
 								<?php
 								$message    = isset( $reason['message'] ) ? $reason['message'] : '';
