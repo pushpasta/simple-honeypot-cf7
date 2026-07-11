@@ -53,9 +53,12 @@ endif;
 				<?php
 				$ip = isset( $event['ip'] ) ? $event['ip'] : '';
 				if ( '' !== $ip && filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+					/* translators: %s: IP address being looked up */
+					$abuseipdb_title = sprintf( __( 'Look up %s on AbuseIPDB', 'simple-honeypot-cf7' ), $ip );
 					printf(
-						'<a href="https://www.abuseipdb.com/check/%s" target="_blank" rel="noopener noreferrer">%s</a>',
+						'<a href="https://www.abuseipdb.com/check/%s" target="_blank" rel="noopener noreferrer" title="%s">%s</a>',
 						esc_attr( $ip ),
+						esc_attr( $abuseipdb_title ),
 						esc_html( $ip )
 					);
 				} else {

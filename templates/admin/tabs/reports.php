@@ -68,7 +68,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php else : ?>
 			<div class="simple-honeypot-cf7-breakdown-grid">
 				<div class="simple-honeypot-cf7-breakdown-box">
-					<h3><?php esc_html_e( 'By Time Period', 'simple-honeypot-cf7' ); ?></h3>
+					<h3><span class="dashicons dashicons-calendar"></span> <?php esc_html_e( 'By Time Period', 'simple-honeypot-cf7' ); ?></h3>
 					<p class="description"><?php esc_html_e( 'How many spam attempts were blocked each day.', 'simple-honeypot-cf7' ); ?></p>
 					<dl class="simple-honeypot-cf7-sidebar-stats">
 						<dt><?php esc_html_e( 'Today', 'simple-honeypot-cf7' ); ?></dt>
@@ -86,7 +86,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</dl>
 				</div>
 				<div class="simple-honeypot-cf7-breakdown-box">
-					<h3><?php esc_html_e( 'By Reason', 'simple-honeypot-cf7' ); ?></h3>
+					<h3><span class="dashicons dashicons-flag"></span> <?php esc_html_e( 'By Reason', 'simple-honeypot-cf7' ); ?></h3>
 					<p class="description"><?php esc_html_e( 'What triggered the spam detection most often.', 'simple-honeypot-cf7' ); ?></p>
 					<?php arsort( $stats['reasons'] ); ?>
 					<dl class="simple-honeypot-cf7-sidebar-stats">
@@ -97,7 +97,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</dl>
 				</div>
 				<div class="simple-honeypot-cf7-breakdown-box">
-					<h3><?php esc_html_e( 'By Form', 'simple-honeypot-cf7' ); ?></h3>
+					<h3><span class="dashicons dashicons-forms"></span> <?php esc_html_e( 'By Form', 'simple-honeypot-cf7' ); ?></h3>
 					<p class="description"><?php esc_html_e( 'Which forms received the most spam.', 'simple-honeypot-cf7' ); ?></p>
 					<dl class="simple-honeypot-cf7-sidebar-stats">
 						<?php foreach ( $stats['forms'] as $form_id => $form ) : ?>

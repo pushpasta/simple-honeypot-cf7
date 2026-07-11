@@ -36,6 +36,18 @@ for ( $i = 1; $i <= $pagination['total_pages']; $i++ ) {
 			</span>
 			<span class="pagination-links">
 				<?php if ( $pagination['current_page'] > 1 ) : ?>
+					<a class="first-page button" href="<?php echo esc_url( $links[0] ); ?>">
+						<span class="screen-reader-text"><?php esc_html_e( 'First page', 'simple-honeypot-cf7' ); ?></span>
+						<span aria-hidden="true">&laquo;&laquo;</span>
+					</a>
+				<?php else : ?>
+					<span class="first-page button disabled" aria-disabled="true">
+						<span class="screen-reader-text"><?php esc_html_e( 'First page', 'simple-honeypot-cf7' ); ?></span>
+						<span aria-hidden="true">&laquo;&laquo;</span>
+					</span>
+				<?php endif; ?>
+
+				<?php if ( $pagination['current_page'] > 1 ) : ?>
 					<a class="prev-page button" href="<?php echo esc_url( $links[ $pagination['current_page'] - 2 ] ); ?>">
 						<span class="screen-reader-text"><?php esc_html_e( 'Previous page', 'simple-honeypot-cf7' ); ?></span>
 						<span aria-hidden="true">&laquo;</span>
@@ -75,6 +87,18 @@ for ( $i = 1; $i <= $pagination['total_pages']; $i++ ) {
 						<span aria-hidden="true">&raquo;</span>
 					</span>
 				<?php endif; ?>
+
+				<?php if ( $pagination['current_page'] < $pagination['total_pages'] ) : ?>
+					<a class="last-page button" href="<?php echo esc_url( $links[ $pagination['total_pages'] - 1 ] ); ?>">
+						<span class="screen-reader-text"><?php esc_html_e( 'Last page', 'simple-honeypot-cf7' ); ?></span>
+						<span aria-hidden="true">&raquo;&raquo;</span>
+					</a>
+				<?php else : ?>
+					<span class="last-page button disabled" aria-disabled="true">
+						<span class="screen-reader-text"><?php esc_html_e( 'Last page', 'simple-honeypot-cf7' ); ?></span>
+						<span aria-hidden="true">&raquo;&raquo;</span>
+					</span>
+				<?php endif; ?>
 			</span>
 		<?php else : ?>
 			<span class="displaying-num">
@@ -87,6 +111,18 @@ for ( $i = 1; $i <= $pagination['total_pages']; $i++ ) {
 				?>
 			</span>
 			<span class="pagination-links">
+				<?php if ( $pagination['current_page'] > 1 ) : ?>
+					<a class="first-page button" href="<?php echo esc_url( $links[0] ); ?>">
+						<span class="screen-reader-text"><?php esc_html_e( 'First page', 'simple-honeypot-cf7' ); ?></span>
+						<span aria-hidden="true">&laquo;&laquo;</span>
+					</a>
+				<?php else : ?>
+					<span class="first-page button disabled" aria-disabled="true">
+						<span class="screen-reader-text"><?php esc_html_e( 'First page', 'simple-honeypot-cf7' ); ?></span>
+						<span aria-hidden="true">&laquo;&laquo;</span>
+					</span>
+				<?php endif; ?>
+
 				<?php if ( $pagination['current_page'] > 1 ) : ?>
 					<a class="prev-page button" href="<?php echo esc_url( $links[ $pagination['current_page'] - 2 ] ); ?>">
 						<span class="screen-reader-text"><?php esc_html_e( 'Previous page', 'simple-honeypot-cf7' ); ?></span>
@@ -123,6 +159,18 @@ for ( $i = 1; $i <= $pagination['total_pages']; $i++ ) {
 					<span class="next-page button disabled" aria-disabled="true">
 						<span class="screen-reader-text"><?php esc_html_e( 'Next page', 'simple-honeypot-cf7' ); ?></span>
 						<span aria-hidden="true">&raquo;</span>
+					</span>
+				<?php endif; ?>
+
+				<?php if ( $pagination['current_page'] < $pagination['total_pages'] ) : ?>
+					<a class="last-page button" href="<?php echo esc_url( $links[ $pagination['total_pages'] - 1 ] ); ?>">
+						<span class="screen-reader-text"><?php esc_html_e( 'Last page', 'simple-honeypot-cf7' ); ?></span>
+						<span aria-hidden="true">&raquo;&raquo;</span>
+					</a>
+				<?php else : ?>
+					<span class="last-page button disabled" aria-disabled="true">
+						<span class="screen-reader-text"><?php esc_html_e( 'Last page', 'simple-honeypot-cf7' ); ?></span>
+						<span aria-hidden="true">&raquo;&raquo;</span>
 					</span>
 				<?php endif; ?>
 			</span>
