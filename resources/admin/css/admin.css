@@ -372,6 +372,10 @@
 	display: block;
 }
 
+.simple-honeypot-cf7-field-invalid {
+	outline: 1px solid #dc3232;
+}
+
 /* Focus row highlighting - pure CSS */
 .simple-honeypot-cf7-admin .form-table tr:has(input[type="text"]:focus),
 .simple-honeypot-cf7-admin .form-table tr:has(input[type="number"]:focus),
