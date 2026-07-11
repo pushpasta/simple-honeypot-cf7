@@ -24,6 +24,13 @@ final class Event_Logger {
 	const TABLE = SIMPLE_HONEYPOT_CF7_BASE . '_events';
 
 	/**
+	 * Atomic stats counter table name without prefix.
+	 *
+	 * @var string
+	 */
+	const STATS_TABLE = SIMPLE_HONEYPOT_CF7_BASE . '_stat_counters';
+
+	/**
 	 * Schema version.
 	 *
 	 * @var int
@@ -296,6 +303,117 @@ final class Event_Logger {
 		$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
 
 		delete_option( $table . '_db_version', false );
+
+		self::drop_stats_table();
+	}
+
+	/**
+	 * Create the atomic stats counter table.
+	 *
+	 * @return void
+	 */
+	public static function create_stats_table() {
+		global $wpdb;
+
+		$table           = $wpdb->prefix . self::STATS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$sql = "CREATE TABLE {$table} (
+			counter_name VARCHAR(100) NOT NULL,
+			counter_value BIGINT UNSIGNED NOT NULL DEFAULT 0,
+			PRIMARY KEY (counter_name)
+		) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	/**
+	 * Atomically increment a counter by one.
+	 *
+	 * Uses INSERT … ON DUPLICATE KEY UPDATE so concurrent requests
+	 * never overwrite each other's increments.
+	 *
+	 * @param string $name Counter name (e.g. 'total', 'reason:too_fast').
+	 * @return void
+	 */
+	public static function increment_counter( $name ) {
+		global $wpdb;
+
+		$table = $wpdb->prefix . self::STATS_TABLE;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( $wpdb->prepare( "INSERT INTO {$table} (counter_name, counter_value) VALUES (%s, 1) ON DUPLICATE KEY UPDATE counter_value = counter_value + 1", $name ) );
+	}
+
+	/**
+	 * Set a counter to a specific value (for migration use).
+	 *
+	 * @param string $name  Counter name.
+	 * @param int    $value Counter value.
+	 * @return void
+	 */
+	public static function set_counter( $name, $value ) {
+		global $wpdb;
+
+		$table = $wpdb->prefix . self::STATS_TABLE;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( $wpdb->prepare( "INSERT INTO {$table} (counter_name, counter_value) VALUES (%s, %d) ON DUPLICATE KEY UPDATE counter_value = %d", $name, $value, $value ) );
+	}
+
+	/**
+	 * Get all counter values.
+	 *
+	 * @return array<string, int>
+	 */
+	public static function get_counters() {
+		global $wpdb;
+
+		$table = $wpdb->prefix . self::STATS_TABLE;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows = $wpdb->get_results( "SELECT counter_name, counter_value FROM {$table}", OBJECT_K );
+
+		if ( ! is_array( $rows ) ) {
+			return array();
+		}
+
+		$counters = array();
+
+		foreach ( $rows as $name => $row ) {
+			$counters[ $name ] = (int) $row->counter_value;
+		}
+
+		return $counters;
+	}
+
+	/**
+	 * Reset all counters to zero.
+	 *
+	 * @return void
+	 */
+	public static function reset_counters() {
+		global $wpdb;
+
+		$table = $wpdb->prefix . self::STATS_TABLE;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "TRUNCATE TABLE {$table}" );
+	}
+
+	/**
+	 * Drop the stats counter table.
+	 *
+	 * @return void
+	 */
+	public static function drop_stats_table() {
+		global $wpdb;
+
+		$table = $wpdb->prefix . self::STATS_TABLE;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
 	}
 
 	/**

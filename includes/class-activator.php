@@ -38,6 +38,7 @@ final class Activator {
 	 */
 	private static function setup_events_table() {
 		Event_Logger::create_table();
+		Event_Logger::create_stats_table();
 		Event_Logger::migrate_from_options( Settings::STATS_OPTION );
 	}
 

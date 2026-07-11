@@ -96,6 +96,7 @@ final class Upgrader {
 		self::run();
 		Settings::activate();
 		Event_Logger::create_table();
+		Event_Logger::create_stats_table();
 		Event_Logger::migrate_from_options( Settings::STATS_OPTION );
 
 		set_transient( self::TRANSIENT_VERSION_OPTION, self::CURRENT_DB_VERSION, 7 * DAY_IN_SECONDS );
@@ -140,8 +141,8 @@ final class Upgrader {
 		}
 
 		// 3. Migrate data from the old events table before dropping it.
-		//     The new table uses a different prefix (shp4cf7_events instead of
-		//     simple_honeypot_cf7_events), but the schema is identical.
+		// The new table uses a different prefix (shp4cf7_events instead of
+		// simple_honeypot_cf7_events), but the schema is identical.
 		$new_table = $wpdb->prefix . Event_Logger::TABLE;
 		$old_table = $wpdb->prefix . 'simple_honeypot_cf7_events';
 

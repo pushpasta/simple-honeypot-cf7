@@ -28,34 +28,25 @@ final class Reporter {
 	 */
 	public function record_spam_attempt( $contact_form, array $reasons ) {
 		$settings   = Settings::get_settings();
-		$stats      = Settings::get_stats();
 		$form_id    = $contact_form && method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
 		$form_title = $contact_form && method_exists( $contact_form, 'title' ) ? wp_strip_all_tags( $contact_form->title() ) : __( 'Unknown form', 'simple-honeypot-cf7' );
-		$form_key   = (string) $form_id;
 
-		$stats['total'] = absint( $stats['total'] ) + 1;
+		// Atomic increments — concurrent requests never overwrite each other.
+		Event_Logger::increment_counter( 'total' );
 
 		foreach ( $reasons as $reason ) {
-			$type = sanitize_key( $reason['type'] );
-
-			if ( empty( $stats['reasons'][ $type ] ) ) {
-				$stats['reasons'][ $type ] = 0;
-			}
-
-			++$stats['reasons'][ $type ];
+			Event_Logger::increment_counter( 'reason:' . sanitize_key( $reason['type'] ) );
 		}
 
-		if ( empty( $stats['forms'][ $form_key ] ) || ! is_array( $stats['forms'][ $form_key ] ) ) {
-			$stats['forms'][ $form_key ] = array(
-				'title' => $form_title,
-				'count' => 0,
-			);
+		Event_Logger::increment_counter( 'form:' . $form_id );
+
+		// Keep form titles for the display layer.
+		$form_titles = get_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', array() );
+
+		if ( ! isset( $form_titles[ $form_id ] ) || $form_titles[ $form_id ] !== $form_title ) {
+			$form_titles[ $form_id ] = $form_title;
+			update_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', $form_titles, false );
 		}
-
-		$stats['forms'][ $form_key ]['title'] = $form_title;
-		$stats['forms'][ $form_key ]['count'] = absint( $stats['forms'][ $form_key ]['count'] ) + 1;
-
-		Settings::update_stats( $stats );
 
 		Event_Logger::insert(
 			$form_id,
