@@ -77,7 +77,7 @@ final class Settings {
 			'custom_rules_enabled'      => 0,
 			'custom_rules'              => '',
 			'pow_enabled'               => 0,
-			'pow_complexity'            => 8,
+			'pow_complexity'            => 14,
 			'store_honeypot_value'      => 0,
 			'honeypot_value_max_length' => 100,
 			'keep_recent_events'        => 1000,

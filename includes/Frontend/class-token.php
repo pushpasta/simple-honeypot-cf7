@@ -338,7 +338,7 @@ final class Token {
 	 */
 	public static function pow_challenge( $form_id, array $settings = array() ) {
 		$tick       = (int) floor( time() / self::POW_TICK );
-		$complexity = empty( $settings['pow_complexity'] ) ? 8 : max( 4, min( 20, absint( $settings['pow_complexity'] ) ) );
+		$complexity = empty( $settings['pow_complexity'] ) ? 14 : max( 4, min( 20, absint( $settings['pow_complexity'] ) ) );
 		$seed       = substr( wp_hash( SIMPLE_HONEYPOT_CF7_BASE . '|pow|seed|' . (int) $form_id . '|' . $tick ), 0, 16 );
 		$payload    = implode( '.', array( $seed, $complexity, $tick, (int) $form_id ) );
 

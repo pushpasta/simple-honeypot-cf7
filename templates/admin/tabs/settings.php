@@ -76,9 +76,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="pow_complexity"><?php esc_html_e( 'Puzzle complexity', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="number" class="small-text" id="pow_complexity" name="pow_complexity" min="4" max="20" step="1" value="<?php echo esc_attr( $settings['pow_complexity'] ); ?>" placeholder="8" />
-						<?php esc_html_e( 'leading zero bits (4 = fast, 20 = slow)', 'simple-honeypot-cf7' ); ?>
-						<p class="description"><?php esc_html_e( 'Each additional bit doubles the work required. Default (8) takes ~50&#8211;100ms in a modern browser. Values above 14 may take several seconds.', 'simple-honeypot-cf7' ); ?></p>
+						<input type="range" id="pow_complexity" name="pow_complexity" min="4" max="20" step="1" value="<?php echo esc_attr( $settings['pow_complexity'] ); ?>" />
+						<span><span id="pow-complexity-value"><?php echo esc_html( $settings['pow_complexity'] ); ?></span> <?php esc_html_e( 'leading zero bits', 'simple-honeypot-cf7' ); ?> <span id="pow-complexity-label" class="simple-honeypot-cf7-badge"><?php esc_html_e( 'Recommended', 'simple-honeypot-cf7' ); ?></span></span>
+						<p class="description"><?php esc_html_e( 'Each additional bit doubles the work required. 4–7 is fast but less reliable, 8–11 offers moderate protection, 12–15 is recommended, and 16–20 provides strong protection but may lag on slow devices.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
 			</table>
@@ -175,6 +175,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 		if (tokenRange) {
 			tokenRange.addEventListener( 'input', updateToken );
 			updateToken.call( tokenRange );
+		}
+
+		var powRange = document.getElementById('pow_complexity');
+		var powOutput = document.getElementById('pow-complexity-value');
+		var powLabel = document.getElementById('pow-complexity-label');
+		var powLabels = [
+			{ min: 4, max: 7, text: 'Light', css: 'inactive' },
+			{ min: 8, max: 11, text: 'Moderate', css: 'info' },
+			{ min: 12, max: 15, text: 'Recommended', css: 'active' },
+			{ min: 16, max: 20, text: 'Strong', css: 'inherited' }
+		];
+
+		function updatePow() {
+			var val = parseInt( this.value, 10 );
+			powOutput.textContent = val;
+			for (var i = 0; i < powLabels.length; i++) {
+				if (val >= powLabels[i].min && val <= powLabels[i].max) {
+					powLabel.textContent = powLabels[i].text;
+					powLabel.className = 'simple-honeypot-cf7-badge simple-honeypot-cf7-badge--' + powLabels[i].css;
+					break;
+				}
+			}
+		}
+
+		if (powRange) {
+			powRange.addEventListener( 'input', updatePow );
+			updatePow.call( powRange );
 		}
 	})();
 	</script>
