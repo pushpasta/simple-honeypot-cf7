@@ -25,6 +25,10 @@ final class Assets {
 	 * @return string The URL to the asset.
 	 */
 	private static function get_asset_url( $relative_path ) {
+		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+			return SIMPLE_HONEYPOT_CF7_URL . $relative_path;
+		}
+
 		$min_path = preg_replace( '/\.(css|js)$/', '.min.$1', $relative_path );
 
 		if ( defined( 'SIMPLE_HONEYPOT_CF7_PATH' ) && file_exists( SIMPLE_HONEYPOT_CF7_PATH . $min_path ) ) {
