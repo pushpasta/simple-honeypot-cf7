@@ -20,6 +20,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Importer {
 
 	/**
+	 * Maximum import file size in bytes.
+	 *
+	 * Settings exports are typically a few KB. This cap prevents a
+	 * privileged upload from causing avoidable memory pressure via
+	 * file_get_contents / json_decode of the full file content.
+	 */
+	const MAX_IMPORT_SIZE = 524288; // 512 KB.
+
+	/**
 	 * Import settings from an uploaded JSON file.
 	 *
 	 * @return array{success: bool, error?: string}
@@ -32,16 +41,16 @@ final class Importer {
 			return array( 'success' => false );
 		}
 
-		$max_size = wp_max_upload_size();
-
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- File size is checked numerically.
-		if ( ! empty( $_FILES['import_file']['size'] ) && (int) $_FILES['import_file']['size'] > $max_size ) {
+		$file_size = ! empty( $_FILES['import_file']['size'] ) ? (int) $_FILES['import_file']['size'] : 0;
+
+		if ( $file_size > self::MAX_IMPORT_SIZE ) {
 			return array(
 				'success' => false,
 				'error'   => sprintf(
-					/* translators: %s: maximum file size in MB. */
-					__( 'File is too large. Maximum size is %s MB.', 'simple-honeypot-cf7' ),
-					number_format( $max_size / ( 1024 * 1024 ), 1 )
+					/* translators: %s: maximum file size in KB. */
+					__( 'File is too large. Maximum size is %s KB.', 'simple-honeypot-cf7' ),
+					number_format( self::MAX_IMPORT_SIZE / 1024 )
 				),
 			);
 		}
