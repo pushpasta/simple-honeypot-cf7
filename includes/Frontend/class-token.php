@@ -348,11 +348,12 @@ final class Token {
 	/**
 	 * Verify a Proof-of-Work answer.
 	 *
-	 * @param string $challenge The challenge string from the hidden field.
-	 * @param string $answer    The PoW nonce submitted by the client.
+	 * @param string $challenge       The challenge string from the hidden field.
+	 * @param string $answer          The PoW nonce submitted by the client.
+	 * @param int    $expected_form_id Expected Contact Form 7 form ID (prevents cross-form reuse).
 	 * @return bool
 	 */
-	public static function verify_pow( $challenge, $answer ) {
+	public static function verify_pow( $challenge, $answer, $expected_form_id = 0 ) {
 		$parts = explode( '.', $challenge );
 
 		if ( count( $parts ) !== 5 ) {
@@ -371,6 +372,11 @@ final class Token {
 		$tick       = (int) $tick;
 		$complexity = (int) $complexity;
 		$current    = (int) floor( time() / self::POW_TICK );
+
+		// Bind the embedded form ID to the expected form ID.
+		if ( $expected_form_id > 0 && (int) $form_id !== $expected_form_id ) {
+			return false;
+		}
 
 		// Allow current and previous tick (grace for cached pages).
 		if ( $tick !== $current && $tick !== $current - 1 ) {
@@ -461,7 +467,7 @@ final class Token {
 		$challenge = implode( '.', array_slice( $parts, 0, 5 ) );
 		$answer    = (string) $parts[5];
 
-		return self::verify_pow( $challenge, $answer );
+		return self::verify_pow( $challenge, $answer, $form_id );
 	}
 
 	/**
