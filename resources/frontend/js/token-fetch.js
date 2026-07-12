@@ -220,7 +220,21 @@
 			.then(
 				function ( response ) {
 					if ( ! response.ok ) {
-						throw new Error();
+						return response.json()
+							.catch(
+								function () {
+									return {};
+								}
+							)
+							.then(
+								function ( body ) {
+									var err = new Error(
+										( body.data && body.data.message ) ? body.data.message : ''
+									);
+									err.status = response.status;
+									throw err;
+								}
+							);
 					}
 
 					return response.json();
@@ -238,9 +252,9 @@
 				}
 			)
 			.catch(
-				function () {
+				function ( err ) {
 					state.promise = null;
-					throw new Error();
+					throw err;
 				}
 			);
 
@@ -279,8 +293,26 @@
 					}
 				)
 				.catch(
-					function () {
-						// Keep the form available so another submit can retry.
+					function ( err ) {
+						var message = ( err && err.message ) ? err.message : '',
+							wrapper, output;
+
+						if ( ! message ) {
+							return;
+						}
+
+						form.classList.add( 'spam' );
+
+						wrapper = form.closest( '.wpcf7' );
+						output  = wrapper
+							? wrapper.querySelector( '.wpcf7-response-output' )
+							: null;
+
+						if ( output ) {
+							output.textContent = message;
+							output.classList.remove( 'wpcf7-display-none' );
+							output.setAttribute( 'aria-hidden', 'false' );
+						}
 					}
 				);
 		},
