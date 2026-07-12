@@ -228,9 +228,11 @@ final class Token {
 			$name .= $chars[ hexdec( substr( $hash, $i * 2, 2 ) ) % 36 ];
 		}
 
-		self::$prefix_cache[ $form_id ] = $name;
+		$full = '_' . SIMPLE_HONEYPOT_CF7_BASE . '_' . $name;
 
-		return $name;
+		self::$prefix_cache[ $form_id ] = $full;
+
+		return $full;
 	}
 
 	/**
