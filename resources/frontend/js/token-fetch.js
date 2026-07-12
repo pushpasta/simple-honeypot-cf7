@@ -302,4 +302,37 @@
 		},
 		true
 	);
+
+	document.addEventListener(
+		'wpcf7submit',
+		function ( event ) {
+			var form = event.target.closest( '.wpcf7 form' ) || event.target.querySelector( 'form' ),
+				state, fields, i, len;
+
+			if ( ! form ) {
+				return;
+			}
+
+			state = states.get( form );
+
+			if ( state ) {
+				state.ready      = false;
+				state.promise    = null;
+				state.readyUntil = 0;
+			}
+
+			fields = form.querySelectorAll( '[name^="' + shp4cf7.prefix + '"]' );
+
+			for ( i = 0, len = fields.length; i < len; i++ ) {
+				fields[ i ].value = '';
+			}
+
+			prepareForm( form ).catch(
+				function () {
+					// A later interaction or submission will retry.
+				}
+			);
+		},
+		false
+	);
 }() );
