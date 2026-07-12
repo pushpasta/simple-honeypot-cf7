@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="postbox shp4cf7-card">
+<div class="postbox shp4cf7-card" id="shp4cf7-overview">
 	<h2 class="hndle"><span class="dashicons dashicons-chart-bar"></span><span><?php esc_html_e( 'Overview', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
 		<div class="shp4cf7-report-grid">
@@ -57,7 +57,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </div>
 
-<div class="postbox shp4cf7-card">
+<div class="postbox shp4cf7-card" id="shp4cf7-breakdown">
 	<h2 class="hndle"><span class="dashicons dashicons-chart-pie"></span><span><?php esc_html_e( 'Breakdown', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
 		<?php if ( 0 === $spam_counts['total'] ) : ?>

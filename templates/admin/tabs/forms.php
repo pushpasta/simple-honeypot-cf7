@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="postbox shp4cf7-card">
+<div class="postbox shp4cf7-card" id="shp4cf7-forms">
 	<h2 class="hndle"><span class="dashicons dashicons-email-alt"></span><span><?php esc_html_e( 'Forms Overview', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
 		<p class="description"><?php esc_html_e( 'Contact Form 7 forms with custom settings. Forms using only global defaults are not shown.', 'simple-honeypot-cf7' ); ?></p>

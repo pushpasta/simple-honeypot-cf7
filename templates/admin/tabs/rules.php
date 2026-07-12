@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<input type="hidden" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="save" />
 	<input type="hidden" name="tab" value="rules" />
 
-	<div class="postbox shp4cf7-card">
+	<div class="postbox shp4cf7-card" id="shp4cf7-rules">
 		<h2 class="hndle"><span class="dashicons dashicons-shield"></span><span><?php esc_html_e( 'Rule sources', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<?php if ( count( $parsed_rules ) > \SimpleHoneypotCF7\Settings::RULES_SOFT_LIMIT ) : ?>

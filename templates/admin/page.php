@@ -73,7 +73,7 @@ $version_tooltip = sprintf(
 		</div>
 
 		<aside class="shp4cf7-sidebar">
-			<div class="postbox shp4cf7-card">
+			<div class="postbox shp4cf7-card" id="shp4cf7-help">
 				<h2 class="hndle"><span class="dashicons dashicons-sos"></span><span><?php esc_html_e( 'Help & Resources', 'simple-honeypot-cf7' ); ?></span></h2>
 				<div class="inside">
 					<?php
@@ -96,7 +96,7 @@ $version_tooltip = sprintf(
 					</ul>
 				</div>
 			</div>
-			<div class="postbox shp4cf7-card">
+			<div class="postbox shp4cf7-card" id="shp4cf7-contribute">
 				<h2 class="hndle"><span class="dashicons dashicons-heart"></span><span><?php esc_html_e( 'Contribute', 'simple-honeypot-cf7' ); ?></span></h2>
 				<div class="inside">
 					<ul class="shp4cf7-sidebar-links">

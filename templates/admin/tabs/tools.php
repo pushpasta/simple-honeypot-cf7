@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<input type="hidden" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="save" />
 	<input type="hidden" name="tab" value="tools" />
 
-	<div class="postbox shp4cf7-card">
+	<div class="postbox shp4cf7-card" id="shp4cf7-import-export">
 		<h2 class="hndle"><span class="dashicons dashicons-upload"></span><span><?php esc_html_e( 'Import &amp; Export', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<p class="description"><?php esc_html_e( 'Export and import all plugin settings as a JSON file.', 'simple-honeypot-cf7' ); ?></p>
@@ -40,7 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </form>
 
-<div class="postbox shp4cf7-card">
+<div class="postbox shp4cf7-card" id="shp4cf7-updates">
 	<h2 class="hndle"><span class="dashicons dashicons-update"></span><span><?php esc_html_e( 'Updates', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
 		<p class="description"><?php esc_html_e( 'Force WordPress to check for plugin updates immediately instead of waiting for the next scheduled check.', 'simple-honeypot-cf7' ); ?></p>
@@ -55,7 +55,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </div>
 
-<div class="postbox shp4cf7-card shp4cf7-card--danger">
+<div class="postbox shp4cf7-card shp4cf7-card--danger" id="shp4cf7-danger-zone">
 	<h2 class="hndle"><span class="dashicons dashicons-warning"></span><span><?php esc_html_e( 'Danger Zone', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
 		<p class="description"><?php esc_html_e( 'Destructive actions that cannot be undone. Use with caution.', 'simple-honeypot-cf7' ); ?></p>

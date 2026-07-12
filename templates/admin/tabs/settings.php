@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<input type="hidden" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_action' ); ?>" value="save" />
 	<input type="hidden" name="tab" value="settings" />
 
-	<div class="postbox shp4cf7-card">
+	<div class="postbox shp4cf7-card" id="shp4cf7-time-check">
 		<h2 class="hndle"><span class="dashicons dashicons-clock"></span><span><?php esc_html_e( 'Time Check', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<p class="description"><?php esc_html_e( 'Blocks submissions that arrive faster than a human could reasonably fill out the form.', 'simple-honeypot-cf7' ); ?></p>
@@ -40,7 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 
-	<div class="postbox shp4cf7-card">
+	<div class="postbox shp4cf7-card" id="shp4cf7-token">
 		<h2 class="hndle"><span class="dashicons dashicons-lock"></span><span><?php esc_html_e( 'Token', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<p class="description"><?php esc_html_e( 'Each form generates a unique token to verify the submission originated from your site.', 'simple-honeypot-cf7' ); ?></p>
@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 
-	<div class="postbox shp4cf7-card">
+	<div class="postbox shp4cf7-card" id="shp4cf7-proof-of-work">
 		<h2 class="hndle"><span class="dashicons dashicons-shield"></span><span><?php esc_html_e( 'Proof of Work', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<p class="description"><?php esc_html_e( 'Requires the visitor\'s browser to solve a small computational puzzle before submitting. Adds friction for bots while remaining imperceptible to humans. Requires JavaScript and HTTPS.', 'simple-honeypot-cf7' ); ?></p>
@@ -95,7 +95,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 
-	<div class="postbox shp4cf7-card">
+	<div class="postbox shp4cf7-card" id="shp4cf7-data">
 		<h2 class="hndle"><span class="dashicons dashicons-database"></span><span><?php esc_html_e( 'Data', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<table class="form-table" role="presentation">
@@ -121,7 +121,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 
-	<div class="postbox shp4cf7-card">
+	<div class="postbox shp4cf7-card" id="shp4cf7-recent-events">
 		<h2 class="hndle"><span class="dashicons dashicons-database"></span><span><?php esc_html_e( 'Recent Events', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<p class="description"><?php esc_html_e( 'Control how many recent blocked submissions are retained in the database.', 'simple-honeypot-cf7' ); ?></p>
