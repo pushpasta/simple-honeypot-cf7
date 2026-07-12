@@ -146,7 +146,7 @@ final class Importer {
 		$settings['custom_rules_enabled']      = empty( $settings['custom_rules_enabled'] ) ? 0 : 1;
 		$settings['custom_rules']              = isset( $settings['custom_rules'] ) ? sanitize_text_field( $settings['custom_rules'] ) : '';
 
-		return $settings;
+		return array_intersect_key( $settings, $defaults );
 	}
 
 	/**
