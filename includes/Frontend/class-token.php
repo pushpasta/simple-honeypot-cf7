@@ -33,6 +33,8 @@ final class Token {
 	const POW_TICK        = 300; // 5-minute PoW challenge window.
 	const POW_SIGN_PREFIX = SIMPLE_HONEYPOT_CF7_BASE . '|pow|sign|';
 	const CONSUMED_OPTION = SIMPLE_HONEYPOT_CF7_BASE . '_consumed';
+	const RATE_LIMIT_OPTION_PREFIX = SIMPLE_HONEYPOT_CF7_BASE . '_token_rate_';
+	const RATE_LIMIT_WINDOW = 300; // 5-minute rate limit window.
 
 	const HIDING_STYLES = array(
 		'position:absolute!important;left:-10000px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important;',
@@ -603,5 +605,65 @@ final class Token {
 		}
 
 		return isset( $pruned[ $hash ] );
+	}
+
+	/**
+	 * Check whether the IP is within the token generation rate limit.
+	 *
+	 * Returns true when the request may proceed. When the limit is reached,
+	 * returns false without incrementing — the caller should reject the request.
+	 *
+	 * @param string $ip    Client IP address.
+	 * @param int    $limit Maximum tokens allowed per window. 0 disables the check.
+	 * @return bool True if under the limit, false if the limit is reached.
+	 */
+	public static function check_rate_limit( $ip, $limit ) {
+		if ( $limit <= 0 ) {
+			return true;
+		}
+
+		$count = (int) get_transient( self::RATE_LIMIT_OPTION_PREFIX . md5( $ip ) );
+
+		if ( $count >= $limit ) {
+			return false;
+		}
+
+		self::increment_rate_limit( $ip );
+
+		return true;
+	}
+
+	/**
+	 * Increment the token generation counter for an IP.
+	 *
+	 * @param string $ip Client IP address.
+	 * @return void
+	 */
+	public static function increment_rate_limit( $ip ) {
+		$key   = self::RATE_LIMIT_OPTION_PREFIX . md5( $ip );
+		$count = (int) get_transient( $key );
+
+		set_transient( $key, $count + 1, self::RATE_LIMIT_WINDOW );
+	}
+
+	/**
+	 * Decrement the token generation counter for an IP after successful consumption.
+	 *
+	 * Reclaims a slot when a token is actually used, so legitimate users who
+	 * submit forms are not penalised by the rate limit.
+	 *
+	 * @param string $ip Client IP address.
+	 * @return void
+	 */
+	public static function decrement_rate_limit( $ip ) {
+		$key   = self::RATE_LIMIT_OPTION_PREFIX . md5( $ip );
+		$count = (int) get_transient( $key );
+
+		if ( $count <= 1 ) {
+			delete_transient( $key );
+			return;
+		}
+
+		set_transient( $key, $count - 1, self::RATE_LIMIT_WINDOW );
 	}
 }

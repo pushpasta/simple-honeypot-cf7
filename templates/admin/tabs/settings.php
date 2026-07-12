@@ -55,6 +55,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<p class="description"><?php esc_html_e( 'How long a form token stays valid. Shorter values improve anti-replay protection but may affect users with slow connections.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
+				<tr>
+					<th scope="row"><label for="token_rate_limit"><?php esc_html_e( 'Generation rate limit', 'simple-honeypot-cf7' ); ?></label></th>
+					<td>
+						<input type="range" id="token_rate_limit" name="token_rate_limit" min="0" max="50" step="1" value="<?php echo esc_attr( $settings['token_rate_limit'] ); ?>" />
+						<span id="token-rate-limit-value"><?php echo esc_html( $settings['token_rate_limit'] ); ?></span>
+						<?php esc_html_e( 'tokens per 5 minutes per IP', 'simple-honeypot-cf7' ); ?>
+						<span id="token-rate-limit-label" class="shp4cf7-badge"></span>
+						<p class="description"><?php esc_html_e( 'Limits how many tokens a single IP can generate within a 5-minute window. Prevents bots from bulk-collecting tokens. Each successful submission reclaims its slot, so normal use is unaffected. Set to 0 to disable.', 'simple-honeypot-cf7' ); ?></p>
+					</td>
+				</tr>
 			</table>
 		</div>
 	</div>
@@ -175,6 +185,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 		if (tokenRange) {
 			tokenRange.addEventListener( 'input', updateToken );
 			updateToken.call( tokenRange );
+		}
+
+		var rateLimitRange = document.getElementById('token_rate_limit');
+		var rateLimitOutput = document.getElementById('token-rate-limit-value');
+		var rateLimitLabel = document.getElementById('token-rate-limit-label');
+		var rateLimitSteps = [0, 5, 10, 20, 50];
+		var rateLimitLabels = { 0: 'Disabled', 5: 'Strict', 10: 'Recommended', 20: 'Moderate', 50: 'Relaxed' };
+		var rateLimitColors = { 0: 'inactive', 5: 'inherited', 10: 'active', 20: 'info', 50: 'inherited' };
+
+		function updateRateLimit() {
+			var val = parseInt( this.value, 10 );
+			var closest = rateLimitSteps.reduce(function( prev, curr ) {
+				return Math.abs( curr - val ) < Math.abs( prev - val ) ? curr : prev;
+			});
+			this.value = closest;
+			rateLimitOutput.textContent = closest;
+			rateLimitLabel.textContent = rateLimitLabels[closest];
+			rateLimitLabel.className = 'shp4cf7-badge shp4cf7-badge--' + rateLimitColors[closest];
+		}
+
+		if (rateLimitRange) {
+			rateLimitRange.addEventListener( 'input', updateRateLimit );
+			updateRateLimit.call( rateLimitRange );
 		}
 
 		var powRange = document.getElementById('pow_complexity');

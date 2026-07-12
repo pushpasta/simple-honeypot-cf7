@@ -9,6 +9,7 @@ namespace SimpleHoneypotCF7\Frontend;
 
 use SimpleHoneypotCF7\Settings;
 use SimpleHoneypotCF7\Support\Contact_Form_7;
+use SimpleHoneypotCF7\Support\Request;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -58,6 +59,17 @@ final class Ajax_Token {
 
 		$settings = Settings::get_settings();
 		$max_age  = max( 10, absint( $settings['max_age_minutes'] ) ) * MINUTE_IN_SECONDS;
+
+		$ip    = Request::remote_ip();
+		$limit = $settings['token_rate_limit'];
+
+		if ( ! empty( $ip ) && ! Token::check_rate_limit( $ip, $limit ) ) {
+			$response = method_exists( $contact_form, 'message' )
+				? $contact_form->message( 'mail_sent_ng' )
+				: '';
+
+			wp_send_json_error( array( 'message' => $response ), 429 );
+		}
 
 		$honeypot_tags = $this->get_honeypot_tags( $contact_form );
 		$dynamic_names = $this->get_dynamic_names( $contact_form, $form_id, count( $honeypot_tags ) );
