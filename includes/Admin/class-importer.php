@@ -133,18 +133,42 @@ final class Importer {
 		$settings = array_merge( $defaults, $settings );
 
 		$settings['time_check_enabled']        = empty( $settings['time_check_enabled'] ) ? 0 : 1;
-		$settings['min_time_seconds']          = max( 0, absint( $settings['min_time_seconds'] ) );
-		$settings['max_age_minutes']           = max( 10, min( 90, absint( $settings['max_age_minutes'] ) ) );
+		$settings['min_time_seconds']          = self::sanitize_int( $settings['min_time_seconds'], $defaults['min_time_seconds'] );
+		$settings['max_age_minutes']           = self::sanitize_int( $settings['max_age_minutes'], $defaults['max_age_minutes'], 10, 90 );
+		$settings['token_rate_limit']          = self::sanitize_int( $settings['token_rate_limit'], $defaults['token_rate_limit'], 0, 50 );
 		$settings['pow_enabled']               = empty( $settings['pow_enabled'] ) ? 0 : 1;
-		$settings['pow_complexity']            = max( 4, min( 20, absint( $settings['pow_complexity'] ) ) );
+		$settings['pow_complexity']            = self::sanitize_int( $settings['pow_complexity'], $defaults['pow_complexity'], 4, 20 );
 		$settings['store_honeypot_value']      = empty( $settings['store_honeypot_value'] ) ? 0 : 1;
-		$settings['honeypot_value_max_length'] = max( 10, min( 200, absint( $settings['honeypot_value_max_length'] ) ) );
-		$settings['keep_recent_events']        = max( 10, absint( $settings['keep_recent_events'] ) );
-		$settings['purge_events_after_days']   = max( 0, absint( $settings['purge_events_after_days'] ) );
-		$settings['events_per_page']           = max( 5, min( 200, absint( $settings['events_per_page'] ) ) );
+		$settings['honeypot_value_max_length'] = self::sanitize_int( $settings['honeypot_value_max_length'], $defaults['honeypot_value_max_length'], 10, 200 );
+		$settings['keep_recent_events']        = self::sanitize_int( $settings['keep_recent_events'], $defaults['keep_recent_events'], 10 );
+		$settings['purge_events_after_days']   = self::sanitize_int( $settings['purge_events_after_days'], $defaults['purge_events_after_days'] );
+		$settings['events_per_page']           = self::sanitize_int( $settings['events_per_page'], $defaults['events_per_page'], 5, 200 );
 		$settings['custom_rules_enabled']      = empty( $settings['custom_rules_enabled'] ) ? 0 : 1;
 		$settings['custom_rules']              = isset( $settings['custom_rules'] ) ? sanitize_text_field( $settings['custom_rules'] ) : '';
 
 		return $settings;
+	}
+
+	/**
+	 * Sanitize an integer setting, returning a default for non-numeric or out-of-range values.
+	 *
+	 * @param mixed      $value    Raw value from the import.
+	 * @param int        $fallback Fallback when the value is invalid.
+	 * @param int        $min      Minimum allowed value (inclusive).
+	 * @param int|string $max      Maximum allowed value (inclusive), or empty for no upper bound.
+	 * @return int Sanitized value.
+	 */
+	private static function sanitize_int( $value, $fallback, $min = 0, $max = '' ) {
+		if ( ! is_numeric( $value ) ) {
+			return $fallback;
+		}
+
+		$value = absint( $value );
+
+		if ( $value < $min || ( '' !== $max && $value > $max ) ) {
+			return $fallback;
+		}
+
+		return $value;
 	}
 }
