@@ -80,7 +80,7 @@ final class Rest_Api {
 
 		switch ( $action ) {
 			case 'reset_stats':
-				Settings::reset_stats();
+				Settings::reset_meta();
 				break;
 
 			case 'reset_settings':
@@ -90,7 +90,7 @@ final class Rest_Api {
 			case 'purge_events':
 				$days    = $request->get_param( 'days' );
 				$days    = max( 1, $days );
-				$removed = Event_Logger::purge_old( $days );
+				$removed = Event_Logger::purge_aged_events( $days );
 
 				set_transient(
 					SIMPLE_HONEYPOT_CF7_BASE . '_purge_notice_' . get_current_user_id(),
@@ -98,7 +98,7 @@ final class Rest_Api {
 						'removed' => $removed,
 						'days'    => $days,
 					),
-					60
+					90
 				);
 				break;
 

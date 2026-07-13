@@ -7,6 +7,8 @@
 
 namespace SimpleHoneypotCF7;
 
+use SimpleHoneypotCF7\Reporting\Cron_Handler;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -22,10 +24,10 @@ final class Deactivator {
 	 * @return void
 	 */
 	public static function deactivate() {
-		$timestamp = wp_next_scheduled( 'shp4cf7_purge_excess' );
+		$timestamp = wp_next_scheduled( Cron_Handler::HOOK );
 
 		if ( $timestamp ) {
-			wp_unschedule_event( $timestamp, 'shp4cf7_purge_excess' );
+			wp_unschedule_event( $timestamp, Cron_Handler::HOOK );
 		}
 	}
 }

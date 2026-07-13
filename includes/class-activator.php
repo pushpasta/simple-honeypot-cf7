@@ -7,6 +7,7 @@
 
 namespace SimpleHoneypotCF7;
 
+use SimpleHoneypotCF7\Reporting\Cron_Handler;
 use SimpleHoneypotCF7\Reporting\Event_Logger;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -39,17 +40,17 @@ final class Activator {
 	private static function setup_events_table() {
 		Event_Logger::create_table();
 		Event_Logger::create_stats_table();
-		Event_Logger::migrate_from_options( Settings::STATS_OPTION );
+		Event_Logger::migrate_from_options( Settings::META_OPTION );
 	}
 
 	/**
-	 * Schedule the hourly purge_excess cron event.
+	 * Schedule the daily purge_events cron event.
 	 *
 	 * @return void
 	 */
 	private static function setup_purge_cron() {
-		if ( ! wp_next_scheduled( 'shp4cf7_purge_excess' ) ) {
-			wp_schedule_event( time(), 'hourly', 'shp4cf7_purge_excess' );
+		if ( ! wp_next_scheduled( Cron_Handler::HOOK ) ) {
+			wp_schedule_event( time(), 'daily', Cron_Handler::HOOK );
 		}
 	}
 

@@ -126,7 +126,7 @@ final class Form_Panel {
 			array(
 				'form_id' => $form_id,
 			),
-			60
+			90
 		);
 
 		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=wpcf7' ) );

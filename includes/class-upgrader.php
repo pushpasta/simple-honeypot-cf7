@@ -17,34 +17,34 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Runs versioned database migrations on plugin activation.
  *
  * Each migration is a static method named migrate_to_N where N is the
- * target version. The stored version is tracked via the shp4cf7_db_version
+ * target version. The stored version is tracked via the shp4cf7_migration_version
  * option so migrations only run once.
  */
 final class Upgrader {
 
 	/**
-	 * Option name that stores the current database schema version.
+	 * Option name that stores the current migration version.
 	 *
 	 * @var string
 	 */
-	const DB_VERSION_OPTION = SIMPLE_HONEYPOT_CF7_BASE . '_db_version';
+	const MIGRATION_VERSION_OPTION = SIMPLE_HONEYPOT_CF7_BASE . '_migration_version';
 
 	/**
-	 * Transient name that caches the last successfully applied DB version.
+	 * Transient name that caches the last successfully applied migration version.
 	 *
 	 * Used to skip migration checks on admin page loads when nothing
 	 * has changed.
 	 *
 	 * @var string
 	 */
-	const TRANSIENT_VERSION_OPTION = SIMPLE_HONEYPOT_CF7_BASE . '_upgrader_version';
+	const MIGRATION_CACHE_OPTION = SIMPLE_HONEYPOT_CF7_BASE . '_migration_cache';
 
 	/**
 	 * The database version this codebase expects.
 	 *
 	 * @var int
 	 */
-	const CURRENT_DB_VERSION = 2;
+	const CURRENT_DB_VERSION = 3;
 
 	/**
 	 * Legacy option names that were renamed in migration 2.
@@ -54,6 +54,8 @@ final class Upgrader {
 	const LEGACY_OPTIONS = array(
 		'simple_honeypot_cf7_settings',
 		'simple_honeypot_cf7_stats',
+		'shp4cf7_stats',
+		'shp4cf7_db_version',
 	);
 
 	/**
@@ -62,7 +64,7 @@ final class Upgrader {
 	 * @return void
 	 */
 	public static function run() {
-		$stored = (int) get_option( self::DB_VERSION_OPTION, 1 );
+		$stored = (int) get_option( self::MIGRATION_VERSION_OPTION, 1 );
 
 		if ( $stored >= self::CURRENT_DB_VERSION ) {
 			return;
@@ -72,9 +74,11 @@ final class Upgrader {
 			self::migrate_to_2();
 		}
 
-		// Future migrations go here.
+		if ( $stored < 3 ) {
+			self::migrate_to_3();
+		}
 
-		update_option( self::DB_VERSION_OPTION, self::CURRENT_DB_VERSION, false );
+		update_option( self::MIGRATION_VERSION_OPTION, self::CURRENT_DB_VERSION, false );
 	}
 
 	/**
@@ -87,7 +91,7 @@ final class Upgrader {
 	 * @return void
 	 */
 	public static function maybe_run() {
-		$cached = get_transient( self::TRANSIENT_VERSION_OPTION );
+		$cached = get_transient( self::MIGRATION_CACHE_OPTION );
 
 		if ( false !== $cached && self::CURRENT_DB_VERSION === (int) $cached ) {
 			return;
@@ -97,9 +101,17 @@ final class Upgrader {
 		Settings::activate();
 		Event_Logger::create_table();
 		Event_Logger::create_stats_table();
-		Event_Logger::migrate_from_options( Settings::STATS_OPTION );
+		Event_Logger::migrate_from_options( Settings::META_OPTION );
 
-		set_transient( self::TRANSIENT_VERSION_OPTION, self::CURRENT_DB_VERSION, 7 * DAY_IN_SECONDS );
+		// Record the update date for the admin header tooltip.
+		$meta = get_option( Settings::META_OPTION, array() );
+
+		if ( is_array( $meta ) ) {
+			$meta['last_updated'] = gmdate( 'Y-m-d' );
+			update_option( Settings::META_OPTION, $meta, false );
+		}
+
+		set_transient( self::MIGRATION_CACHE_OPTION, self::CURRENT_DB_VERSION, 7 * DAY_IN_SECONDS );
 	}
 
 	/**
@@ -181,6 +193,39 @@ final class Upgrader {
 
 		// Cache flush to ensure stale site transients are cleared.
 		wp_cache_flush();
+	}
+
+	/**
+	 * Migration v3: rename storage keys, reschedule cron.
+	 *
+	 * - Options: shp4cf7_stats → shp4cf7_meta, shp4cf7_db_version → shp4cf7_migration_version,
+	 *            shp4cf7_consumed → shp4cf7_consumed_tokens
+	 * - Transients: shp4cf7_upgrader_version → shp4cf7_migration_cache
+	 * - Cron: reschedule shp4cf7_purge_excess (hourly) → shp4cf7_purge_events (daily)
+	 *
+	 * @return void
+	 */
+	private static function migrate_to_3() {
+		// 1. Rename options.
+		self::rename_option( 'shp4cf7_stats', 'shp4cf7_meta' );
+		self::rename_option( 'shp4cf7_db_version', 'shp4cf7_migration_version' );
+		self::rename_option( 'shp4cf7_consumed', 'shp4cf7_consumed_tokens' );
+
+		// 2. Delete old transients.
+		delete_transient( 'shp4cf7_upgrader_version' );
+		delete_transient( 'shp4cf7_purge_old' );
+		delete_transient( 'shp4cf7_purge_throttle' );
+
+		// 3. Reschedule cron from hourly to daily with new hook name.
+		$old_timestamp = wp_next_scheduled( 'shp4cf7_purge_excess' );
+
+		if ( $old_timestamp ) {
+			wp_unschedule_event( $old_timestamp, 'shp4cf7_purge_excess' );
+		}
+
+		if ( ! wp_next_scheduled( \SimpleHoneypotCF7\Reporting\Cron_Handler::HOOK ) ) {
+			wp_schedule_event( time(), 'daily', \SimpleHoneypotCF7\Reporting\Cron_Handler::HOOK );
+		}
 	}
 
 	/**

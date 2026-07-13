@@ -26,15 +26,15 @@ final class Token {
 	 */
 	private static $validate_cache = array();
 
-	const SIGN_PREFIX     = SIMPLE_HONEYPOT_CF7_BASE . '|token|sign|';
-	const NAME_PREFIX     = SIMPLE_HONEYPOT_CF7_BASE . '|token|dname|';
-	const TICK_SECONDS    = HOUR_IN_SECONDS;
-	const FIELD_TYPES     = array( 'text', 'email', 'tel', 'url', 'number', 'date', 'textarea' );
-	const POW_TICK        = 300; // 5-minute PoW challenge window.
-	const POW_SIGN_PREFIX = SIMPLE_HONEYPOT_CF7_BASE . '|pow|sign|';
-	const CONSUMED_OPTION = SIMPLE_HONEYPOT_CF7_BASE . '_consumed';
+	const SIGN_PREFIX              = SIMPLE_HONEYPOT_CF7_BASE . '|token|sign|';
+	const NAME_PREFIX              = SIMPLE_HONEYPOT_CF7_BASE . '|token|dname|';
+	const TICK_SECONDS             = HOUR_IN_SECONDS;
+	const FIELD_TYPES              = array( 'text', 'email', 'tel', 'url', 'number', 'date', 'textarea' );
+	const POW_TICK                 = 300; // 5-minute PoW challenge window.
+	const POW_SIGN_PREFIX          = SIMPLE_HONEYPOT_CF7_BASE . '|pow|sign|';
+	const CONSUMED_TOKENS_OPTION   = SIMPLE_HONEYPOT_CF7_BASE . '_consumed_tokens';
 	const RATE_LIMIT_OPTION_PREFIX = SIMPLE_HONEYPOT_CF7_BASE . '_token_rate_';
-	const RATE_LIMIT_WINDOW = 300; // 5-minute rate limit window.
+	const RATE_LIMIT_WINDOW        = 300; // 5-minute rate limit window.
 
 	const HIDING_STYLES = array(
 		'position:absolute!important;left:-10000px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important;',
@@ -564,7 +564,7 @@ final class Token {
 	 * @return void
 	 */
 	public static function consume( $token, $max_age ) {
-		$consumed = get_option( self::CONSUMED_OPTION, array() );
+		$consumed = get_option( self::CONSUMED_TOKENS_OPTION, array() );
 		$hash     = wp_hash( $token );
 		$expires  = time() + $max_age;
 
@@ -578,7 +578,7 @@ final class Token {
 		);
 
 		$consumed[ $hash ] = array( 'e' => $expires );
-		update_option( self::CONSUMED_OPTION, $consumed, 'no' );
+		update_option( self::CONSUMED_TOKENS_OPTION, $consumed, 'no' );
 	}
 
 	/**
@@ -588,7 +588,7 @@ final class Token {
 	 * @return bool
 	 */
 	public static function is_consumed( $token ) {
-		$consumed = get_option( self::CONSUMED_OPTION, array() );
+		$consumed = get_option( self::CONSUMED_TOKENS_OPTION, array() );
 		$hash     = wp_hash( $token );
 		$now      = time();
 
@@ -601,7 +601,7 @@ final class Token {
 		);
 
 		if ( $pruned !== $consumed ) {
-			update_option( self::CONSUMED_OPTION, $pruned, 'no' );
+			update_option( self::CONSUMED_TOKENS_OPTION, $pruned, 'no' );
 		}
 
 		return isset( $pruned[ $hash ] );
@@ -622,7 +622,7 @@ final class Token {
 			return true;
 		}
 
-		$count = (int) get_transient( self::RATE_LIMIT_OPTION_PREFIX . md5( $ip ) );
+		$count = (int) get_transient( self::RATE_LIMIT_OPTION_PREFIX . sha1( $ip ) );
 
 		if ( $count >= $limit ) {
 			return false;
@@ -640,7 +640,7 @@ final class Token {
 	 * @return void
 	 */
 	public static function increment_rate_limit( $ip ) {
-		$key   = self::RATE_LIMIT_OPTION_PREFIX . md5( $ip );
+		$key   = self::RATE_LIMIT_OPTION_PREFIX . sha1( $ip );
 		$count = (int) get_transient( $key );
 
 		set_transient( $key, $count + 1, self::RATE_LIMIT_WINDOW );
@@ -656,7 +656,7 @@ final class Token {
 	 * @return void
 	 */
 	public static function decrement_rate_limit( $ip ) {
-		$key   = self::RATE_LIMIT_OPTION_PREFIX . md5( $ip );
+		$key   = self::RATE_LIMIT_OPTION_PREFIX . sha1( $ip );
 		$count = (int) get_transient( $key );
 
 		if ( $count <= 1 ) {

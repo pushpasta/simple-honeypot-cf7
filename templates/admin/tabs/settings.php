@@ -145,7 +145,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<td>
 						<input type="number" class="small-text" id="purge_events_after_days" name="purge_events_after_days" min="0" step="1" value="<?php echo esc_attr( $settings['purge_events_after_days'] ); ?>" placeholder="0" />
 						<?php esc_html_e( 'days (0 = disabled)', 'simple-honeypot-cf7' ); ?>
-						<p class="description"><?php esc_html_e( 'Automatically removes events older than the specified number of days each time a new event is recorded. Set to 0 to disable.', 'simple-honeypot-cf7' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Automatically removes events older than the specified number of days once daily. Set to 0 to disable.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
 			</table>

@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Settings {
 
 	const SETTINGS_OPTION  = SIMPLE_HONEYPOT_CF7_BASE . '_settings';
-	const STATS_OPTION     = SIMPLE_HONEYPOT_CF7_BASE . '_stats';
+	const META_OPTION      = SIMPLE_HONEYPOT_CF7_BASE . '_meta';
 	const FORM_META        = '_' . SIMPLE_HONEYPOT_CF7_BASE . '_settings';
 	const RULES_SOFT_LIMIT = 10000;
 
@@ -31,38 +31,63 @@ final class Settings {
 			add_option( self::SETTINGS_OPTION, self::default_settings(), '', false );
 		}
 
-		if ( false === get_option( self::STATS_OPTION, false ) ) {
-			add_option( self::STATS_OPTION, self::default_stats(), '', false );
+		if ( false === get_option( self::META_OPTION, false ) ) {
+			add_option( self::META_OPTION, self::default_meta(), '', false );
 		}
 	}
 
 	/**
 	 * Remove all plugin data.
 	 *
+	 * Uses a single prefix-based query to delete all plugin options
+	 * instead of enumerating each one individually.
+	 *
 	 * @return void
 	 */
 	public static function uninstall() {
+		global $wpdb;
+
 		\SimpleHoneypotCF7\Reporting\Event_Logger::drop_table();
+		\SimpleHoneypotCF7\Reporting\Event_Logger::drop_stats_table();
 
-		delete_option( self::SETTINGS_OPTION );
-		delete_option( self::STATS_OPTION );
-		delete_option( Upgrader::DB_VERSION_OPTION );
-		delete_option( \SimpleHoneypotCF7\Frontend\Token::CONSUMED_OPTION );
-		delete_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles' );
-		delete_transient( Upgrader::TRANSIENT_VERSION_OPTION );
+		// Delete all shp4cf7_ options in one query.
+		$esc_prefix = $wpdb->esc_like( SIMPLE_HONEYPOT_CF7_BASE ) . '%';
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+				$esc_prefix,
+				$wpdb->esc_like( '_shp4cf7_settings' ) . '%'
+			)
+		);
+
+		// Delete all transients (stored as _transient_shp4cf7_* and _transient_timeout_shp4cf7_*).
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$wpdb->esc_like( '_transient_' . SIMPLE_HONEYPOT_CF7_BASE . '_' ) . '%'
+			)
+		);
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$wpdb->esc_like( '_transient_timeout_' . SIMPLE_HONEYPOT_CF7_BASE . '_' ) . '%'
+			)
+		);
+
+		// Delete site transients.
 		delete_site_transient( SIMPLE_HONEYPOT_CF7_BASE . '_github_release' );
 		self::cleanup_readme_transients();
 
+		// Delete per-form post meta.
 		self::delete_form_meta_settings();
+
+		// Remove from auto_update_plugins.
 		self::remove_auto_update_opt_in();
-
-		// @todo Remove legacy option cleanup after a suitable deprecation period.
-		foreach ( Upgrader::LEGACY_OPTIONS as $legacy_option ) {
-			delete_option( $legacy_option );
-		}
-
-		delete_option( '_simple_honeypot_cf7_settings' );
 	}
 
 	/**
@@ -126,12 +151,13 @@ final class Settings {
 	 *
 	 * @return array
 	 */
-	public static function default_stats() {
+	public static function default_meta() {
 		return array(
-			'total'     => 0,
-			'run_since' => time(),
-			'reasons'   => array(),
-			'forms'     => array(),
+			'total'        => 0,
+			'run_since'    => time(),
+			'last_updated' => '',
+			'reasons'      => array(),
+			'forms'        => array(),
 		);
 	}
 
@@ -180,18 +206,22 @@ final class Settings {
 	 *
 	 * @return array
 	 */
-	public static function get_stats() {
-		$existing = get_option( self::STATS_OPTION, array() );
-		$stats    = self::default_stats();
+	public static function get_meta() {
+		$existing = get_option( self::META_OPTION, array() );
+		$stats    = self::default_meta();
 
 		if ( is_array( $existing ) && ! empty( $existing['run_since'] ) ) {
 			$stats['run_since'] = (int) $existing['run_since'];
 		}
 
+		if ( is_array( $existing ) && ! empty( $existing['last_updated'] ) ) {
+			$stats['last_updated'] = sanitize_text_field( $existing['last_updated'] );
+		}
+
 		$counters = \SimpleHoneypotCF7\Reporting\Event_Logger::get_counters();
 
 		if ( empty( $counters ) ) {
-			return self::stats_from_legacy( $existing );
+			return self::meta_from_legacy( $existing );
 		}
 
 		// Build total.
@@ -232,8 +262,8 @@ final class Settings {
 	 * @param array $stats Stats.
 	 * @return void
 	 */
-	public static function update_stats( array $stats ) {
-		update_option( self::STATS_OPTION, wp_parse_args( $stats, self::default_stats() ), false );
+	public static function update_meta( array $stats ) {
+		update_option( self::META_OPTION, wp_parse_args( $stats, self::default_meta() ), false );
 	}
 
 	/**
@@ -241,21 +271,25 @@ final class Settings {
 	 *
 	 * @return void
 	 */
-	public static function reset_stats() {
+	public static function reset_meta() {
 		\SimpleHoneypotCF7\Reporting\Event_Logger::reset_counters();
 		\SimpleHoneypotCF7\Reporting\Event_Logger::delete_all();
 
 		delete_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles' );
 
 		// Preserve the original activation date.
-		$existing = get_option( self::STATS_OPTION, array() );
-		$stats    = self::default_stats();
+		$existing = get_option( self::META_OPTION, array() );
+		$stats    = self::default_meta();
 
 		if ( is_array( $existing ) && ! empty( $existing['run_since'] ) ) {
 			$stats['run_since'] = (int) $existing['run_since'];
 		}
 
-		update_option( self::STATS_OPTION, $stats, false );
+		if ( is_array( $existing ) && ! empty( $existing['last_updated'] ) ) {
+			$stats['last_updated'] = sanitize_text_field( $existing['last_updated'] );
+		}
+
+		update_option( self::META_OPTION, $stats, false );
 	}
 
 	/**
@@ -268,8 +302,8 @@ final class Settings {
 	 * @param array $existing The legacy stats option value.
 	 * @return array
 	 */
-	private static function stats_from_legacy( array $existing ) {
-		$stats = self::default_stats();
+	private static function meta_from_legacy( array $existing ) {
+		$stats = self::default_meta();
 
 		if ( ! empty( $existing['total'] ) ) {
 			// Migrate legacy counters to the atomic table.
@@ -301,7 +335,7 @@ final class Settings {
 				}
 			}
 
-			// Return the legacy data. The next call to get_stats() will
+			// Return the legacy data. The next call to get_meta() will
 			// serve from the counter table if migration succeeded.
 			$stats['total']   = absint( $existing['total'] );
 			$stats['reasons'] = isset( $existing['reasons'] ) && is_array( $existing['reasons'] ) ? $existing['reasons'] : array();

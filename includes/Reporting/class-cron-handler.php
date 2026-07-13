@@ -19,21 +19,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Cron_Handler {
 
 	/**
+	 * Cron hook name.
+	 *
+	 * @var string
+	 */
+	const HOOK = 'shp4cf7_purge_events';
+
+	/**
 	 * Register the cron hook callback.
 	 *
 	 * @return void
 	 */
 	public static function register() {
-		add_action( 'shp4cf7_purge_excess', array( __CLASS__, 'purge_excess' ) );
+		add_action( self::HOOK, array( __CLASS__, 'run' ) );
 	}
 
 	/**
-	 * Read settings and run purge_excess.
+	 * Run both purge strategies based on current settings.
 	 *
 	 * @return void
 	 */
-	public static function purge_excess() {
+	public static function run() {
 		$settings = Settings::get_settings();
-		Event_Logger::purge_excess( $settings['keep_recent_events'] );
+
+		$purge_days = absint( $settings['purge_events_after_days'] );
+
+		if ( $purge_days > 0 ) {
+			Event_Logger::purge_aged_events( $purge_days );
+		}
+
+		Event_Logger::purge_excess_events( $settings['keep_recent_events'] );
 	}
 }

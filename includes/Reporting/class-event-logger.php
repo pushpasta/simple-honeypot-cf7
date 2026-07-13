@@ -38,6 +38,13 @@ final class Event_Logger {
 	const VERSION = 1;
 
 	/**
+	 * Option name for the events table DB version.
+	 *
+	 * @var string
+	 */
+	const VERSION_OPTION = SIMPLE_HONEYPOT_CF7_BASE . '_events_db_version';
+
+	/**
 	 * Create or upgrade the events table.
 	 *
 	 * Uses dbDelta() so it is safe to call on every activation.
@@ -66,7 +73,7 @@ final class Event_Logger {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 
-		update_option( $wpdb->prefix . self::TABLE . '_db_version', self::VERSION, false );
+		update_option( self::VERSION_OPTION, self::VERSION, false );
 	}
 
 	/**
@@ -224,7 +231,7 @@ final class Event_Logger {
 	 * @param int $days Retention period in days.
 	 * @return int Number of events deleted.
 	 */
-	public static function purge_old( $days ) {
+	public static function purge_aged_events( $days ) {
 		global $wpdb;
 
 		$days   = absint( $days );
@@ -246,7 +253,7 @@ final class Event_Logger {
 	 * @param int $keep Number of events to keep.
 	 * @return int Number of events deleted.
 	 */
-	public static function purge_excess( $keep ) {
+	public static function purge_excess_events( $keep ) {
 		global $wpdb;
 
 		$keep  = max( 10, absint( $keep ) );
@@ -302,7 +309,7 @@ final class Event_Logger {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
 
-		delete_option( $table . '_db_version', false );
+		delete_option( self::VERSION_OPTION );
 
 		self::drop_stats_table();
 	}

@@ -160,7 +160,7 @@ final class Settings_Page {
 	private function tab_context( $tab ) {
 		if ( 'reports' === $tab ) {
 			$settings = Settings::get_settings();
-			$stats    = Settings::get_stats();
+			$stats    = Settings::get_meta();
 
 			$per_page     = $settings['events_per_page'];
 			$total_events = Event_Logger::count();
