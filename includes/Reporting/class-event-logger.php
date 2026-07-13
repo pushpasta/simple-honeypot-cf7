@@ -447,6 +447,8 @@ final class Event_Logger {
 		// so IDs are chronological.
 		$events = array_reverse( $stats['events'] );
 
+		global $wpdb;
+
 		foreach ( $events as $event ) {
 			$form_id    = isset( $event['form_id'] ) ? (int) $event['form_id'] : 0;
 			$form_title = isset( $event['form_title'] ) ? wp_strip_all_tags( $event['form_title'] ) : '';
@@ -454,8 +456,6 @@ final class Event_Logger {
 			$user_agent = isset( $event['user_agent'] ) ? sanitize_text_field( $event['user_agent'] ) : '';
 			$reasons    = isset( $event['reasons'] ) && is_array( $event['reasons'] ) ? $event['reasons'] : array();
 			$time       = isset( $event['time'] ) ? gmdate( 'Y-m-d H:i:s', (int) $event['time'] ) : gmdate( 'Y-m-d H:i:s' );
-
-			global $wpdb;
 
 			$result = $wpdb->insert(
 				$wpdb->prefix . self::TABLE,
