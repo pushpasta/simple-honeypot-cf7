@@ -509,21 +509,21 @@ final class Settings {
 	/**
 	 * Validate an integer setting against a step pattern and range, returning the default on failure.
 	 *
-	 * @param mixed $value   Raw value to validate.
-	 * @param int   $fallback Fallback when the value is invalid.
-	 * @param int   $min      Minimum allowed value (inclusive).
-	 * @param int   $max      Maximum allowed value (inclusive).
-	 * @param int   $step     Required step increment (e.g. 5 means only 0, 5, 10 … are valid).
+	 * @param mixed      $value    Raw value to validate.
+	 * @param int        $fallback Fallback when the value is invalid.
+	 * @param int        $min      Minimum allowed value (inclusive).
+	 * @param int|string $max      Maximum allowed value (inclusive), or empty for no upper bound.
+	 * @param int        $step     Required step increment (e.g. 5 means only 0, 5, 10 … are valid).
 	 * @return int Validated value.
 	 */
-	private static function validate_step_int( $value, $fallback, $min, $max, $step ) {
+	public static function validate_step_int( $value, $fallback, $min = 0, $max = '', $step = 1 ) {
 		if ( ! is_numeric( $value ) ) {
 			return $fallback;
 		}
 
 		$value = absint( $value );
 
-		if ( $value < $min || $value > $max || ( $value % $step ) !== 0 ) {
+		if ( $value < $min || ( '' !== $max && $value > $max ) || ( $value % $step ) !== 0 ) {
 			return $fallback;
 		}
 

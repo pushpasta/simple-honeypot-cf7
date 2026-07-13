@@ -160,20 +160,6 @@ final class Importer {
 	 * @return int Sanitized value.
 	 */
 	private static function sanitize_int( $value, $fallback, $min = 0, $max = '', $step = 1 ) {
-		if ( ! is_numeric( $value ) ) {
-			return $fallback;
-		}
-
-		$value = absint( $value );
-
-		if ( $value < $min || ( '' !== $max && $value > $max ) ) {
-			return $fallback;
-		}
-
-		if ( $step > 1 && ( $value % $step ) !== 0 ) {
-			return $fallback;
-		}
-
-		return $value;
+		return Settings::validate_step_int( $value, $fallback, $min, $max, $step );
 	}
 }
