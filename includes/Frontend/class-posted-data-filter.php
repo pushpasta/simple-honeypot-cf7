@@ -114,8 +114,7 @@ final class Posted_Data_Filter {
 
 					$dynamic_name = sanitize_key( $dynamic_name );
 
-					// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading Contact Form 7 submission data.
-					$value = isset( $_POST[ $dynamic_name ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $dynamic_name ] ) ) : '';
+					$value = isset( $posted_data[ $dynamic_name ] ) ? sanitize_textarea_field( wp_unslash( $posted_data[ $dynamic_name ] ) ) : '';
 
 					if ( mb_strlen( $value ) > 200 ) {
 						$value = mb_substr( $value, 0, 200 );
