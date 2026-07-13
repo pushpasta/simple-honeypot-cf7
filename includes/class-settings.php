@@ -259,6 +259,7 @@ final class Settings {
 	 * No longer called by the plugin; all counters are now atomically
 	 * incremented via the dedicated database table.
 	 *
+	 * @deprecated
 	 * @param array $stats Stats.
 	 * @return void
 	 */
