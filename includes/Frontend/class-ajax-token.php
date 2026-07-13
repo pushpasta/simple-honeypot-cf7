@@ -93,6 +93,10 @@ final class Ajax_Token {
 
 		$result['expires_in'] = max( 1, $expires_at - time() - 5 );
 
+		if ( ! empty( $ip ) ) {
+			Token::increment_rate_limit( $ip );
+		}
+
 		wp_send_json_success( $result );
 	}
 

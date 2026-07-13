@@ -624,13 +624,7 @@ final class Token {
 
 		$count = (int) get_transient( self::RATE_LIMIT_OPTION_PREFIX . sha1( $ip ) );
 
-		if ( $count >= $limit ) {
-			return false;
-		}
-
-		self::increment_rate_limit( $ip );
-
-		return true;
+		return $count < $limit;
 	}
 
 	/**
