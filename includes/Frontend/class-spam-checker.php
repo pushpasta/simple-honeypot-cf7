@@ -195,7 +195,7 @@ final class Spam_Checker {
 		$now      = time();
 		$elapsed  = $now - $created_at;
 		$min_time = Settings::get_min_submission_time( $form_id );
-		$max_age  = max( 10, absint( $settings['max_age_minutes'] ) ) * MINUTE_IN_SECONDS;
+		$max_age  = max( 10, min( 60, absint( $settings['max_age_minutes'] ) ) ) * MINUTE_IN_SECONDS;
 
 		if ( $created_at > $now ) {
 			$reasons[] = Reason_Factory::create( 'future_time', __( 'Honeypot timing data was in the future.', 'simple-honeypot-cf7' ) );

@@ -58,7 +58,7 @@ final class Ajax_Token {
 		}
 
 		$settings = Settings::get_settings();
-		$max_age  = max( 10, absint( $settings['max_age_minutes'] ) ) * MINUTE_IN_SECONDS;
+		$max_age  = max( 10, min( 60, absint( $settings['max_age_minutes'] ) ) ) * MINUTE_IN_SECONDS;
 
 		$ip    = Request::remote_ip();
 		$limit = $settings['token_rate_limit'];

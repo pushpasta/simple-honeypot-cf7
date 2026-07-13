@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="max_age_minutes"><?php esc_html_e( 'Token lifetime', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="range" id="max_age_minutes" name="max_age_minutes" min="10" max="90" step="10" value="<?php echo esc_attr( $settings['max_age_minutes'] ); ?>" />
+						<input type="range" id="max_age_minutes" name="max_age_minutes" min="10" max="60" step="5" value="<?php echo esc_attr( $settings['max_age_minutes'] ); ?>" />
 						<span id="max-age-minutes-value"><?php echo esc_html( $settings['max_age_minutes'] ); ?></span>
 						<?php esc_html_e( 'minutes', 'simple-honeypot-cf7' ); ?>
 						<span id="max-age-minutes-label" class="shp4cf7-badge"></span>
@@ -168,10 +168,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 		var tokenOutput = document.getElementById('max-age-minutes-value');
 		var tokenLabel = document.getElementById('max-age-minutes-label');
 		var tokenLabels = [
-			{ min: 10, max: 20, text: 'Strict', css: 'inactive' },
-			{ min: 30, max: 40, text: 'Recommended', css: 'active' },
-			{ min: 50, max: 60, text: 'Comfortable', css: 'info' },
-			{ min: 70, max: 90, text: 'Relaxed', css: 'inherited' }
+			{ min: 10, max: 10, text: 'Strict', css: 'inactive' },
+			{ min: 15, max: 20, text: 'Recommended', css: 'active' },
+			{ min: 25, max: 35, text: 'Moderate', css: 'info' },
+			{ min: 40, max: 60, text: 'Relaxed', css: 'inherited' }
 		];
 
 		function updateToken() {

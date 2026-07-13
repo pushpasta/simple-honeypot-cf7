@@ -99,7 +99,7 @@ final class Settings {
 		return array(
 			'time_check_enabled'        => 1,
 			'min_time_seconds'          => 4,
-			'max_age_minutes'           => 10,
+			'max_age_minutes'           => 15,
 			'token_rate_limit'          => 10,
 			'custom_rules_enabled'      => 0,
 			'custom_rules'              => '',
@@ -540,7 +540,7 @@ final class Settings {
 
 		$settings['time_check_enabled']        = empty( $settings['time_check_enabled'] ) ? 0 : 1;
 		$settings['min_time_seconds']          = max( 0, absint( $settings['min_time_seconds'] ) );
-		$settings['max_age_minutes']           = self::validate_step_int( $settings['max_age_minutes'], $defaults['max_age_minutes'], 10, 90, 10 );
+		$settings['max_age_minutes']           = self::validate_step_int( $settings['max_age_minutes'], $defaults['max_age_minutes'], 10, 60, 5 );
 		$settings['token_rate_limit']          = self::validate_step_int( $settings['token_rate_limit'], $defaults['token_rate_limit'], 0, 30, 5 );
 		$settings['custom_rules_enabled']      = empty( $settings['custom_rules_enabled'] ) ? 0 : 1;
 		$settings['custom_rules']              = self::sanitize_rules( $settings['custom_rules'] ?? '' );
