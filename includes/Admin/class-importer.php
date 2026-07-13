@@ -150,13 +150,13 @@ final class Importer {
 	}
 
 	/**
-	 * Sanitize an integer setting, returning a default for non-numeric or out-of-range values.
+	 * Sanitize an integer setting, returning a default for non-numeric, out-of-range, or off-step values.
 	 *
 	 * @param mixed      $value    Raw value from the import.
 	 * @param int        $fallback Fallback when the value is invalid.
 	 * @param int        $min      Minimum allowed value (inclusive).
 	 * @param int|string $max      Maximum allowed value (inclusive), or empty for no upper bound.
-	 * @param int        $step     Step increment to snap to (1 = no snapping).
+	 * @param int        $step     Required step increment (1 = any value allowed).
 	 * @return int Sanitized value.
 	 */
 	private static function sanitize_int( $value, $fallback, $min = 0, $max = '', $step = 1 ) {
@@ -170,12 +170,8 @@ final class Importer {
 			return $fallback;
 		}
 
-		if ( $step > 1 ) {
-			$value = (int) round( $value / $step ) * $step;
-
-			if ( $value < $min || ( '' !== $max && $value > $max ) ) {
-				return $fallback;
-			}
+		if ( $step > 1 && ( $value % $step ) !== 0 ) {
+			return $fallback;
 		}
 
 		return $value;

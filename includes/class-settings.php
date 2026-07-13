@@ -506,22 +506,27 @@ final class Settings {
 	}
 
 	/**
-	 * Snap an integer to the nearest valid step within a range.
+	 * Validate an integer setting against a step pattern and range, returning the default on failure.
 	 *
-	 * @param int $value Raw integer value.
-	 * @param int $step  Step increment (must be >= 1).
-	 * @param int $min   Minimum allowed value.
-	 * @param int $max   Maximum allowed value.
-	 * @return int Snapped value.
+	 * @param mixed $value   Raw value to validate.
+	 * @param int   $fallback Fallback when the value is invalid.
+	 * @param int   $min      Minimum allowed value (inclusive).
+	 * @param int   $max      Maximum allowed value (inclusive).
+	 * @param int   $step     Required step increment (e.g. 5 means only 0, 5, 10 … are valid).
+	 * @return int Validated value.
 	 */
-	private static function snap_to_step( $value, $step, $min, $max ) {
-		$value = absint( $value );
-
-		if ( $step > 1 ) {
-			$value = (int) round( $value / $step ) * $step;
+	private static function validate_step_int( $value, $fallback, $min, $max, $step ) {
+		if ( ! is_numeric( $value ) ) {
+			return $fallback;
 		}
 
-		return max( $min, min( $max, $value ) );
+		$value = absint( $value );
+
+		if ( $value < $min || $value > $max || ( $value % $step ) !== 0 ) {
+			return $fallback;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -531,14 +536,16 @@ final class Settings {
 	 * @return array Sanitized settings.
 	 */
 	public static function sanitize_global( array $settings ) {
+		$defaults = self::default_settings();
+
 		$settings['time_check_enabled']        = empty( $settings['time_check_enabled'] ) ? 0 : 1;
 		$settings['min_time_seconds']          = max( 0, absint( $settings['min_time_seconds'] ) );
-		$settings['max_age_minutes']           = self::snap_to_step( $settings['max_age_minutes'], 10, 10, 90 );
-		$settings['token_rate_limit']          = self::snap_to_step( $settings['token_rate_limit'], 5, 0, 30 );
+		$settings['max_age_minutes']           = self::validate_step_int( $settings['max_age_minutes'], $defaults['max_age_minutes'], 10, 90, 10 );
+		$settings['token_rate_limit']          = self::validate_step_int( $settings['token_rate_limit'], $defaults['token_rate_limit'], 0, 30, 5 );
 		$settings['custom_rules_enabled']      = empty( $settings['custom_rules_enabled'] ) ? 0 : 1;
 		$settings['custom_rules']              = self::sanitize_rules( $settings['custom_rules'] ?? '' );
 		$settings['pow_enabled']               = empty( $settings['pow_enabled'] ) ? 0 : 1;
-		$settings['pow_complexity']            = self::snap_to_step( $settings['pow_complexity'], 5, 5, 30 );
+		$settings['pow_complexity']            = self::validate_step_int( $settings['pow_complexity'], $defaults['pow_complexity'], 5, 30, 5 );
 		$settings['store_honeypot_value']      = empty( $settings['store_honeypot_value'] ) ? 0 : 1;
 		$settings['honeypot_value_max_length'] = max( 10, min( 200, absint( $settings['honeypot_value_max_length'] ) ) );
 		$settings['keep_recent_events']        = max( 10, absint( $settings['keep_recent_events'] ) );
