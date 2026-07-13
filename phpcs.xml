@@ -10,6 +10,8 @@
 
     <exclude-pattern>vendor/*</exclude-pattern>
     <exclude-pattern>.github/scripts/*</exclude-pattern>
+    <exclude-pattern>**/*.min.css</exclude-pattern>
+    <exclude-pattern>**/*.min.js</exclude-pattern>
 
     <!-- WordPress standards -->
     <rule ref="WordPress-Core">
