@@ -284,7 +284,7 @@ final class Token {
 			}
 		}
 
-		return 'input-' . $tick;
+		return 'input-' . $tick . '-' . substr( $hash, 0, 6 );
 	}
 
 	/**
