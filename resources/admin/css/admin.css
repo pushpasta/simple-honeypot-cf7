@@ -333,13 +333,18 @@
 	margin-right: 6px;
 }
 
-.shp4cf7-admin #keep_recent_events {
-	width: 120px;
-}
-
 .shp4cf7-admin .form-table input[type="number"],
 .shp4cf7-admin .form-table input[type="text"] {
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+@supports (field-sizing: content) {
+	.shp4cf7-admin .form-table input[type="number"],
+	.shp4cf7-form-panel-box .form-table input[type="number"] {
+		width: auto;
+		field-sizing: content;
+		max-width: 7em;
+	}
 }
 
 .shp4cf7-admin .form-table input[type="number"]:focus,
