@@ -228,7 +228,7 @@
 							)
 							.then(
 								function ( body ) {
-									var err = new Error(
+									var err    = new Error(
 										( body.data && body.data.message ) ? body.data.message : ''
 									);
 									err.status = response.status;

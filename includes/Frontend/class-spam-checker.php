@@ -392,7 +392,7 @@ final class Spam_Checker {
 	 * @param \WPCF7_ContactForm $contact_form The current contact form.
 	 * @return void
 	 */
-	public function maybe_consume_pending_token( $contact_form ) {
+	public function maybe_consume_pending_token( $contact_form ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter -- Required by wpcf7_before_send_mail hook.
 		if ( null === $this->pending_consumption ) {
 			return;
 		}

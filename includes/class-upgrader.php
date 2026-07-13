@@ -169,12 +169,14 @@ final class Upgrader {
 				// Ensure the new table exists (idempotent — dbDelta handles already-created).
 				Event_Logger::create_table();
 
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are internal and cannot be prepared.
 				$wpdb->query(
 					"INSERT INTO {$new_table} (form_id, form_title, ip, user_agent, reasons, `time`)
 					 SELECT form_id, form_title, ip, user_agent, reasons, `time`
 					 FROM {$old_table}"
 				);
+				// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			}
 		}
 
