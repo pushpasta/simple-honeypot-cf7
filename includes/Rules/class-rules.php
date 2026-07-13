@@ -109,13 +109,16 @@ final class Rules {
 			return 'email';
 		}
 
-		// IPv4-like: must start with a digit or asterisk and contain a dot.
-		if ( preg_match( '/^[\d\*][\d\.\*\/]+$/', $pattern ) && false !== strpos( $pattern, '.' ) ) {
+		// IPv4-like: strip CIDR and wildcards, then validate with filter_var.
+		$parts = explode( '/', $pattern, 2 );
+		$base  = str_replace( '*', '0', $parts[0] );
+
+		if ( false !== strpos( $pattern, '.' ) && filter_var( $base, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
 			return 'ip';
 		}
 
-		// IPv6-like: hex chars, colons, slashes; must have at least two colons.
-		if ( preg_match( '/^[0-9a-fA-F:\*\/]+$/', $pattern ) && substr_count( $pattern, ':' ) >= 2 ) {
+		// IPv6-like: same approach — $base already computed above.
+		if ( substr_count( $pattern, ':' ) >= 2 && filter_var( $base, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
 			return 'ip';
 		}
 
