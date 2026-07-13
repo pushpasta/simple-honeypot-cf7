@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="max_age_minutes"><?php esc_html_e( 'Token lifetime', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="range" id="max_age_minutes" name="max_age_minutes" min="10" max="90" step="1" value="<?php echo esc_attr( $settings['max_age_minutes'] ); ?>" />
+						<input type="range" id="max_age_minutes" name="max_age_minutes" min="10" max="90" step="10" value="<?php echo esc_attr( $settings['max_age_minutes'] ); ?>" />
 						<span id="max-age-minutes-value"><?php echo esc_html( $settings['max_age_minutes'] ); ?></span>
 						<?php esc_html_e( 'minutes', 'simple-honeypot-cf7' ); ?>
 						<span id="max-age-minutes-label" class="shp4cf7-badge"></span>
@@ -58,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="token_rate_limit"><?php esc_html_e( 'Generation rate limit', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="range" id="token_rate_limit" name="token_rate_limit" min="0" max="50" step="1" value="<?php echo esc_attr( $settings['token_rate_limit'] ); ?>" />
+						<input type="range" id="token_rate_limit" name="token_rate_limit" min="0" max="30" step="5" value="<?php echo esc_attr( $settings['token_rate_limit'] ); ?>" />
 						<span id="token-rate-limit-value"><?php echo esc_html( $settings['token_rate_limit'] ); ?></span>
 						<?php esc_html_e( 'tokens per 5 minutes per IP', 'simple-honeypot-cf7' ); ?>
 						<span id="token-rate-limit-label" class="shp4cf7-badge"></span>
@@ -86,9 +86,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="pow_complexity"><?php esc_html_e( 'Puzzle complexity', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="range" id="pow_complexity" name="pow_complexity" min="4" max="20" step="1" value="<?php echo esc_attr( $settings['pow_complexity'] ); ?>" />
+						<input type="range" id="pow_complexity" name="pow_complexity" min="5" max="30" step="5" value="<?php echo esc_attr( $settings['pow_complexity'] ); ?>" />
 						<span><span id="pow-complexity-value"><?php echo esc_html( $settings['pow_complexity'] ); ?></span> <?php esc_html_e( 'leading zero bits', 'simple-honeypot-cf7' ); ?> <span id="pow-complexity-label" class="shp4cf7-badge"><?php esc_html_e( 'Recommended', 'simple-honeypot-cf7' ); ?></span></span>
-						<p class="description"><?php esc_html_e( 'Each additional bit doubles the work required. 4–7 is fast but less reliable, 8–11 offers moderate protection, 12–15 is recommended, and 16–20 provides strong protection but may lag on slow devices.', 'simple-honeypot-cf7' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Each additional bit doubles the work required. 5 is fast, 10–15 offers solid protection, and 20+ may slow down older or low-end mobile devices.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
 			</table>
@@ -167,19 +167,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 		var tokenRange = document.getElementById('max_age_minutes');
 		var tokenOutput = document.getElementById('max-age-minutes-value');
 		var tokenLabel = document.getElementById('max-age-minutes-label');
-		var tokenSteps = [10, 30, 60, 90];
-		var tokenLabels = { 10: 'Strict', 30: 'Recommended', 60: 'Moderate', 90: 'Relaxed' };
-		var tokenColors = { 10: 'inactive', 30: 'active', 60: 'info', 90: 'inherited' };
+		var tokenLabels = [
+			{ min: 10, max: 20, text: 'Strict', css: 'inactive' },
+			{ min: 30, max: 40, text: 'Recommended', css: 'active' },
+			{ min: 50, max: 60, text: 'Comfortable', css: 'info' },
+			{ min: 70, max: 90, text: 'Relaxed', css: 'inherited' }
+		];
 
 		function updateToken() {
 			var val = parseInt( this.value, 10 );
-			var closest = tokenSteps.reduce(function( prev, curr ) {
-				return Math.abs( curr - val ) < Math.abs( prev - val ) ? curr : prev;
-			});
-			this.value = closest;
-			tokenOutput.textContent = closest;
-			tokenLabel.textContent = tokenLabels[closest];
-			tokenLabel.className = 'shp4cf7-badge shp4cf7-badge--' + tokenColors[closest];
+			tokenOutput.textContent = val;
+			for (var i = 0; i < tokenLabels.length; i++) {
+				if (val >= tokenLabels[i].min && val <= tokenLabels[i].max) {
+					tokenLabel.textContent = tokenLabels[i].text;
+					tokenLabel.className = 'shp4cf7-badge shp4cf7-badge--' + tokenLabels[i].css;
+					break;
+				}
+			}
 		}
 
 		if (tokenRange) {
@@ -190,19 +194,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 		var rateLimitRange = document.getElementById('token_rate_limit');
 		var rateLimitOutput = document.getElementById('token-rate-limit-value');
 		var rateLimitLabel = document.getElementById('token-rate-limit-label');
-		var rateLimitSteps = [0, 5, 10, 20, 50];
-		var rateLimitLabels = { 0: 'Disabled', 5: 'Strict', 10: 'Recommended', 20: 'Moderate', 50: 'Relaxed' };
-		var rateLimitColors = { 0: 'inactive', 5: 'inherited', 10: 'active', 20: 'info', 50: 'inherited' };
+		var rateLimitLabels = [
+			{ min: 0, max: 0, text: 'Disabled', css: 'inactive' },
+			{ min: 5, max: 5, text: 'Strict', css: 'inherited' },
+			{ min: 10, max: 15, text: 'Recommended', css: 'active' },
+			{ min: 20, max: 25, text: 'Moderate', css: 'info' },
+			{ min: 30, max: 30, text: 'Relaxed', css: 'inherited' }
+		];
 
 		function updateRateLimit() {
 			var val = parseInt( this.value, 10 );
-			var closest = rateLimitSteps.reduce(function( prev, curr ) {
-				return Math.abs( curr - val ) < Math.abs( prev - val ) ? curr : prev;
-			});
-			this.value = closest;
-			rateLimitOutput.textContent = closest;
-			rateLimitLabel.textContent = rateLimitLabels[closest];
-			rateLimitLabel.className = 'shp4cf7-badge shp4cf7-badge--' + rateLimitColors[closest];
+			rateLimitOutput.textContent = val;
+			for (var i = 0; i < rateLimitLabels.length; i++) {
+				if (val >= rateLimitLabels[i].min && val <= rateLimitLabels[i].max) {
+					rateLimitLabel.textContent = rateLimitLabels[i].text;
+					rateLimitLabel.className = 'shp4cf7-badge shp4cf7-badge--' + rateLimitLabels[i].css;
+					break;
+				}
+			}
 		}
 
 		if (rateLimitRange) {
@@ -214,10 +223,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		var powOutput = document.getElementById('pow-complexity-value');
 		var powLabel = document.getElementById('pow-complexity-label');
 		var powLabels = [
-			{ min: 4, max: 7, text: 'Light', css: 'inactive' },
-			{ min: 8, max: 11, text: 'Moderate', css: 'info' },
-			{ min: 12, max: 15, text: 'Recommended', css: 'active' },
-			{ min: 16, max: 20, text: 'Strong', css: 'inherited' }
+			{ min: 5, max: 5, text: 'Light', css: 'inactive' },
+			{ min: 10, max: 10, text: 'Moderate', css: 'info' },
+			{ min: 15, max: 15, text: 'Recommended', css: 'active' },
+			{ min: 20, max: 20, text: 'Strong', css: 'inherited' },
+			{ min: 25, max: 30, text: 'May slow mobile', css: 'warning' }
 		];
 
 		function updatePow() {

@@ -99,12 +99,12 @@ final class Settings {
 		return array(
 			'time_check_enabled'        => 1,
 			'min_time_seconds'          => 4,
-			'max_age_minutes'           => 30,
+			'max_age_minutes'           => 10,
 			'token_rate_limit'          => 10,
 			'custom_rules_enabled'      => 0,
 			'custom_rules'              => '',
 			'pow_enabled'               => 0,
-			'pow_complexity'            => 14,
+			'pow_complexity'            => 15,
 			'store_honeypot_value'      => 0,
 			'honeypot_value_max_length' => 100,
 			'keep_recent_events'        => 1000,
@@ -506,6 +506,25 @@ final class Settings {
 	}
 
 	/**
+	 * Snap an integer to the nearest valid step within a range.
+	 *
+	 * @param int $value Raw integer value.
+	 * @param int $step  Step increment (must be >= 1).
+	 * @param int $min   Minimum allowed value.
+	 * @param int $max   Maximum allowed value.
+	 * @return int Snapped value.
+	 */
+	private static function snap_to_step( $value, $step, $min, $max ) {
+		$value = absint( $value );
+
+		if ( $step > 1 ) {
+			$value = (int) round( $value / $step ) * $step;
+		}
+
+		return max( $min, min( $max, $value ) );
+	}
+
+	/**
 	 * Sanitize global settings from untrusted input.
 	 *
 	 * @param array $settings Unslashed settings data.
@@ -514,12 +533,12 @@ final class Settings {
 	public static function sanitize_global( array $settings ) {
 		$settings['time_check_enabled']        = empty( $settings['time_check_enabled'] ) ? 0 : 1;
 		$settings['min_time_seconds']          = max( 0, absint( $settings['min_time_seconds'] ) );
-		$settings['max_age_minutes']           = max( 10, min( 90, absint( $settings['max_age_minutes'] ) ) );
-		$settings['token_rate_limit']          = max( 0, min( 50, absint( $settings['token_rate_limit'] ) ) );
+		$settings['max_age_minutes']           = self::snap_to_step( $settings['max_age_minutes'], 10, 10, 90 );
+		$settings['token_rate_limit']          = self::snap_to_step( $settings['token_rate_limit'], 5, 0, 30 );
 		$settings['custom_rules_enabled']      = empty( $settings['custom_rules_enabled'] ) ? 0 : 1;
 		$settings['custom_rules']              = self::sanitize_rules( $settings['custom_rules'] ?? '' );
 		$settings['pow_enabled']               = empty( $settings['pow_enabled'] ) ? 0 : 1;
-		$settings['pow_complexity']            = max( 4, min( 20, absint( $settings['pow_complexity'] ) ) );
+		$settings['pow_complexity']            = self::snap_to_step( $settings['pow_complexity'], 5, 5, 30 );
 		$settings['store_honeypot_value']      = empty( $settings['store_honeypot_value'] ) ? 0 : 1;
 		$settings['honeypot_value_max_length'] = max( 10, min( 200, absint( $settings['honeypot_value_max_length'] ) ) );
 		$settings['keep_recent_events']        = max( 10, absint( $settings['keep_recent_events'] ) );

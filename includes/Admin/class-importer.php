@@ -134,10 +134,10 @@ final class Importer {
 
 		$settings['time_check_enabled']        = empty( $settings['time_check_enabled'] ) ? 0 : 1;
 		$settings['min_time_seconds']          = self::sanitize_int( $settings['min_time_seconds'], $defaults['min_time_seconds'] );
-		$settings['max_age_minutes']           = self::sanitize_int( $settings['max_age_minutes'], $defaults['max_age_minutes'], 10, 90 );
-		$settings['token_rate_limit']          = self::sanitize_int( $settings['token_rate_limit'], $defaults['token_rate_limit'], 0, 50 );
+		$settings['max_age_minutes']           = self::sanitize_int( $settings['max_age_minutes'], $defaults['max_age_minutes'], 10, 90, 10 );
+		$settings['token_rate_limit']          = self::sanitize_int( $settings['token_rate_limit'], $defaults['token_rate_limit'], 0, 30, 5 );
 		$settings['pow_enabled']               = empty( $settings['pow_enabled'] ) ? 0 : 1;
-		$settings['pow_complexity']            = self::sanitize_int( $settings['pow_complexity'], $defaults['pow_complexity'], 4, 20 );
+		$settings['pow_complexity']            = self::sanitize_int( $settings['pow_complexity'], $defaults['pow_complexity'], 5, 30, 5 );
 		$settings['store_honeypot_value']      = empty( $settings['store_honeypot_value'] ) ? 0 : 1;
 		$settings['honeypot_value_max_length'] = self::sanitize_int( $settings['honeypot_value_max_length'], $defaults['honeypot_value_max_length'], 10, 200 );
 		$settings['keep_recent_events']        = self::sanitize_int( $settings['keep_recent_events'], $defaults['keep_recent_events'], 10 );
@@ -156,9 +156,10 @@ final class Importer {
 	 * @param int        $fallback Fallback when the value is invalid.
 	 * @param int        $min      Minimum allowed value (inclusive).
 	 * @param int|string $max      Maximum allowed value (inclusive), or empty for no upper bound.
+	 * @param int        $step     Step increment to snap to (1 = no snapping).
 	 * @return int Sanitized value.
 	 */
-	private static function sanitize_int( $value, $fallback, $min = 0, $max = '' ) {
+	private static function sanitize_int( $value, $fallback, $min = 0, $max = '', $step = 1 ) {
 		if ( ! is_numeric( $value ) ) {
 			return $fallback;
 		}
@@ -167,6 +168,14 @@ final class Importer {
 
 		if ( $value < $min || ( '' !== $max && $value > $max ) ) {
 			return $fallback;
+		}
+
+		if ( $step > 1 ) {
+			$value = (int) round( $value / $step ) * $step;
+
+			if ( $value < $min || ( '' !== $max && $value > $max ) ) {
+				return $fallback;
+			}
 		}
 
 		return $value;
