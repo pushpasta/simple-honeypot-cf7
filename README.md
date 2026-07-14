@@ -4,7 +4,7 @@
 
 Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
 
-![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-2.2.0-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
+![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0.1-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-3.0.0-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
 
 ![Stars](https://img.shields.io/github/stars/pushpasta/simple-honeypot-cf7?style=plastic) ![Forks](https://img.shields.io/github/forks/pushpasta/simple-honeypot-cf7?style=plastic) ![Watchers](https://img.shields.io/github/watchers/pushpasta/simple-honeypot-cf7?style=plastic) ![Last Commit](https://img.shields.io/github/last-commit/pushpasta/simple-honeypot-cf7?style=plastic) ![Downloads](https://img.shields.io/github/downloads/pushpasta/simple-honeypot-cf7/total?style=plastic)
 
@@ -14,8 +14,8 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 | Donate link | [https://github.com/pushpasta/simple-honeypot-cf7/?sponsor](https://github.com/pushpasta/simple-honeypot-cf7/?sponsor) |
 | Tags | contact form 7, cf7, honeypot, antispam, spam protection, bot protection, proof of work, hashcash |
 | Requires at least | 6.7 |
-| Tested up to | 7.0 |
-| Stable tag | 2.2.0 |
+| Tested up to | 7.0.1 |
+| Stable tag | 3.0.0 |
 | Requires PHP | 7.4 |
 | Requires Plugins | contact-form-7 |
 | License | GNU GPLv3 |
@@ -23,11 +23,12 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 
 ## Description
 
-Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam reporting for Contact Form 7. Everything runs on your server — no external services, no visitor tracking.
+Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam reporting for Contact Form 7. Everything runs on your server — no external services, no visitor tracking. <strong>Requires JavaScript</strong> in the browser.
 
 ### Features
 
 * 🪤 Adds a `[honeypot]` form tag to Contact Form 7, supporting multiple fields per form.
+* ✅ Forms without `[honeypot]` fields continue working as normal — the plugin does not interfere.
 * 🔒 Server-side token validation — no database queries during validation.
 * 🧩 Dynamic field names that change regularly, cache-friendly and harder for bots to predict.
 * ⏱️ Timing checks flag submissions that arrive faster than a human could fill out the form.
@@ -59,7 +60,14 @@ The plugin adds one or more hidden fields that are invisible to legitimate visit
 <details>
 <summary>What is Proof of Work and how does it help?</summary>
 
-Proof of Work requires the visitor's browser to spend a small amount of CPU time computing a hash before the form can be submitted. At the default complexity, this takes roughly 50–100ms — imperceptible to humans — but forces automated spam tools to spend significant resources. It can be enabled or disabled in the settings with configurable difficulty. Requires JavaScript and a secure (HTTPS) connection.
+Proof of Work requires the visitor's browser to spend a small amount of CPU time computing a hash before the form can be submitted. At the default complexity, this takes roughly 50–100ms — imperceptible to humans — but forces automated spam tools to spend significant resources. It can be enabled or disabled in the settings with configurable difficulty. Requires a secure (HTTPS) connection.
+
+</details>
+
+<details>
+<summary>Why does the plugin require JavaScript?</summary>
+
+The plugin uses JavaScript to fetch anti-spam tokens and solve proof-of-work puzzles directly in the browser. This approach is fully compatible with full-page caching solutions and ensures tokens are always fresh. Visitors with JavaScript disabled will be unable to submit protected forms.
 
 </details>
 
@@ -95,6 +103,13 @@ By default, honeypot fields are removed from submitted data before it is stored.
 <summary>Why was a submission marked as spam?</summary>
 
 The Spam Log shows which rule triggered the detection, such as a filled honeypot field, a failed time check, a blocked keyword, or a custom IP or email rule.
+
+</details>
+
+<details>
+<summary>Are existing forms without honeypots affected?</summary>
+
+No. The plugin only runs on forms that include at least one `[honeypot]` tag. All other CF7 forms keep working exactly as before.
 
 </details>
 
@@ -150,6 +165,50 @@ Detection reason and details recorded for each blocked submission, visible in re
 ![Spam Status](assets/screenshot-7.png)
 
 ## Changelog
+
+### 3.0.0
+
+### Added
+* Cache-safe AJAX token and proof-of-work delivery — fully compatible with page caching.
+* Form submit now waits until token and PoW are ready, preventing race conditions.
+* Token replay protection with consumption tracking per form.
+* IP-based rate limiting for token generation.
+* Proof-of-work complexity range slider with UI (default raised to 14).
+* Token lifetime range slider (10–90 min) with step-aligned validation.
+* Anchor IDs on admin card sections for direct linking.
+* `SCRIPT_DEBUG` support for loading unminified assets during development.
+
+### Fixed
+* Honeypot fields prefixed with `_shp4cf7_` for proper CF7 field name styling.
+* Forms without honeypot fields no longer get stuck waiting for a token.
+* Token state resets after submission so re-submits get a fresh token.
+* Token fetch errors now surface in CF7 AJAX response output.
+* Honeypot values read from `posted_data` instead of raw `$_POST`.
+* Rate-limit counter only increments after successful token generation.
+* Import strips removed settings and falls back to defaults for invalid values.
+* Import file size capped at 512 KB to prevent memory pressure.
+* Legacy events table data preserved during v2 migration.
+* PoW form ID bound in verifier to prevent cross-form replay.
+* Fallback field name made unique per form to avoid collisions.
+* IPv4 and IPv6 validation unified in rule detection.
+* Stats counters use atomic database increments.
+* Admin notice transients keyed by user ID to prevent collisions.
+* Various UI fixes (field-invalid feedback, nav-tabs, sidebar-stats).
+* Migrator verifies row count before dropping old tables.
+
+### Changed
+* CSS class prefix shortened from `simple_honeypot_cf7` to `shp4cf7` (faster, cleaner).
+* Storage keys renamed and event purge consolidated.
+* Step-int validation deduplicated between Settings and Importer.
+* Plugin homepage link updated, icon and screenshots refreshed.
+* Tested up to WordPress 7.0.1.
+
+### Performance
+* Excess event deletion deferred to hourly cron.
+* Minified assets served in production for smaller payloads.
+
+### Removed
+* Dead `frontend.js` file.
 
 ### 2.2.0
 
@@ -294,6 +353,9 @@ Detection reason and details recorded for each blocked submission, visible in re
 * Initial release.
 
 ## Upgrade Notice
+
+### 3.0.0
+* Major update with cache-safe token delivery, replay protection, range sliders, and extensive fixes. Recommended update for all users.
 
 ### 2.2.0
 * New View details link and force update check button. Recommended update for all users.
