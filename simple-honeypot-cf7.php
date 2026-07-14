@@ -6,7 +6,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Simple Honeypot for Contact Form 7
- * Plugin URI:        https://github.com/pushpasta/simple-honeypot-cf7
+ * Plugin URI:        https://pushpasta.github.io/simple-honeypot-cf7/
  * Description:       Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
  * Version:           2.2.0
  * Requires at least: 6.7
