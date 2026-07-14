@@ -342,6 +342,10 @@ final class Settings {
 			$stats['reasons'] = isset( $existing['reasons'] ) && is_array( $existing['reasons'] ) ? $existing['reasons'] : array();
 			$stats['forms']   = isset( $existing['forms'] ) && is_array( $existing['forms'] ) ? $existing['forms'] : array();
 
+			if ( ! empty( $existing['run_since'] ) ) {
+				$stats['run_since'] = (int) $existing['run_since'];
+			}
+
 			return $stats;
 		}
 
