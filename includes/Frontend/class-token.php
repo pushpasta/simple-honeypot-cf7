@@ -41,6 +41,10 @@ final class Token {
 		'position:fixed!important;top:-9999px!important;left:0!important;width:1px!important;height:1px!important;overflow:hidden!important;',
 		'position:absolute!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;height:1px!important;width:1px!important;overflow:hidden!important;',
 		'position:absolute!important;transform:scale(0)!important;transform-origin:0 0!important;width:1px!important;height:1px!important;overflow:hidden!important;',
+		'position:absolute!important;left:-9999px!important;top:-9999px!important;width:1px!important;height:1px!important;overflow:hidden!important;',
+		'position:fixed!important;right:100%!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important;',
+		'position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important;overflow:hidden!important;',
+		'position:absolute!important;top:0!important;left:0!important;z-index:-999!important;width:1px!important;height:1px!important;overflow:hidden!important;',
 	);
 
 	/**
