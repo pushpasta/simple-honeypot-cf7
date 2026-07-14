@@ -4,7 +4,7 @@ Donate link: https://github.com/pushpasta/simple-honeypot-cf7/?sponsor
 Tags: contact form 7, cf7, honeypot, antispam, spam protection, bot protection, proof of work, hashcash
 Requires at least: 6.7
 Requires PHP: 7.4
-Tested up to: 7.0
+Tested up to: 7.0.1
 Requires Plugins: contact-form-7
 Stable tag: 2.2.0
 License: GNU GPLv3
