@@ -143,8 +143,9 @@ final class GitHub_Updater {
 			'requires'     => $readme['requires_wp'] ?? '',
 			'requires_php' => $readme['requires_php'] ?? '',
 			'icons'        => array(
-				'1x' => 'https://raw.githubusercontent.com/' . $this->owner . '/' . $this->repo . '/refs/heads/main/assets/icon-128x128.jpg',
-				'2x' => 'https://raw.githubusercontent.com/' . $this->owner . '/' . $this->repo . '/refs/heads/main/assets/icon-256x256.jpg',
+				'1x'  => 'https://raw.githubusercontent.com/' . $this->owner . '/' . $this->repo . '/refs/heads/main/assets/icon-128x128.png',
+				'2x'  => 'https://raw.githubusercontent.com/' . $this->owner . '/' . $this->repo . '/refs/heads/main/assets/icon-256x256.png',
+				'svg' => 'https://raw.githubusercontent.com/' . $this->owner . '/' . $this->repo . '/refs/heads/main/assets/icon.svg',
 			),
 		);
 
