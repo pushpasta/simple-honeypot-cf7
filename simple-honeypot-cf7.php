@@ -30,6 +30,7 @@ define( 'SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'SIMPLE_HONEYPOT_CF7_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SIMPLE_HONEYPOT_CF7_URL', plugin_dir_url( __FILE__ ) );
 define( 'SIMPLE_HONEYPOT_CF7_BASE', 'shp4cf7' );
+define( 'SIMPLE_HONEYPOT_CF7_PLUGIN_URI', 'https://pushpasta.github.io/simple-honeypot-cf7/' );
 
 require_once SIMPLE_HONEYPOT_CF7_PATH . 'includes/class-autoloader.php';
 
