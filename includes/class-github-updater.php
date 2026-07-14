@@ -384,9 +384,13 @@ final class GitHub_Updater {
 			'sections'     => array(),
 		);
 
-		// Plugin name from the first line.
-		if ( ! empty( $lines ) && preg_match( '/^===\s*(.+?)\s*===\s*$/', $lines[0], $m ) ) {
-			$data['name'] = $m[1];
+		// Plugin name from the first line. Supports both === Name === and plain name formats.
+		if ( ! empty( $lines[0] ) ) {
+			if ( preg_match( '/^===\s*(.+?)\s*===\s*$/', $lines[0], $m ) ) {
+				$data['name'] = $m[1];
+			} else {
+				$data['name'] = trim( $lines[0] );
+			}
 		}
 
 		// Metadata from the header block.
