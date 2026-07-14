@@ -134,5 +134,7 @@ final class Rest_Api {
 		if ( false !== $cached ) {
 			delete_site_transient( $release_key );
 		}
+
+		delete_site_transient( 'update_plugins' );
 	}
 }
