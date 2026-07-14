@@ -177,11 +177,19 @@ final class Upgrader {
 					 FROM {$old_table}"
 				);
 				// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+				// Verify row count matches before dropping the old table.
+				$new_row_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$new_table}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+				if ( (int) $new_row_count === (int) $old_row_count ) {
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					$wpdb->query( "DROP TABLE IF EXISTS {$old_table}" );
+				}
+			} else {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$wpdb->query( "DROP TABLE IF EXISTS {$old_table}" );
 			}
 		}
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$old_table}" );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		delete_option( $wpdb->prefix . 'simple_honeypot_cf7_events_db_version' );
