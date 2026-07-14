@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.0.1
 Requires Plugins: contact-form-7
-Stable tag: 2.2.0
+Stable tag: 3.0.0
 License: GNU GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -92,6 +92,50 @@ All plugin data is removed from the database, including settings, statistics, an
 7. **Spam Status:** Detection reason and details recorded for each blocked submission, visible in record-keeping plugins like Flamingo.
 
 == Changelog ==
+
+= 3.0.0 =
+
+= Added =
+* Cache-safe AJAX token and proof-of-work delivery — fully compatible with page caching.
+* Form submit now waits until token and PoW are ready, preventing race conditions.
+* Token replay protection with consumption tracking per form.
+* IP-based rate limiting for token generation.
+* Proof-of-work complexity range slider with UI (default raised to 14).
+* Token lifetime range slider (10–90 min) with step-aligned validation.
+* Anchor IDs on admin card sections for direct linking.
+* `SCRIPT_DEBUG` support for loading unminified assets during development.
+
+= Fixed =
+* Honeypot fields prefixed with `_shp4cf7_` for proper CF7 field name styling.
+* Forms without honeypot fields no longer get stuck waiting for a token.
+* Token state resets after submission so re-submits get a fresh token.
+* Token fetch errors now surface in CF7 AJAX response output.
+* Honeypot values read from `posted_data` instead of raw `$_POST`.
+* Rate-limit counter only increments after successful token generation.
+* Import strips removed settings and falls back to defaults for invalid values.
+* Import file size capped at 512 KB to prevent memory pressure.
+* Legacy events table data preserved during v2 migration.
+* PoW form ID bound in verifier to prevent cross-form replay.
+* Fallback field name made unique per form to avoid collisions.
+* IPv4 and IPv6 validation unified in rule detection.
+* Stats counters use atomic database increments.
+* Admin notice transients keyed by user ID to prevent collisions.
+* Various UI fixes (field-invalid feedback, nav-tabs, sidebar-stats).
+* Migrator verifies row count before dropping old tables.
+
+= Changed =
+* CSS class prefix shortened from `simple_honeypot_cf7` to `shp4cf7` (faster, cleaner).
+* Storage keys renamed and event purge consolidated.
+* Step-int validation deduplicated between Settings and Importer.
+* Plugin homepage link updated, icon and screenshots refreshed.
+* Tested up to WordPress 7.0.1.
+
+= Performance =
+* Excess event deletion deferred to hourly cron.
+* Minified assets served in production for smaller payloads.
+
+= Removed =
+* Dead `frontend.js` file.
 
 = 2.2.0 =
 
@@ -236,6 +280,9 @@ All plugin data is removed from the database, including settings, statistics, an
 * Initial release.
 
 == Upgrade Notice ==
+
+= 3.0.0 =
+* Major update with cache-safe token delivery, replay protection, range sliders, and extensive fixes. Recommended update for all users.
 
 = 2.2.0 =
 * New View details link and force update check button. Recommended update for all users.
