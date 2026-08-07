@@ -139,7 +139,7 @@ final class GitHub_Updater {
 			'new_version'  => $version,
 			'url'          => SIMPLE_HONEYPOT_CF7_PLUGIN_URI,
 			'package'      => $asset->browser_download_url ?? '',
-			'tested'       => $readme['tested_up_to'] ?? '',
+			'tested'       => $this->normalize_tested_up_to( $readme['tested_up_to'] ?? '' ),
 			'requires'     => $readme['requires_wp'] ?? '',
 			'requires_php' => $readme['requires_php'] ?? '',
 			'icons'        => array(
@@ -217,7 +217,7 @@ final class GitHub_Updater {
 			'author'         => sprintf( '<a href="%s">%s</a>', esc_url( 'https://github.com/' . $this->owner . '/' ), esc_html( $this->owner ) ),
 			'homepage'       => SIMPLE_HONEYPOT_CF7_PLUGIN_URI,
 			'requires'       => $readme['requires_wp'] ?? '',
-			'tested'         => $readme['tested_up_to'] ?? '',
+			'tested'         => $this->normalize_tested_up_to( $readme['tested_up_to'] ?? '' ),
 			'requires_php'   => $readme['requires_php'] ?? '',
 			'last_updated'   => $release->published_at ?? '',
 			'sections'       => $sections,
@@ -364,6 +364,29 @@ final class GitHub_Updater {
 		$content = file_get_contents( $file );
 
 		return $this->parse_readme( $content );
+	}
+
+	/**
+	 * Normalize the readme "Tested up to" value to a full three-part version.
+	 *
+	 * Mirrors the WordPress.org plugin directory, which appends the current
+	 * WordPress patch version when the readme only declares major.minor.
+	 * WordPress core compares the tested value against the full installed
+	 * version, so a bare "7.0" would otherwise always flag the plugin as
+	 * untested on "7.0.x" sites.
+	 *
+	 * @param string $tested_up_to Value from the readme "Tested up to:" header.
+	 * @return string Normalized version, or the original value unchanged.
+	 */
+	private function normalize_tested_up_to( $tested_up_to ) {
+		if ( ! is_string( $tested_up_to ) || 1 !== substr_count( $tested_up_to, '.' ) ) {
+			return $tested_up_to;
+		}
+
+		$parts = explode( '.', get_bloginfo( 'version' ) );
+		$patch = isset( $parts[2] ) ? $parts[2] : '0';
+
+		return $tested_up_to . '.' . $patch;
 	}
 
 	/**
