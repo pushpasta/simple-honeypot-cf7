@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.0
 Requires Plugins: contact-form-7
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 License: GNU GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -92,6 +92,15 @@ All plugin data is removed from the database, including settings, statistics, an
 7. **Spam Status:** Detection reason and details recorded for each blocked submission, visible in record-keeping plugins like Flamingo.
 
 == Changelog ==
+
+= 3.0.1 =
+
+= Fixed =
+* WordPress compatibility check no longer warns on patch releases — the "Tested up to" value is padded with the current WordPress patch version.
+* Tested up to WordPress 7.0.
+* Plugin icons restored in the update details modal.
+* Update details now link to the plugin homepage instead of the release page.
+* Statistics start date preserved when settings migrate from legacy storage.
 
 = 3.0.0 =
 
@@ -280,6 +289,9 @@ All plugin data is removed from the database, including settings, statistics, an
 * Initial release.
 
 == Upgrade Notice ==
+
+= 3.0.1 =
+* Fixes the WordPress compatibility warning in the plugin details, restores plugin icons, and preserves statistics during settings migration. Recommended update for all users.
 
 = 3.0.0 =
 * Major update with cache-safe token delivery, replay protection, range sliders, and extensive fixes. Recommended update for all users.
