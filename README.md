@@ -4,7 +4,7 @@
 
 Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
 
-![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0.1-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-3.0.0-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
+![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-3.0.1-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
 
 ![Stars](https://img.shields.io/github/stars/pushpasta/simple-honeypot-cf7?style=plastic) ![Forks](https://img.shields.io/github/forks/pushpasta/simple-honeypot-cf7?style=plastic) ![Watchers](https://img.shields.io/github/watchers/pushpasta/simple-honeypot-cf7?style=plastic) ![Last Commit](https://img.shields.io/github/last-commit/pushpasta/simple-honeypot-cf7?style=plastic) ![Downloads](https://img.shields.io/github/downloads/pushpasta/simple-honeypot-cf7/total?style=plastic)
 
@@ -14,8 +14,8 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 | Donate link | [https://github.com/pushpasta/simple-honeypot-cf7/?sponsor](https://github.com/pushpasta/simple-honeypot-cf7/?sponsor) |
 | Tags | contact form 7, cf7, honeypot, antispam, spam protection, bot protection, proof of work, hashcash |
 | Requires at least | 6.7 |
-| Tested up to | 7.0.1 |
-| Stable tag | 3.0.0 |
+| Tested up to | 7.0 |
+| Stable tag | 3.0.1 |
 | Requires PHP | 7.4 |
 | Requires Plugins | contact-form-7 |
 | License | GNU GPLv3 |
@@ -165,6 +165,15 @@ Detection reason and details recorded for each blocked submission, visible in re
 ![Spam Status](assets/screenshot-7.png)
 
 ## Changelog
+
+### 3.0.1
+
+### Fixed
+* WordPress compatibility check no longer warns on patch releases — the "Tested up to" value is padded with the current WordPress patch version.
+* Tested up to WordPress 7.0.
+* Plugin icons restored in the update details modal.
+* Update details now link to the plugin homepage instead of the release page.
+* Statistics start date preserved when settings migrate from legacy storage.
 
 ### 3.0.0
 
@@ -353,6 +362,9 @@ Detection reason and details recorded for each blocked submission, visible in re
 * Initial release.
 
 ## Upgrade Notice
+
+### 3.0.1
+* Fixes the WordPress compatibility warning in the plugin details, restores plugin icons, and preserves statistics during settings migration. Recommended update for all users.
 
 ### 3.0.0
 * Major update with cache-safe token delivery, replay protection, range sliders, and extensive fixes. Recommended update for all users.
