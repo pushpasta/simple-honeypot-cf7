@@ -113,6 +113,7 @@ final class Settings {
 				'default' => 4,
 				'tab'     => 'settings',
 				'min'     => 0,
+				'max'     => 3600,
 				'step'    => 1,
 			),
 			'max_age_minutes'           => array(
@@ -172,6 +173,7 @@ final class Settings {
 				'default' => 1000,
 				'tab'     => 'settings',
 				'min'     => 10,
+				'max'     => 100000,
 				'step'    => 1,
 			),
 			'purge_events_after_days'   => array(
@@ -179,6 +181,7 @@ final class Settings {
 				'default' => 0,
 				'tab'     => 'settings',
 				'min'     => 0,
+				'max'     => 3650,
 				'step'    => 1,
 			),
 			'events_per_page'           => array(
@@ -719,6 +722,14 @@ final class Settings {
 	 */
 	public static function sanitize_global( array $settings ) {
 		$settings = self::normalize_settings( $settings );
+
+		// Cross-field: the minimum submission time cannot exceed the token
+		// lifetime, or every submission is flagged as too fast.
+		$max_min_time = $settings['max_age_minutes'] * 60;
+
+		if ( $settings['min_time_seconds'] > $max_min_time ) {
+			$settings['min_time_seconds'] = $max_min_time;
+		}
 
 		$settings['custom_rules'] = self::sanitize_rules( $settings['custom_rules'] );
 
