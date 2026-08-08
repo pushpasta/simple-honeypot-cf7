@@ -299,6 +299,8 @@ final class Settings {
 	 */
 	public static function update_settings( array $settings ) {
 		update_option( self::SETTINGS_OPTION, self::sanitize_global( $settings ), false );
+
+		self::$settings_cache = null;
 	}
 
 	/**
@@ -364,6 +366,8 @@ final class Settings {
 		if ( $repaired !== $current ) {
 			update_option( self::SETTINGS_OPTION, $repaired, false );
 		}
+
+		self::$settings_cache = null;
 	}
 
 	/**
@@ -538,6 +542,8 @@ final class Settings {
 	 */
 	public static function reset_settings() {
 		update_option( self::SETTINGS_OPTION, self::default_settings(), false );
+
+		self::$settings_cache = null;
 	}
 
 	/**
