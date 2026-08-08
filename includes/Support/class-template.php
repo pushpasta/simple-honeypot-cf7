@@ -64,8 +64,10 @@ final class Template {
 			return $real;
 		}
 
-		// phpcs:ignore WordPress.PHP.error_log_error_log,WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Developer-facing diagnostics for missing templates.
-		error_log( sprintf( 'Simple Honeypot CF7: template not found — %s', $template ) );
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			// phpcs:ignore WordPress.PHP.error_log_error_log,WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Developer-facing diagnostics for missing templates.
+			error_log( sprintf( 'Simple Honeypot CF7: template not found — %s', $template ) );
+		}
 
 		return '';
 	}
