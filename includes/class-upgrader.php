@@ -246,21 +246,30 @@ final class Upgrader {
 	/**
 	 * Rename an option from an old key to a new key.
 	 *
-	 * Copies the value and meta, then deletes the old entry.
+	 * If the new key already exists, the old key is dropped without
+	 * overwriting the existing value. update_option() is used so the
+	 * rename is a single atomic write rather than a delete/add pair.
 	 *
 	 * @param string $old_key Previous option name.
 	 * @param string $new_key New option name.
 	 * @return void
 	 */
 	private static function rename_option( $old_key, $new_key ) {
-		$value = get_option( $old_key );
+		$value = get_option( $old_key, null );
 
-		if ( false === $value ) {
+		if ( null === $value ) {
 			return;
 		}
 
-		// Use direct option manipulation to avoid race conditions.
+		// Do not overwrite an existing new key — dropping the stale old
+		// key is safer than silently losing the newer value.
+		if ( false !== get_option( $new_key, false ) ) {
+			delete_option( $old_key );
+
+			return;
+		}
+
+		update_option( $new_key, $value, false );
 		delete_option( $old_key );
-		add_option( $new_key, $value, '', false );
 	}
 }
