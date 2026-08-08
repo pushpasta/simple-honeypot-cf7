@@ -187,7 +187,7 @@ final class GitHub_Updater {
 		}
 
 		$version = $this->version_from_tag( $release->tag_name );
-		$asset   = $this->find_release_asset( $release->assets );
+		$asset   = $this->find_release_asset( isset( $release->assets ) ? $release->assets : array() );
 
 		// Fetch readme.txt from the release tag on GitHub.
 		$readme = $this->release_readme( $release->tag_name );
