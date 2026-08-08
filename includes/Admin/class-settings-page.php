@@ -336,6 +336,24 @@ final class Settings_Page {
 	}
 
 	/**
+	 * Boolean keys for a given settings tab, derived from the schema.
+	 *
+	 * @param string $tab Tab name.
+	 * @return string[]
+	 */
+	private function boolean_keys_for_tab( $tab ) {
+		$keys = array();
+
+		foreach ( Settings::setting_schema() as $key => $descriptor ) {
+			if ( $tab === $descriptor['tab'] && 'bool' === $descriptor['type'] ) {
+				$keys[] = $key;
+			}
+		}
+
+		return $keys;
+	}
+
+	/**
 	 * Sanitize general settings from POST.
 	 *
 	 * @param array $settings Existing settings.
@@ -343,9 +361,7 @@ final class Settings_Page {
 	 * @return array
 	 */
 	private function settings_from_post( array $settings, array $post ) {
-		$boolean_keys = array( 'time_check_enabled', 'pow_enabled', 'store_honeypot_value' );
-
-		foreach ( $boolean_keys as $key ) {
+		foreach ( $this->boolean_keys_for_tab( 'settings' ) as $key ) {
 			if ( ! isset( $post[ $key ] ) ) {
 				$post[ $key ] = 0;
 			}
@@ -362,8 +378,10 @@ final class Settings_Page {
 	 * @return array
 	 */
 	private function rules_from_post( array $settings, array $post ) {
-		if ( ! isset( $post['custom_rules_enabled'] ) ) {
-			$post['custom_rules_enabled'] = 0;
+		foreach ( $this->boolean_keys_for_tab( 'rules' ) as $key ) {
+			if ( ! isset( $post[ $key ] ) ) {
+				$post[ $key ] = 0;
+			}
 		}
 
 		return Settings::sanitize_global( array_intersect_key( $post, array_flip( Settings::rules_tab_keys() ) ) + $settings );
