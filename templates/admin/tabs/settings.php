@@ -17,7 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 $schema_attrs = static function ( $key ) use ( $schema ) {
 	$descriptor = $schema[ $key ];
-	$attrs      = 'min="' . esc_attr( $descriptor['min'] ) . '" step="' . esc_attr( $descriptor['step'] ) . '"';
+	$min        = isset( $descriptor['min'] ) ? $descriptor['min'] : 0;
+	$step       = isset( $descriptor['step'] ) ? $descriptor['step'] : 1;
+	$attrs      = 'min="' . esc_attr( $min ) . '" step="' . esc_attr( $step ) . '"';
 
 	if ( isset( $descriptor['max'] ) ) {
 		$attrs .= ' max="' . esc_attr( $descriptor['max'] ) . '"';
