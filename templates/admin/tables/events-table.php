@@ -81,7 +81,7 @@ endif;
 								$max_length = isset( $settings['honeypot_value_max_length'] )
 								? absint( $settings['honeypot_value_max_length'] )
 								: 100;
-								$truncated  = mb_strlen( $message ) > $max_length;
+								$truncated  = mb_strlen( $full ) > $max_length;
 								?>
 							<li<?php echo $truncated ? ' title="' . esc_attr( $full ) . '"' : ''; ?>><?php echo esc_html( $truncated ? mb_substr( $message, 0, $max_length ) . '…' : $message ); ?></li>
 							<?php endforeach; ?>
