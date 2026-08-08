@@ -11,10 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $meta            = get_option( \SimpleHoneypotCF7\Settings::META_OPTION, array() );
 $updated_date    = ! empty( $meta['last_updated'] ) ? $meta['last_updated'] : '';
+$last_updated    = $updated_date ? wp_date( get_option( 'date_format' ), strtotime( $updated_date ) ) : SIMPLE_HONEYPOT_CF7_VERSION;
 $version_tooltip = sprintf(
 	/* translators: %s: date */
-	'%s ' . ( $updated_date ? wp_date( get_option( 'date_format' ), strtotime( $updated_date ) ) : SIMPLE_HONEYPOT_CF7_VERSION ),
-	__( 'Last updated:', 'simple-honeypot-cf7' )
+	'%s %s',
+	__( 'Last updated:', 'simple-honeypot-cf7' ),
+	$last_updated
 );
 ?>
 <div class="wrap shp4cf7-admin">
