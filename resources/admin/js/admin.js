@@ -107,16 +107,16 @@
 				const isDanger = $trigger.data( 'confirm-danger' ) !== undefined;
 				const $header  = $dialog.find( '.shp4cf7-confirm-header' );
 				const $yes     = $dialog.find( '.shp4cf7-confirm-yes' );
+				const $message = $dialog.find( '.shp4cf7-confirm-message' );
 
-				let message     = $trigger.data( 'confirm' );
-				const daysInput = $trigger.data( 'confirm-days' );
+				const message     = $trigger.data( 'confirm' );
+				const daysInput   = $trigger.data( 'confirm-days' );
 
 				if ( daysInput ) {
 					const daysValue = $( '#' + daysInput ).val() || '90';
-					message         = message.replace( '%d', daysValue );
-					$dialog.find( '.shp4cf7-confirm-message' ).html( message );
+					$message.text( message.replace( '%d', daysValue ) );
 				} else {
-					$dialog.find( '.shp4cf7-confirm-message' ).text( message );
+					$message.text( message );
 				}
 
 				if ( isDanger ) {
