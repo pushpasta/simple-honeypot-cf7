@@ -201,9 +201,6 @@ final class Upgrader {
 
 		// 5. Delete old site transients.
 		delete_site_transient( 'shcf7_github_release' );
-
-		// Cache flush to ensure stale site transients are cleared.
-		wp_cache_flush();
 	}
 
 	/**
