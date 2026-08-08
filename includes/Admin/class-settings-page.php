@@ -205,6 +205,7 @@ final class Settings_Page {
 
 		return array(
 			'settings'   => Settings::get_settings(),
+			'schema'     => Settings::setting_schema(),
 			'export_url' => $this->export_url(),
 		);
 	}

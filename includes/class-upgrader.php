@@ -99,6 +99,7 @@ final class Upgrader {
 
 		self::run();
 		Settings::activate();
+		Settings::normalize_stored_settings();
 		Event_Logger::create_table();
 		Event_Logger::create_stats_table();
 		Event_Logger::migrate_from_options( Settings::META_OPTION );

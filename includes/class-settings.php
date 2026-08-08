@@ -91,26 +91,120 @@ final class Settings {
 	}
 
 	/**
+	 * Define the global settings schema.
+	 *
+	 * Single source of truth for defaults, validation bounds, and tab
+	 * placement. Integer settings may define 'min', 'max', and 'step';
+	 * out-of-range or off-step integer values fall back to the 'default'
+	 * (recommended) value. All consumers — saves, imports, reads, upgrades,
+	 * and the admin UI — derive their behavior from this map.
+	 *
+	 * @return array<string, array{type: string, default: mixed, tab: string, min?: int, max?: int, step?: int}>
+	 */
+	public static function setting_schema() {
+		return array(
+			'time_check_enabled'        => array(
+				'type'    => 'bool',
+				'default' => 1,
+				'tab'     => 'settings',
+			),
+			'min_time_seconds'          => array(
+				'type'    => 'int',
+				'default' => 4,
+				'tab'     => 'settings',
+				'min'     => 0,
+				'step'    => 1,
+			),
+			'max_age_minutes'           => array(
+				'type'    => 'int',
+				'default' => 15,
+				'tab'     => 'settings',
+				'min'     => 10,
+				'max'     => 60,
+				'step'    => 5,
+			),
+			'token_rate_limit'          => array(
+				'type'    => 'int',
+				'default' => 10,
+				'tab'     => 'settings',
+				'min'     => 0,
+				'max'     => 30,
+				'step'    => 5,
+			),
+			'custom_rules_enabled'      => array(
+				'type'    => 'bool',
+				'default' => 0,
+				'tab'     => 'rules',
+			),
+			'custom_rules'              => array(
+				'type'    => 'string',
+				'default' => '',
+				'tab'     => 'rules',
+			),
+			'pow_enabled'               => array(
+				'type'    => 'bool',
+				'default' => 0,
+				'tab'     => 'settings',
+			),
+			'pow_complexity'            => array(
+				'type'    => 'int',
+				'default' => 15,
+				'tab'     => 'settings',
+				'min'     => 5,
+				'max'     => 30,
+				'step'    => 5,
+			),
+			'store_honeypot_value'      => array(
+				'type'    => 'bool',
+				'default' => 0,
+				'tab'     => 'settings',
+			),
+			'honeypot_value_max_length' => array(
+				'type'    => 'int',
+				'default' => 100,
+				'tab'     => 'settings',
+				'min'     => 10,
+				'max'     => 200,
+				'step'    => 10,
+			),
+			'keep_recent_events'        => array(
+				'type'    => 'int',
+				'default' => 1000,
+				'tab'     => 'settings',
+				'min'     => 10,
+				'step'    => 1,
+			),
+			'purge_events_after_days'   => array(
+				'type'    => 'int',
+				'default' => 0,
+				'tab'     => 'settings',
+				'min'     => 0,
+				'step'    => 1,
+			),
+			'events_per_page'           => array(
+				'type'    => 'int',
+				'default' => 20,
+				'tab'     => 'settings',
+				'min'     => 5,
+				'max'     => 200,
+				'step'    => 1,
+			),
+		);
+	}
+
+	/**
 	 * Default global settings.
 	 *
 	 * @return array
 	 */
 	public static function default_settings() {
-		return array(
-			'time_check_enabled'        => 1,
-			'min_time_seconds'          => 4,
-			'max_age_minutes'           => 15,
-			'token_rate_limit'          => 10,
-			'custom_rules_enabled'      => 0,
-			'custom_rules'              => '',
-			'pow_enabled'               => 0,
-			'pow_complexity'            => 15,
-			'store_honeypot_value'      => 0,
-			'honeypot_value_max_length' => 100,
-			'keep_recent_events'        => 1000,
-			'purge_events_after_days'   => 0,
-			'events_per_page'           => 20,
-		);
+		$defaults = array();
+
+		foreach ( self::setting_schema() as $key => $descriptor ) {
+			$defaults[ $key ] = $descriptor['default'];
+		}
+
+		return $defaults;
 	}
 
 	/**
@@ -119,19 +213,7 @@ final class Settings {
 	 * @return string[]
 	 */
 	public static function settings_tab_keys() {
-		return array(
-			'time_check_enabled',
-			'min_time_seconds',
-			'max_age_minutes',
-			'token_rate_limit',
-			'pow_enabled',
-			'pow_complexity',
-			'store_honeypot_value',
-			'honeypot_value_max_length',
-			'keep_recent_events',
-			'purge_events_after_days',
-			'events_per_page',
-		);
+		return self::schema_keys_for_tab( 'settings' );
 	}
 
 	/**
@@ -140,10 +222,25 @@ final class Settings {
 	 * @return string[]
 	 */
 	public static function rules_tab_keys() {
-		return array(
-			'custom_rules_enabled',
-			'custom_rules',
-		);
+		return self::schema_keys_for_tab( 'rules' );
+	}
+
+	/**
+	 * Keys belonging to a given settings tab.
+	 *
+	 * @param string $tab Tab name.
+	 * @return string[]
+	 */
+	private static function schema_keys_for_tab( $tab ) {
+		$keys = array();
+
+		foreach ( self::setting_schema() as $key => $descriptor ) {
+			if ( $tab === $descriptor['tab'] ) {
+				$keys[] = $key;
+			}
+		}
+
+		return $keys;
 	}
 
 	/**
@@ -169,7 +266,10 @@ final class Settings {
 	private static $settings_cache;
 
 	/**
-	 * Get global settings merged with defaults.
+	 * Get global settings, normalized against the schema.
+	 *
+	 * Missing keys are filled with defaults and present values are
+	 * validated, so stored values can never bypass the schema bounds.
 	 *
 	 * @return array
 	 */
@@ -180,9 +280,7 @@ final class Settings {
 
 		$settings = get_option( self::SETTINGS_OPTION, array() );
 
-		$merged = wp_parse_args( is_array( $settings ) ? $settings : array(), self::default_settings() );
-
-		self::$settings_cache = array_intersect_key( $merged, self::default_settings() );
+		self::$settings_cache = self::normalize_settings( is_array( $settings ) ? $settings : array() );
 
 		return self::$settings_cache;
 	}
@@ -190,11 +288,79 @@ final class Settings {
 	/**
 	 * Save global settings.
 	 *
+	 * Settings are always sanitized against the schema before they are
+	 * stored, regardless of the caller.
+	 *
 	 * @param array $settings Settings.
 	 * @return void
 	 */
 	public static function update_settings( array $settings ) {
-		update_option( self::SETTINGS_OPTION, wp_parse_args( $settings, self::default_settings() ), false );
+		update_option( self::SETTINGS_OPTION, self::sanitize_global( $settings ), false );
+	}
+
+	/**
+	 * Normalize a settings array against the schema.
+	 *
+	 * Fills missing keys with defaults and validates present values,
+	 * falling back to the recommended default for out-of-range or
+	 * off-step integers. Used on read and repair so stored values can
+	 * never bypass the schema bounds.
+	 *
+	 * @param array $settings Settings.
+	 * @return array
+	 */
+	public static function normalize_settings( array $settings ) {
+		$normalized = array();
+
+		foreach ( self::setting_schema() as $key => $descriptor ) {
+			$value              = array_key_exists( $key, $settings ) ? $settings[ $key ] : $descriptor['default'];
+			$normalized[ $key ] = self::normalize_value( $value, $descriptor );
+		}
+
+		return $normalized;
+	}
+
+	/**
+	 * Apply a schema descriptor to a single value.
+	 *
+	 * @param mixed $value      Raw value.
+	 * @param array $descriptor Schema descriptor.
+	 * @return mixed
+	 */
+	private static function normalize_value( $value, array $descriptor ) {
+		if ( 'bool' === $descriptor['type'] ) {
+			return empty( $value ) ? 0 : 1;
+		}
+
+		if ( 'int' === $descriptor['type'] ) {
+			return self::validate_step_int(
+				$value,
+				$descriptor['default'],
+				isset( $descriptor['min'] ) ? $descriptor['min'] : 0,
+				isset( $descriptor['max'] ) ? $descriptor['max'] : '',
+				isset( $descriptor['step'] ) ? $descriptor['step'] : 1
+			);
+		}
+
+		return is_string( $value ) ? $value : (string) $value;
+	}
+
+	/**
+	 * Re-validate stored settings against the schema.
+	 *
+	 * Brings out-of-range or off-step values inherited from previous
+	 * plugin versions, direct option edits, or restored backups back
+	 * within the schema bounds. Only writes when something changed.
+	 *
+	 * @return void
+	 */
+	public static function normalize_stored_settings() {
+		$current  = get_option( self::SETTINGS_OPTION, array() );
+		$repaired = self::sanitize_global( is_array( $current ) ? $current : array() );
+
+		if ( $repaired !== $current ) {
+			update_option( self::SETTINGS_OPTION, $repaired, false );
+		}
 	}
 
 	/**
@@ -372,18 +538,6 @@ final class Settings {
 	}
 
 	/**
-	 * Default per-form settings.
-	 *
-	 * @return array
-	 */
-	public static function default_form_settings() {
-		return array(
-			'time_mode'        => 'inherit',
-			'min_time_seconds' => 0,
-		);
-	}
-
-	/**
 	 * Get per-form settings.
 	 *
 	 * @param int $form_id Contact Form 7 form ID.
@@ -392,10 +546,7 @@ final class Settings {
 	public static function get_form_settings( $form_id ) {
 		$settings = $form_id ? get_post_meta( $form_id, self::FORM_META, true ) : array();
 
-		return wp_parse_args(
-			is_array( $settings ) ? $settings : array(),
-			self::default_form_settings()
-		);
+		return self::normalize_form_settings( is_array( $settings ) ? $settings : array() );
 	}
 
 	/**
@@ -406,12 +557,20 @@ final class Settings {
 	 * @return void
 	 */
 	public static function update_form_settings( $form_id, array $settings ) {
-		$data = array(
+		update_post_meta( $form_id, self::FORM_META, self::normalize_form_settings( $settings ) );
+	}
+
+	/**
+	 * Normalize per-form settings.
+	 *
+	 * @param array $settings Settings.
+	 * @return array
+	 */
+	private static function normalize_form_settings( array $settings ) {
+		return array(
 			'time_mode'        => self::allowed_mode( $settings['time_mode'] ?? 'inherit' ),
 			'min_time_seconds' => absint( $settings['min_time_seconds'] ?? 0 ),
 		);
-
-		update_post_meta( $form_id, self::FORM_META, $data );
 	}
 
 	/**
@@ -537,25 +696,16 @@ final class Settings {
 	/**
 	 * Sanitize global settings from untrusted input.
 	 *
+	 * Applies the schema bounds to every key, then runs the line-based
+	 * rules sanitizer on the custom rules textarea.
+	 *
 	 * @param array $settings Unslashed settings data.
 	 * @return array Sanitized settings.
 	 */
 	public static function sanitize_global( array $settings ) {
-		$defaults = self::default_settings();
+		$settings = self::normalize_settings( $settings );
 
-		$settings['time_check_enabled']        = empty( $settings['time_check_enabled'] ) ? 0 : 1;
-		$settings['min_time_seconds']          = max( 0, absint( $settings['min_time_seconds'] ) );
-		$settings['max_age_minutes']           = self::validate_step_int( $settings['max_age_minutes'], $defaults['max_age_minutes'], 10, 60, 5 );
-		$settings['token_rate_limit']          = self::validate_step_int( $settings['token_rate_limit'], $defaults['token_rate_limit'], 0, 30, 5 );
-		$settings['custom_rules_enabled']      = empty( $settings['custom_rules_enabled'] ) ? 0 : 1;
-		$settings['custom_rules']              = self::sanitize_rules( $settings['custom_rules'] ?? '' );
-		$settings['pow_enabled']               = empty( $settings['pow_enabled'] ) ? 0 : 1;
-		$settings['pow_complexity']            = self::validate_step_int( $settings['pow_complexity'], $defaults['pow_complexity'], 5, 30, 5 );
-		$settings['store_honeypot_value']      = empty( $settings['store_honeypot_value'] ) ? 0 : 1;
-		$settings['honeypot_value_max_length'] = max( 10, min( 200, absint( $settings['honeypot_value_max_length'] ) ) );
-		$settings['keep_recent_events']        = max( 10, absint( $settings['keep_recent_events'] ) );
-		$settings['purge_events_after_days']   = max( 0, absint( $settings['purge_events_after_days'] ) );
-		$settings['events_per_page']           = max( 5, min( 200, absint( $settings['events_per_page'] ) ) );
+		$settings['custom_rules'] = self::sanitize_rules( $settings['custom_rules'] );
 
 		return $settings;
 	}

@@ -95,12 +95,9 @@ final class Importer {
 			);
 		}
 
-		$global = $this->validate_global_settings( $data['global_settings'] );
-		$merged = wp_parse_args( $global, Settings::get_settings() );
+		$merged = wp_parse_args( $data['global_settings'], Settings::get_settings() );
 
-		$merged = Settings::sanitize_global( $merged );
-
-		Settings::update_settings( $merged );
+		Settings::update_settings( Settings::sanitize_global( $merged ) );
 
 		if ( ! empty( $data['form_settings'] ) && is_array( $data['form_settings'] ) && Contact_Form_7::is_active() ) {
 			foreach ( $data['form_settings'] as $form_id => $form_settings ) {
@@ -117,49 +114,5 @@ final class Importer {
 		// phpcs:enable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 
 		return array( 'success' => true );
-	}
-
-	/**
-	 * Validate and sanitize imported global settings.
-	 *
-	 * Ensures each value is the correct type and within the allowed range.
-	 *
-	 * @param array $settings Raw settings from the import file.
-	 * @return array Validated settings.
-	 */
-	private function validate_global_settings( array $settings ) {
-		$defaults = Settings::default_settings();
-
-		$settings = array_merge( $defaults, $settings );
-
-		$settings['time_check_enabled']        = empty( $settings['time_check_enabled'] ) ? 0 : 1;
-		$settings['min_time_seconds']          = self::sanitize_int( $settings['min_time_seconds'], $defaults['min_time_seconds'] );
-		$settings['max_age_minutes']           = self::sanitize_int( $settings['max_age_minutes'], $defaults['max_age_minutes'], 10, 60, 5 );
-		$settings['token_rate_limit']          = self::sanitize_int( $settings['token_rate_limit'], $defaults['token_rate_limit'], 0, 30, 5 );
-		$settings['pow_enabled']               = empty( $settings['pow_enabled'] ) ? 0 : 1;
-		$settings['pow_complexity']            = self::sanitize_int( $settings['pow_complexity'], $defaults['pow_complexity'], 5, 30, 5 );
-		$settings['store_honeypot_value']      = empty( $settings['store_honeypot_value'] ) ? 0 : 1;
-		$settings['honeypot_value_max_length'] = self::sanitize_int( $settings['honeypot_value_max_length'], $defaults['honeypot_value_max_length'], 10, 200 );
-		$settings['keep_recent_events']        = self::sanitize_int( $settings['keep_recent_events'], $defaults['keep_recent_events'], 10 );
-		$settings['purge_events_after_days']   = self::sanitize_int( $settings['purge_events_after_days'], $defaults['purge_events_after_days'] );
-		$settings['events_per_page']           = self::sanitize_int( $settings['events_per_page'], $defaults['events_per_page'], 5, 200 );
-		$settings['custom_rules_enabled']      = empty( $settings['custom_rules_enabled'] ) ? 0 : 1;
-		$settings['custom_rules']              = isset( $settings['custom_rules'] ) ? sanitize_text_field( $settings['custom_rules'] ) : '';
-
-		return array_intersect_key( $settings, $defaults );
-	}
-
-	/**
-	 * Sanitize an integer setting, returning a default for non-numeric, out-of-range, or off-step values.
-	 *
-	 * @param mixed      $value    Raw value from the import.
-	 * @param int        $fallback Fallback when the value is invalid.
-	 * @param int        $min      Minimum allowed value (inclusive).
-	 * @param int|string $max      Maximum allowed value (inclusive), or empty for no upper bound.
-	 * @param int        $step     Required step increment (1 = any value allowed).
-	 * @return int Sanitized value.
-	 */
-	private static function sanitize_int( $value, $fallback, $min = 0, $max = '', $step = 1 ) {
-		return Settings::validate_step_int( $value, $fallback, $min, $max, $step );
 	}
 }

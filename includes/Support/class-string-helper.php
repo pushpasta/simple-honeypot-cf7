@@ -26,7 +26,7 @@ trait String_Helper {
 	protected function short_value( $value, $length = 0 ) {
 		if ( $length <= 0 ) {
 			$settings = \SimpleHoneypotCF7\Settings::get_settings();
-			$length   = max( 10, min( 200, absint( $settings['honeypot_value_max_length'] ) ) );
+			$length   = absint( $settings['honeypot_value_max_length'] );
 		}
 
 		$value = sanitize_textarea_field( (string) $value );

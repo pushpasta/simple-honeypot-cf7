@@ -8,6 +8,23 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+/**
+ * Render min/max/step attributes for an integer setting from the schema.
+ *
+ * @param string $key Setting key.
+ * @return string
+ */
+$schema_attrs = static function ( $key ) use ( $schema ) {
+	$descriptor = $schema[ $key ];
+	$attrs      = 'min="' . esc_attr( $descriptor['min'] ) . '" step="' . esc_attr( $descriptor['step'] ) . '"';
+
+	if ( isset( $descriptor['max'] ) ) {
+		$attrs .= ' max="' . esc_attr( $descriptor['max'] ) . '"';
+	}
+
+	return $attrs;
+};
 ?>
 <form method="post" action="">
 	<?php wp_nonce_field( SIMPLE_HONEYPOT_CF7_BASE . '_save_settings', SIMPLE_HONEYPOT_CF7_BASE . '_nonce' ); ?>
@@ -31,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="min_time_seconds"><?php esc_html_e( 'Minimum time', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="number" class="small-text" id="min_time_seconds" name="min_time_seconds" min="0" step="1" value="<?php echo esc_attr( $settings['min_time_seconds'] ); ?>" placeholder="4" />
+						<input type="number" class="small-text" id="min_time_seconds" name="min_time_seconds" <?php echo $schema_attrs( 'min_time_seconds' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Values escaped by the schema_attrs closure. ?> value="<?php echo esc_attr( $settings['min_time_seconds'] ); ?>" placeholder="<?php echo esc_attr( $schema['min_time_seconds']['default'] ); ?>" />
 						<?php esc_html_e( 'seconds', 'simple-honeypot-cf7' ); ?>
 						<p class="description"><?php esc_html_e( 'Minimum time required between form submissions.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
@@ -48,7 +65,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="max_age_minutes"><?php esc_html_e( 'Token lifetime', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="range" id="max_age_minutes" name="max_age_minutes" min="10" max="60" step="5" value="<?php echo esc_attr( $settings['max_age_minutes'] ); ?>" />
+						<input type="range" id="max_age_minutes" name="max_age_minutes" <?php echo $schema_attrs( 'max_age_minutes' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Values escaped by the schema_attrs closure. ?> value="<?php echo esc_attr( $settings['max_age_minutes'] ); ?>" />
 						<span id="max-age-minutes-value"><?php echo esc_html( $settings['max_age_minutes'] ); ?></span>
 						<?php esc_html_e( 'minutes', 'simple-honeypot-cf7' ); ?>
 						<span id="max-age-minutes-label" class="shp4cf7-badge"></span>
@@ -58,7 +75,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="token_rate_limit"><?php esc_html_e( 'Generation rate limit', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="range" id="token_rate_limit" name="token_rate_limit" min="0" max="30" step="5" value="<?php echo esc_attr( $settings['token_rate_limit'] ); ?>" />
+						<input type="range" id="token_rate_limit" name="token_rate_limit" <?php echo $schema_attrs( 'token_rate_limit' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Values escaped by the schema_attrs closure. ?> value="<?php echo esc_attr( $settings['token_rate_limit'] ); ?>" />
 						<span id="token-rate-limit-value"><?php echo esc_html( $settings['token_rate_limit'] ); ?></span>
 						<?php esc_html_e( 'tokens per 5 minutes per IP', 'simple-honeypot-cf7' ); ?>
 						<span id="token-rate-limit-label" class="shp4cf7-badge"></span>
@@ -86,7 +103,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="pow_complexity"><?php esc_html_e( 'Puzzle complexity', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="range" id="pow_complexity" name="pow_complexity" min="5" max="30" step="5" value="<?php echo esc_attr( $settings['pow_complexity'] ); ?>" />
+						<input type="range" id="pow_complexity" name="pow_complexity" <?php echo $schema_attrs( 'pow_complexity' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Values escaped by the schema_attrs closure. ?> value="<?php echo esc_attr( $settings['pow_complexity'] ); ?>" />
 						<span><span id="pow-complexity-value"><?php echo esc_html( $settings['pow_complexity'] ); ?></span> <?php esc_html_e( 'leading zero bits', 'simple-honeypot-cf7' ); ?> <span id="pow-complexity-label" class="shp4cf7-badge"><?php esc_html_e( 'Recommended', 'simple-honeypot-cf7' ); ?></span></span>
 						<p class="description"><?php esc_html_e( 'Each additional bit doubles the work required. 5 is fast, 10–15 offers solid protection, and 20+ may slow down older or low-end mobile devices.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
@@ -111,7 +128,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="honeypot_value_max_length"><?php esc_html_e( 'Max value length', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="range" id="honeypot_value_max_length" name="honeypot_value_max_length" min="10" max="200" step="10" value="<?php echo esc_attr( $settings['honeypot_value_max_length'] ); ?>" />
+						<input type="range" id="honeypot_value_max_length" name="honeypot_value_max_length" <?php echo $schema_attrs( 'honeypot_value_max_length' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Values escaped by the schema_attrs closure. ?> value="<?php echo esc_attr( $settings['honeypot_value_max_length'] ); ?>" />
 						<span id="honeypot-value-max-length-value"><?php echo esc_html( $settings['honeypot_value_max_length'] ); ?></span>
 						<?php esc_html_e( 'characters', 'simple-honeypot-cf7' ); ?>
 						<p class="description"><?php esc_html_e( 'Maximum length of stored and displayed honeypot values. Shorter values reduce database size.', 'simple-honeypot-cf7' ); ?></p>
@@ -129,21 +146,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="events_per_page"><?php esc_html_e( 'Events per page', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="number" class="small-text" id="events_per_page" name="events_per_page" min="5" step="1" value="<?php echo esc_attr( $settings['events_per_page'] ); ?>" placeholder="20" />
+						<input type="number" class="small-text" id="events_per_page" name="events_per_page" <?php echo $schema_attrs( 'events_per_page' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Values escaped by the schema_attrs closure. ?> value="<?php echo esc_attr( $settings['events_per_page'] ); ?>" placeholder="<?php echo esc_attr( $schema['events_per_page']['default'] ); ?>" />
 						<?php esc_html_e( 'entries shown on the Reports tab', 'simple-honeypot-cf7' ); ?>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row"><label for="keep_recent_events"><?php esc_html_e( 'Events to keep', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="number" class="small-text" id="keep_recent_events" name="keep_recent_events" min="10" step="1" value="<?php echo esc_attr( $settings['keep_recent_events'] ); ?>" placeholder="1000" />
+						<input type="number" class="small-text" id="keep_recent_events" name="keep_recent_events" <?php echo $schema_attrs( 'keep_recent_events' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Values escaped by the schema_attrs closure. ?> value="<?php echo esc_attr( $settings['keep_recent_events'] ); ?>" placeholder="<?php echo esc_attr( $schema['keep_recent_events']['default'] ); ?>" />
 						<?php esc_html_e( 'recent events', 'simple-honeypot-cf7' ); ?>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row"><label for="purge_events_after_days"><?php esc_html_e( 'Auto-delete events older than', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="number" class="small-text" id="purge_events_after_days" name="purge_events_after_days" min="0" step="1" value="<?php echo esc_attr( $settings['purge_events_after_days'] ); ?>" placeholder="0" />
+						<input type="number" class="small-text" id="purge_events_after_days" name="purge_events_after_days" <?php echo $schema_attrs( 'purge_events_after_days' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Values escaped by the schema_attrs closure. ?> value="<?php echo esc_attr( $settings['purge_events_after_days'] ); ?>" placeholder="<?php echo esc_attr( $schema['purge_events_after_days']['default'] ); ?>" />
 						<?php esc_html_e( 'days (0 = disabled)', 'simple-honeypot-cf7' ); ?>
 						<p class="description"><?php esc_html_e( 'Automatically removes events older than the specified number of days once daily. Set to 0 to disable.', 'simple-honeypot-cf7' ); ?></p>
 					</td>

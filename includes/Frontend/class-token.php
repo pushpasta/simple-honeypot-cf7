@@ -7,6 +7,8 @@
 
 namespace SimpleHoneypotCF7\Frontend;
 
+use SimpleHoneypotCF7\Settings;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -346,7 +348,7 @@ final class Token {
 	 */
 	public static function pow_challenge( $form_id, array $settings = array() ) {
 		$tick       = (int) floor( time() / self::POW_TICK );
-		$complexity = empty( $settings['pow_complexity'] ) ? 15 : max( 5, min( 30, absint( $settings['pow_complexity'] ) ) );
+		$complexity = empty( $settings['pow_complexity'] ) ? Settings::default_settings()['pow_complexity'] : absint( $settings['pow_complexity'] );
 		$seed       = substr( wp_hash( SIMPLE_HONEYPOT_CF7_BASE . '|pow|seed|' . (int) $form_id . '|' . $tick ), 0, 16 );
 		$payload    = implode( '.', array( $seed, $complexity, $tick, (int) $form_id ) );
 
