@@ -672,6 +672,9 @@ final class Settings {
 	/**
 	 * Validate an integer setting against a step pattern and range, returning the default on failure.
 	 *
+	 * Non-numeric, negative, and non-integer (float/scientific) values fall
+	 * back to the recommended default rather than being silently coerced.
+	 *
 	 * @param mixed      $value    Raw value to validate.
 	 * @param int        $fallback Fallback when the value is invalid.
 	 * @param int        $min      Minimum allowed value (inclusive).
@@ -684,7 +687,19 @@ final class Settings {
 			return $fallback;
 		}
 
-		$value = absint( $value );
+		// Reject floats and scientific notation — only whole numbers pass.
+		$int_value = filter_var( $value, FILTER_VALIDATE_INT );
+
+		if ( false === $int_value ) {
+			return $fallback;
+		}
+
+		$value = $int_value;
+
+		// Guard against division by zero.
+		if ( 1 > $step ) {
+			$step = 1;
+		}
 
 		if ( $value < $min || ( '' !== $max && $value > $max ) || ( $value % $step ) !== 0 ) {
 			return $fallback;
