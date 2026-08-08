@@ -55,11 +55,12 @@ final class Template {
 	 * @return string
 	 */
 	private function path( $template ) {
-		$template = ltrim( str_replace( '\\', '/', $template ), '/' );
-		$file     = SIMPLE_HONEYPOT_CF7_PATH . 'templates/' . $template;
-		$real     = realpath( $file );
+		$template      = ltrim( str_replace( '\\', '/', $template ), '/' );
+		$file          = SIMPLE_HONEYPOT_CF7_PATH . 'templates/' . $template;
+		$real          = realpath( $file );
+		$templates_dir = realpath( SIMPLE_HONEYPOT_CF7_PATH . 'templates' );
 
-		if ( false !== $real && 0 === strpos( $real, realpath( SIMPLE_HONEYPOT_CF7_PATH . 'templates' ) ) && is_readable( $real ) ) {
+		if ( false !== $real && false !== $templates_dir && 0 === strpos( $real, $templates_dir . DIRECTORY_SEPARATOR ) && is_readable( $real ) ) {
 			return $real;
 		}
 
