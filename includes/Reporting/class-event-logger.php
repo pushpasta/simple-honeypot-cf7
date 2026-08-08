@@ -77,24 +77,6 @@ final class Event_Logger {
 	}
 
 	/**
-	 * Check whether the events table exists.
-	 *
-	 * @return bool
-	 */
-	public static function table_exists() {
-		global $wpdb;
-
-		$table = $wpdb->prefix . self::TABLE;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$exists = $wpdb->get_var(
-			$wpdb->prepare( 'SHOW TABLES LIKE %s', $table )
-		);
-
-		return null !== $exists && $table === $exists;
-	}
-
-	/**
 	 * Insert a new event.
 	 *
 	 * @param int    $form_id    Contact Form 7 form ID.

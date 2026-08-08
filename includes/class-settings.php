@@ -427,20 +427,6 @@ final class Settings {
 	}
 
 	/**
-	 * Legacy stats saver — kept for backward compatibility.
-	 *
-	 * No longer called by the plugin; all counters are now atomically
-	 * incremented via the dedicated database table.
-	 *
-	 * @deprecated
-	 * @param array $stats Stats.
-	 * @return void
-	 */
-	public static function update_meta( array $stats ) {
-		update_option( self::META_OPTION, wp_parse_args( $stats, self::default_meta() ), false );
-	}
-
-	/**
 	 * Reset all reporting data.
 	 *
 	 * @return void

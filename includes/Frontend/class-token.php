@@ -98,20 +98,6 @@ final class Token {
 	}
 
 	/**
-	 * Generate a self-contained signed token.
-	 *
-	 * @param int    $form_id      Contact Form 7 form ID.
-	 * @param string $field_name   Honeypot form tag name.
-	 * @param string $dynamic_name Dynamic field name for this instance.
-	 * @param int    $max_age      Token lifetime in seconds.
-	 * @return string
-	 */
-	public static function generate( $form_id, $field_name, $dynamic_name, $max_age ) {
-		$payload = implode( '.', array( time(), (int) $form_id, $field_name, $dynamic_name, (int) $max_age ) );
-		return $payload . '.' . wp_hash( self::SIGN_PREFIX . $payload );
-	}
-
-	/**
 	 * Generate a single form-level token that encodes timing data and all dynamic names.
 	 *
 	 * Token format: {created_at}.{form_id}.{dynamic_names_csv}.{max_age}.{hmac_signature}

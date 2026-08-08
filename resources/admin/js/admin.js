@@ -246,16 +246,35 @@
 					return;
 			}
 
-			// Select tag generator output on focus.
-			$( document ).on(
-				'focus',
-				'.insert-box input.tag.code',
-				function () {
-					$( this ).select();
-				}
-			);
+			// Import: enable button only when file selected.
+			const $importFile       = $( '#shp4cf7-import-file' );
+			const $importBtn        = $( '#shp4cf7-import-btn' );
+			const $importLabel      = $importFile.next( 'label' );
+			const importDefaultText = $importLabel.text();
 
-			initialData = syncDirty();
+			if ( $importFile.length && $importBtn.length ) {
+				$importFile.on(
+					'change',
+					function () {
+						const hasFile = this.files.length > 0;
+						$importBtn.prop( 'disabled', ! hasFile );
+						$importLabel.text( hasFile ? this.files[ 0 ].name : importDefaultText );
+						$importLabel.attr( 'title', hasFile ? this.files[ 0 ].name : '' );
+						clearFieldError( $importFile );
+					}
+				);
+			}
+
+			// Select tag generator output on focus.
+		$( document ).on(
+			'focus',
+			'.insert-box input.tag.code',
+			function () {
+				$( this ).select();
+			}
+		);
+
+		initialData = syncDirty();
 
 			$form.on(
 				'change input',
@@ -347,25 +366,7 @@
 			// Apply initial disabled state on page load.
 			$form.find( '.shp4cf7-custom-rules-toggle input:not(:checked)' ).trigger( 'change' );
 
-			// Import: enable button only when file selected.
-			const $importFile       = $( '#shp4cf7-import-file' );
-			const $importBtn        = $( '#shp4cf7-import-btn' );
-			const $importLabel      = $importFile.next( 'label' );
-			const importDefaultText = $importLabel.text();
-
-			if ( $importFile.length && $importBtn.length ) {
-				$importFile.on(
-					'change',
-					function () {
-						const hasFile = this.files.length > 0;
-						$importBtn.prop( 'disabled', ! hasFile );
-						$importLabel.text( hasFile ? this.files[ 0 ].name : importDefaultText );
-						$importLabel.attr( 'title', hasFile ? this.files[ 0 ].name : '' );
-						clearFieldError( $importFile );
-					}
-				);
-			}
-		}
+	}
 	);
 
 	$( window ).on(
