@@ -209,8 +209,8 @@ final class Upgrader {
 	/**
 	 * Migration v3: rename storage keys, reschedule cron.
 	 *
-	 * - Options: shp4cf7_stats → shp4cf7_meta, shp4cf7_db_version → shp4cf7_migration_version,
-	 *            shp4cf7_consumed → shp4cf7_consumed_tokens
+	 * - Options: shp4cf7_stats → shp4cf7_meta, shp4cf7_db_version → shp4cf7_migration_version
+	 * - Obsolete: shp4cf7_consumed / shp4cf7_consumed_tokens (replaced by per-token transients)
 	 * - Transients: shp4cf7_upgrader_version → shp4cf7_migration_cache
 	 * - Cron: reschedule shp4cf7_purge_excess (hourly) → shp4cf7_purge_events (daily)
 	 *
@@ -220,7 +220,11 @@ final class Upgrader {
 		// 1. Rename options.
 		self::rename_option( 'shp4cf7_stats', 'shp4cf7_meta' );
 		self::rename_option( 'shp4cf7_db_version', 'shp4cf7_migration_version' );
-		self::rename_option( 'shp4cf7_consumed', 'shp4cf7_consumed_tokens' );
+
+		// 1b. Consumed tokens now use per-token transients, so the legacy
+		// option (and the renamed copy from a previous migration) is obsolete.
+		delete_option( 'shp4cf7_consumed' );
+		delete_option( 'shp4cf7_consumed_tokens' );
 
 		// 2. Delete old transients.
 		delete_transient( 'shp4cf7_upgrader_version' );

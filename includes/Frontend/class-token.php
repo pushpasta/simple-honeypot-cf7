@@ -28,15 +28,16 @@ final class Token {
 	 */
 	private static $validate_cache = array();
 
-	const SIGN_PREFIX              = SIMPLE_HONEYPOT_CF7_BASE . '|token|sign|';
-	const NAME_PREFIX              = SIMPLE_HONEYPOT_CF7_BASE . '|token|dname|';
-	const TICK_SECONDS             = HOUR_IN_SECONDS;
-	const FIELD_TYPES              = array( 'text', 'email', 'tel', 'url', 'number', 'date', 'textarea' );
-	const POW_TICK                 = 300; // 5-minute PoW challenge window.
-	const POW_SIGN_PREFIX          = SIMPLE_HONEYPOT_CF7_BASE . '|pow|sign|';
-	const CONSUMED_TOKENS_OPTION   = SIMPLE_HONEYPOT_CF7_BASE . '_consumed_tokens';
-	const RATE_LIMIT_OPTION_PREFIX = SIMPLE_HONEYPOT_CF7_BASE . '_token_rate_';
-	const RATE_LIMIT_WINDOW        = 300; // 5-minute rate limit window.
+	const SIGN_PREFIX               = SIMPLE_HONEYPOT_CF7_BASE . '|token|sign|';
+	const NAME_PREFIX               = SIMPLE_HONEYPOT_CF7_BASE . '|token|dname|';
+	const TICK_SECONDS              = HOUR_IN_SECONDS;
+	const FIELD_TYPES               = array( 'text', 'email', 'tel', 'url', 'number', 'date', 'textarea' );
+	const POW_TICK                  = 300; // 5-minute PoW challenge window.
+	const POW_SIGN_PREFIX           = SIMPLE_HONEYPOT_CF7_BASE . '|pow|sign|';
+	const CONSUMED_TOKENS_OPTION    = SIMPLE_HONEYPOT_CF7_BASE . '_consumed_tokens';
+	const CONSUMED_TRANSIENT_PREFIX = SIMPLE_HONEYPOT_CF7_BASE . '_ct_';
+	const RATE_LIMIT_OPTION_PREFIX  = SIMPLE_HONEYPOT_CF7_BASE . '_token_rate_';
+	const RATE_LIMIT_WINDOW         = 300; // 5-minute rate limit window.
 
 	const HIDING_STYLES = array(
 		'position:absolute!important;left:-10000px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important;',
@@ -561,30 +562,16 @@ final class Token {
 	/**
 	 * Mark a token as consumed to prevent replay attacks.
 	 *
-	 * Stores a hashed fingerprint of the token with an expiry matching
-	 * the token's max_age. Once consumed, the same token cannot be used
-	 * for a second submission within that window.
+	 * Stores a per-token transient that expires with the token's max_age.
+	 * Atomic and self-expiring, so there is no read-modify-write race and
+	 * no unbounded option growth.
 	 *
 	 * @param string $token   Raw token string.
 	 * @param int    $max_age Token lifetime in seconds.
 	 * @return void
 	 */
 	public static function consume( $token, $max_age ) {
-		$consumed = get_option( self::CONSUMED_TOKENS_OPTION, array() );
-		$hash     = wp_hash( $token );
-		$expires  = time() + $max_age;
-
-		// Prune expired entries on write.
-		$now      = time();
-		$consumed = array_filter(
-			$consumed,
-			static function ( $entry ) use ( $now ) {
-				return $entry['e'] > $now;
-			}
-		);
-
-		$consumed[ $hash ] = array( 'e' => $expires );
-		update_option( self::CONSUMED_TOKENS_OPTION, $consumed, 'no' );
+		set_transient( self::CONSUMED_TRANSIENT_PREFIX . wp_hash( $token ), 1, $max_age );
 	}
 
 	/**
@@ -594,23 +581,7 @@ final class Token {
 	 * @return bool
 	 */
 	public static function is_consumed( $token ) {
-		$consumed = get_option( self::CONSUMED_TOKENS_OPTION, array() );
-		$hash     = wp_hash( $token );
-		$now      = time();
-
-		// Prune expired entries on read.
-		$pruned = array_filter(
-			$consumed,
-			static function ( $entry ) use ( $now ) {
-				return $entry['e'] > $now;
-			}
-		);
-
-		if ( $pruned !== $consumed ) {
-			update_option( self::CONSUMED_TOKENS_OPTION, $pruned, 'no' );
-		}
-
-		return isset( $pruned[ $hash ] );
+		return (bool) get_transient( self::CONSUMED_TRANSIENT_PREFIX . wp_hash( $token ) );
 	}
 
 	/**
