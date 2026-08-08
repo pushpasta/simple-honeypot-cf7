@@ -124,6 +124,12 @@ final class GitHub_Updater {
 			return $transient;
 		}
 
+		$package_url = $asset->browser_download_url ?? '';
+
+		if ( ! $this->is_trusted_package_host( $package_url ) ) {
+			return $transient;
+		}
+
 		$version = $this->version_from_tag( $release->tag_name );
 
 		if ( ! $version || version_compare( $version, SIMPLE_HONEYPOT_CF7_VERSION, '<=' ) ) {
@@ -138,7 +144,7 @@ final class GitHub_Updater {
 			'plugin'       => SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME,
 			'new_version'  => $version,
 			'url'          => SIMPLE_HONEYPOT_CF7_PLUGIN_URI,
-			'package'      => $asset->browser_download_url ?? '',
+			'package'      => $package_url,
 			'tested'       => $this->normalize_tested_up_to( $readme['tested_up_to'] ?? '' ),
 			'requires'     => $readme['requires_wp'] ?? '',
 			'requires_php' => $readme['requires_php'] ?? '',
@@ -669,6 +675,43 @@ final class GitHub_Updater {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Check whether a package URL points at a trusted download host.
+	 *
+	 * Limits update packages to GitHub domains and localhost. This keeps
+	 * the release/api_url filters (used for local testing) from handing
+	 * WordPress an arbitrary, attacker-controlled zip.
+	 *
+	 * @param string $url Package URL.
+	 * @return bool
+	 */
+	private function is_trusted_package_host( $url ) {
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+
+		if ( ! is_string( $host ) || '' === $host ) {
+			return false;
+		}
+
+		$host = strtolower( $host );
+
+		// github.com and any subdomain (api.github.com, raw.githubusercontent.com, etc.).
+		if ( 'github.com' === $host || substr( $host, -11 ) === '.github.com' ) {
+			return true;
+		}
+
+		// githubusercontent.com release asset CDN and its subdomains.
+		if ( 'githubusercontent.com' === $host || substr( $host, -20 ) === '.githubusercontent.com' ) {
+			return true;
+		}
+
+		// Local development and testing.
+		if ( in_array( $host, array( 'localhost', '127.0.0.1', '::1' ), true ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
