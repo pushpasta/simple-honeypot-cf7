@@ -101,13 +101,19 @@ final class Importer {
 
 		if ( ! empty( $data['form_settings'] ) && is_array( $data['form_settings'] ) && Contact_Form_7::is_active() ) {
 			foreach ( $data['form_settings'] as $form_id => $form_settings ) {
-				if ( is_numeric( $form_id ) && is_array( $form_settings ) ) {
-					$allowed_modes                     = array( 'inherit', 'enabled', 'disabled' );
-					$time_mode                         = sanitize_key( isset( $form_settings['time_mode'] ) ? $form_settings['time_mode'] : 'inherit' );
-					$form_settings['time_mode']        = in_array( $time_mode, $allowed_modes, true ) ? $time_mode : 'inherit';
-					$form_settings['min_time_seconds'] = max( 0, absint( isset( $form_settings['min_time_seconds'] ) ? $form_settings['min_time_seconds'] : 0 ) );
-					Settings::update_form_settings( (int) $form_id, $form_settings );
+				if ( ! is_numeric( $form_id ) || ! is_array( $form_settings ) ) {
+					continue;
 				}
+
+				if ( 'wpcf7_contact_form' !== get_post_type( (int) $form_id ) ) {
+					continue;
+				}
+
+				$allowed_modes                     = array( 'inherit', 'enabled', 'disabled' );
+				$time_mode                         = sanitize_key( isset( $form_settings['time_mode'] ) ? $form_settings['time_mode'] : 'inherit' );
+				$form_settings['time_mode']        = in_array( $time_mode, $allowed_modes, true ) ? $time_mode : 'inherit';
+				$form_settings['min_time_seconds'] = max( 0, absint( isset( $form_settings['min_time_seconds'] ) ? $form_settings['min_time_seconds'] : 0 ) );
+				Settings::update_form_settings( (int) $form_id, $form_settings );
 			}
 		}
 
