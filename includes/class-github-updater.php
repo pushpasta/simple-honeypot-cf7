@@ -306,7 +306,7 @@ final class GitHub_Updater {
 	/**
 	 * Fetch the plugin readme.txt from GitHub at a specific tag.
 	 *
-	 * Tags are immutable, so the parsed result is cached for a year.
+	 * Tags are immutable, so the parsed result is cached for a week.
 	 *
 	 * @param string $tag Release tag (e.g. "v1.1.0").
 	 * @return array|null Keys: name, requires_wp, tested_up_to, requires_php, sections.
