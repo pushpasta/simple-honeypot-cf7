@@ -117,9 +117,9 @@ final class Event_Logger {
 			$wpdb->prefix . self::TABLE,
 			array(
 				'form_id'    => absint( $form_id ),
-				'form_title' => sanitize_text_field( $form_title ),
+				'form_title' => sanitize_text_field( self::truncate( $form_title, 250 ) ),
 				'ip'         => sanitize_text_field( $ip ),
-				'user_agent' => sanitize_text_field( $user_agent ),
+				'user_agent' => sanitize_text_field( self::truncate( $user_agent, 250 ) ),
 				'reasons'    => $encoded,
 				'time'       => current_time( 'mysql', true ),
 			),
@@ -131,6 +131,28 @@ final class Event_Logger {
 		}
 
 		return (int) $wpdb->insert_id;
+	}
+
+	/**
+	 * Truncate a string to a byte-safe length for utf8mb4 columns.
+	 *
+	 * A VARCHAR(250) column holds 250 characters at up to 4 bytes each.
+	 * Truncating by characters keeps the stored value within bounds even
+	 * under strict-mode MySQL, where an over-long INSERT would otherwise
+	 * fail silently and drop the event.
+	 *
+	 * @param string $value  Raw value.
+	 * @param int    $length Maximum characters.
+	 * @return string
+	 */
+	private static function truncate( $value, $length ) {
+		$value = (string) $value;
+
+		if ( mb_strlen( $value, 'UTF-8' ) <= $length ) {
+			return $value;
+		}
+
+		return mb_substr( $value, 0, $length, 'UTF-8' );
 	}
 
 	/**
