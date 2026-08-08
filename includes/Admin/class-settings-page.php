@@ -123,11 +123,10 @@ final class Settings_Page {
 			$result   = $importer->import();
 
 			if ( empty( $result['success'] ) ) {
-				$args = array();
 				if ( ! empty( $result['error'] ) ) {
-					$args['import_error'] = $result['error'];
+					set_transient( SIMPLE_HONEYPOT_CF7_BASE . '_import_error_' . get_current_user_id(), sanitize_text_field( $result['error'] ), 90 );
 				}
-				$this->redirect( 'tools', 'import-failed', $args );
+				$this->redirect( 'tools', 'import-failed' );
 				return;
 			}
 
@@ -310,8 +309,16 @@ final class Settings_Page {
 		}
 
 		if ( 'import-failed' === $updated ) {
-			$result['message'] = isset( $get['import_error'] ) ? sanitize_text_field( $get['import_error'] ) : __( 'Import failed. Please verify the file and try again.', 'simple-honeypot-cf7' );
-			$result['type']    = 'error';
+			$error = get_transient( SIMPLE_HONEYPOT_CF7_BASE . '_import_error_' . get_current_user_id() );
+
+			if ( is_string( $error ) && '' !== $error ) {
+				delete_transient( SIMPLE_HONEYPOT_CF7_BASE . '_import_error_' . get_current_user_id() );
+				$result['message'] = $error;
+			} else {
+				$result['message'] = __( 'Import failed. Please verify the file and try again.', 'simple-honeypot-cf7' );
+			}
+
+			$result['type'] = 'error';
 			return $result;
 		}
 
