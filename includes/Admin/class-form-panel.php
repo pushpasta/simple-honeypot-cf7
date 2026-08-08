@@ -73,16 +73,23 @@ final class Form_Panel {
 	 * @return void
 	 */
 	public function save( $contact_form ) {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Contact Form 7 verifies the request before wpcf7_after_save.
-		$post = wp_unslash( $_POST );
-
 		if ( ! method_exists( $contact_form, 'id' ) ) {
 			return;
 		}
 
-		if ( function_exists( 'wpcf7_admin_has_edit_cap' ) && ! wpcf7_admin_has_edit_cap() ) {
+		// wpcf7_after_save can fire from programmatic saves (importer,
+		// WP-CLI, REST) that bypass CF7's own admin nonce check. Only
+		// process genuine admin POST submissions with the right caps.
+		if ( ! is_admin() || 'POST' !== $_SERVER['REQUEST_METHOD'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- See capability check below.
 			return;
 		}
+
+		if ( ! wpcf7_admin_has_edit_cap() ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- See is_admin() + capability check above.
+		$post = wp_unslash( $_POST );
 
 		$form_id = (int) $contact_form->id();
 
