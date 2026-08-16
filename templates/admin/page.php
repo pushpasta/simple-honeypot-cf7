@@ -114,7 +114,22 @@ $version_tooltip = sprintf(
 			<div class="postbox shp4cf7-card" id="shp4cf7-useful-info">
 				<h2 class="hndle"><span class="dashicons dashicons-info"></span><span><?php esc_html_e( 'Useful information', 'simple-honeypot-cf7' ); ?></span></h2>
 				<div class="inside">
-					<p class="description"><?php esc_html_e( 'Use a single [honeypot] field per form for the best results. Multiple fields are supported but not recommended.', 'simple-honeypot-cf7' ); ?></p>
+					<details>
+						<summary><?php esc_html_e( 'One honeypot per form', 'simple-honeypot-cf7' ); ?></summary>
+						<p>
+							<?php
+							printf(
+								/* translators: %s: [honeypot] form tag. */
+								esc_html__( 'Browsers autofill hidden fields by name and position, so multiple honeypots increase the chance of a false positive. Use a single %s tag per form.', 'simple-honeypot-cf7' ),
+								'<code>[honeypot]</code>'
+							);
+							?>
+						</p>
+					</details>
+					<details>
+						<summary><?php esc_html_e( 'Add proof-of-work for extra protection', 'simple-honeypot-cf7' ); ?></summary>
+						<p><?php esc_html_e( 'The token already blocks automated replays. Enabling proof-of-work on top of the token makes brute-force submissions much harder — often enough without needing multiple honeypots.', 'simple-honeypot-cf7' ); ?></p>
+					</details>
 				</div>
 			</div>
 		</aside>

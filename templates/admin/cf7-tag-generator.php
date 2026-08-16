@@ -11,12 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <?php if ( ! empty( $modern ) && ! empty( $tag ) ) : ?>
 	<header class="description-box">
-		<h3><?php esc_html_e( 'Honeypot', 'simple-honeypot-cf7' ); ?></h3>
+		<h3><?php esc_html_e( 'honeypot', 'simple-honeypot-cf7' ); ?></h3>
 	</header>
 
 	<div class="control-box">
 		<?php
-		$tag->print( 'field_type', array( 'select_options' => array( 'honeypot' => __( 'Honeypot', 'simple-honeypot-cf7' ) ) ) );
+		$tag->print( 'field_type', array( 'select_options' => array( 'honeypot' => __( 'honeypot', 'simple-honeypot-cf7' ) ) ) );
 		$tag->print( 'field_name' );
 		$tag->print( 'class_attr' );
 		?>

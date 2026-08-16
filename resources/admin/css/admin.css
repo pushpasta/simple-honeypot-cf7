@@ -314,6 +314,28 @@
 	padding: 0;
 }
 
+.shp4cf7-admin .shp4cf7-card details + details {
+	margin-top: 8px;
+}
+
+.shp4cf7-admin .shp4cf7-card summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.shp4cf7-admin .shp4cf7-card summary::marker {
+	color: #646970;
+}
+
+.shp4cf7-admin .shp4cf7-card details[open] summary {
+	margin-bottom: 8px;
+}
+
+.shp4cf7-admin .shp4cf7-card details p {
+	margin: 0;
+	color: #646970;
+}
+
 /* Form Section Grouping
 	========================================================================== */
 
