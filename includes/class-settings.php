@@ -322,6 +322,16 @@ final class Settings {
 			$normalized[ $key ] = self::normalize_value( $value, $descriptor );
 		}
 
+		// Cross-field: the minimum submission time cannot exceed the token
+		// lifetime, or every submission is flagged as too fast once the
+		// token expires. Applied on every read and save so stored values
+		// can never bypass the token lifetime.
+		$max_min_time = $normalized['max_age_minutes'] * 60;
+
+		if ( $normalized['min_time_seconds'] > $max_min_time ) {
+			$normalized['min_time_seconds'] = $max_min_time;
+		}
+
 		return $normalized;
 	}
 
@@ -562,9 +572,11 @@ final class Settings {
 	 * @return array
 	 */
 	private static function normalize_form_settings( array $settings ) {
+		$min_time = absint( $settings['min_time_seconds'] ?? 0 );
+
 		return array(
 			'time_mode'        => self::allowed_mode( $settings['time_mode'] ?? 'inherit' ),
-			'min_time_seconds' => absint( $settings['min_time_seconds'] ?? 0 ),
+			'min_time_seconds' => min( $min_time, self::get_max_min_time_seconds() ),
 		);
 	}
 
@@ -610,6 +622,22 @@ final class Settings {
 		}
 
 		return absint( $settings['min_time_seconds'] );
+	}
+
+	/**
+	 * Get the maximum allowed minimum-submission-time.
+	 *
+	 * The minimum time can never exceed the token lifetime, or every
+	 * submission is flagged as too fast once the token expires. Used for
+	 * admin input bounds and per-form clamping.
+	 *
+	 * @return int
+	 */
+	public static function get_max_min_time_seconds() {
+		$settings = self::get_settings();
+		$schema   = self::setting_schema();
+
+		return min( absint( $settings['max_age_minutes'] ) * 60, $schema['min_time_seconds']['max'] );
 	}
 
 	/**
@@ -713,15 +741,8 @@ final class Settings {
 	 * @return array Sanitized settings.
 	 */
 	public static function sanitize_global( array $settings ) {
+		// normalize_settings() clamps min_time_seconds to the token lifetime.
 		$settings = self::normalize_settings( $settings );
-
-		// Cross-field: the minimum submission time cannot exceed the token
-		// lifetime, or every submission is flagged as too fast.
-		$max_min_time = $settings['max_age_minutes'] * 60;
-
-		if ( $settings['min_time_seconds'] > $max_min_time ) {
-			$settings['min_time_seconds'] = $max_min_time;
-		}
 
 		$settings['custom_rules'] = self::sanitize_rules( $settings['custom_rules'] );
 
