@@ -11,7 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <?php if ( ! empty( $modern ) && ! empty( $tag ) ) : ?>
 	<header class="description-box">
-		<h3><?php esc_html_e( 'honeypot', 'simple-honeypot-cf7' ); ?></h3>
+		<h3><?php esc_html_e( 'honeypot field form-tag generator', 'simple-honeypot-cf7' ); ?></h3>
+		<p class="description"><?php esc_html_e( 'Generates a form-tag for a hidden honeypot field that helps catch automated spam.', 'simple-honeypot-cf7' ); ?></p>
 	</header>
 
 	<div class="control-box">
@@ -24,6 +25,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<footer class="insert-box">
 		<?php $tag->print( 'insert_box_content' ); ?>
+		<p class="description">
+			<?php
+			printf(
+				/* translators: %s: [honeypot] form tag. */
+				esc_html__( 'Only use one %s field per form. Browsers autofill hidden fields by name and position, so multiple honeypots increase the chance of a false positive.', 'simple-honeypot-cf7' ),
+				'<code>[honeypot]</code>'
+			);
+			?>
+		</p>
 	</footer>
 <?php else : ?>
 	<div class="control-box">
