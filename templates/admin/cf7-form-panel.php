@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<tr>
 			<th scope="row"><label for="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_form_min_time' ); ?>"><?php esc_html_e( 'Minimum submission time', 'simple-honeypot-cf7' ); ?></label></th>
 			<td>
-				<input type="number" class="small-text" id="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_form_min_time' ); ?>" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_form[min_time_seconds]' ); ?>" min="0" step="1" value="<?php echo esc_attr( $form_settings['min_time_seconds'] ); ?>" placeholder="0" />
+				<input type="number" class="small-text" id="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_form_min_time' ); ?>" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_form[min_time_seconds]' ); ?>" min="0" max="<?php echo esc_attr( \SimpleHoneypotCF7\Settings::get_max_min_time_seconds() ); ?>" step="1" value="<?php echo esc_attr( $form_settings['min_time_seconds'] ); ?>" placeholder="0" />
 				<?php esc_html_e( 'seconds', 'simple-honeypot-cf7' ); ?>
 				<p class="description"><?php esc_html_e( 'Leave empty or set to 0 to use the global minimum time. Only applies when the timing check is enabled (either globally or per form).', 'simple-honeypot-cf7' ); ?></p>
 			</td>

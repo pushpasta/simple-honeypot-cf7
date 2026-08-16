@@ -12,21 +12,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Render min/max/step attributes for an integer setting from the schema.
  *
- * @param string $key Setting key.
+ * @param string      $key           Setting key.
+ * @param int|string  $max_override  Optional max to use instead of the schema max.
  * @return string
  */
-$schema_attrs = static function ( $key ) use ( $schema ) {
+$schema_attrs = static function ( $key, $max_override = null ) use ( $schema ) {
 	$descriptor = $schema[ $key ];
 	$min        = isset( $descriptor['min'] ) ? $descriptor['min'] : 0;
 	$step       = isset( $descriptor['step'] ) ? $descriptor['step'] : 1;
+	$max        = ( null !== $max_override ) ? $max_override : ( isset( $descriptor['max'] ) ? $descriptor['max'] : null );
 	$attrs      = 'min="' . esc_attr( $min ) . '" step="' . esc_attr( $step ) . '"';
 
-	if ( isset( $descriptor['max'] ) ) {
-		$attrs .= ' max="' . esc_attr( $descriptor['max'] ) . '"';
+	if ( null !== $max ) {
+		$attrs .= ' max="' . esc_attr( $max ) . '"';
 	}
 
 	return $attrs;
 };
+
+$max_min_time = min( $schema['min_time_seconds']['max'], $settings['max_age_minutes'] * 60 );
 ?>
 <form method="post" action="">
 	<?php wp_nonce_field( SIMPLE_HONEYPOT_CF7_BASE . '_save_settings', SIMPLE_HONEYPOT_CF7_BASE . '_nonce' ); ?>
@@ -50,9 +54,9 @@ $schema_attrs = static function ( $key ) use ( $schema ) {
 				<tr>
 					<th scope="row"><label for="min_time_seconds"><?php esc_html_e( 'Minimum time', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
-						<input type="number" class="small-text" id="min_time_seconds" name="min_time_seconds" <?php echo $schema_attrs( 'min_time_seconds' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Values escaped by the schema_attrs closure. ?> value="<?php echo esc_attr( $settings['min_time_seconds'] ); ?>" placeholder="<?php echo esc_attr( $schema['min_time_seconds']['default'] ); ?>" />
+						<input type="number" class="small-text" id="min_time_seconds" name="min_time_seconds" data-max-min-time="<?php echo esc_attr( $schema['min_time_seconds']['max'] ); ?>" <?php echo $schema_attrs( 'min_time_seconds', $max_min_time ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Values escaped by the schema_attrs closure. ?> value="<?php echo esc_attr( $settings['min_time_seconds'] ); ?>" placeholder="<?php echo esc_attr( $schema['min_time_seconds']['default'] ); ?>" />
 						<?php esc_html_e( 'seconds', 'simple-honeypot-cf7' ); ?>
-						<p class="description"><?php esc_html_e( 'Minimum time required between form submissions.', 'simple-honeypot-cf7' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Minimum time required between form submissions. Cannot exceed the token lifetime.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
 			</table>
