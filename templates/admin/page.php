@@ -111,6 +111,12 @@ $version_tooltip = sprintf(
 					</ul>
 				</div>
 			</div>
+			<div class="postbox shp4cf7-card" id="shp4cf7-useful-info">
+				<h2 class="hndle"><span class="dashicons dashicons-info"></span><span><?php esc_html_e( 'Useful information', 'simple-honeypot-cf7' ); ?></span></h2>
+				<div class="inside">
+					<p class="description"><?php esc_html_e( 'Use a single [honeypot] field per form for the best results. Multiple fields are supported but not recommended.', 'simple-honeypot-cf7' ); ?></p>
+				</div>
+			</div>
 		</aside>
 	</div>
 
