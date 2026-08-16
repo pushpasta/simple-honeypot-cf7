@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.0
 Requires Plugins: contact-form-7
-Stable tag: 3.0.1
+Stable tag: 3.1.0
 License: GNU GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -92,6 +92,40 @@ All plugin data is removed from the database, including settings, statistics, an
 7. **Spam Status:** Detection reason and details recorded for each blocked submission, visible in record-keeping plugins like Flamingo.
 
 == Changelog ==
+
+= 3.1.0 =
+
+= Added =
+* "Useful information" sidebar card with a recommendation to use a single honeypot field per form.
+
+= Changed =
+* Honeypot fields now use `aria-hidden="true"` and `autocomplete="new-password"` to prevent browser profile autofill from filling hidden inputs and blocking real visitors.
+* Minimum submission time is now clamped to the token lifetime so it can never exceed it.
+* "Reset Settings" on the Tools tab now only resets Settings-tab values — custom rules are preserved.
+* Honeypot tag generator follows CF7's lowercase naming convention.
+* Settings tab range sliders and badges now live in the dedicated admin JavaScript file instead of an inline script.
+
+= Fixed =
+* Settings validation centralized in schema with cross-field bounds enforced on every read and save.
+* Settings cache invalidated after programmatic writes.
+* Importer restricted to CF7 forms; errors passed via transient instead of URL parameters.
+* Upgrader rename_option guarded against data loss.
+* Dynamic confirm dialog uses `.text()` to prevent XSS.
+* Form_Panel::save hardened against programmatic saves.
+* Boolean setting keys derived from schema.
+* Settings schema rejects negatives and floats; min and step guarded in the attributes closure.
+* Token storage migrated from consumed-option to per-token transients.
+* Hardened update-package host validation.
+* base64_decode guarded in token verification.
+* Date passed as sprintf argument, not embedded in format string.
+* Realpath containment checks include trailing separator.
+* Form title and user agent truncated to fit column widths.
+* Assets dereference guarded in plugin info.
+* Cache lifetime comment corrected in readme.
+* Targeted transient deletion replaces full cache flush.
+* Truncation indicator based on the displayed value.
+* Template-not-found error_log gated behind WP_DEBUG.
+* Dead code removed; JS temporal dead zone hazard fixed.
 
 = 3.0.1 =
 
@@ -289,6 +323,9 @@ All plugin data is removed from the database, including settings, statistics, an
 * Initial release.
 
 == Upgrade Notice ==
+
+= 3.1.0 =
+* Fixes browser autofill blocking real visitors as spam, scopes reset to preserve rules, and adds a helpful sidebar card. Recommended update for all users.
 
 = 3.0.1 =
 * Fixes the WordPress compatibility warning in the plugin details, restores plugin icons, and preserves statistics during settings migration. Recommended update for all users.
