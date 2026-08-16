@@ -4,7 +4,7 @@
 
 Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
 
-![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-3.0.1-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
+![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-3.1.0-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
 
 ![Stars](https://img.shields.io/github/stars/pushpasta/simple-honeypot-cf7?style=plastic) ![Forks](https://img.shields.io/github/forks/pushpasta/simple-honeypot-cf7?style=plastic) ![Watchers](https://img.shields.io/github/watchers/pushpasta/simple-honeypot-cf7?style=plastic) ![Last Commit](https://img.shields.io/github/last-commit/pushpasta/simple-honeypot-cf7?style=plastic) ![Downloads](https://img.shields.io/github/downloads/pushpasta/simple-honeypot-cf7/total?style=plastic)
 
@@ -15,7 +15,7 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 | Tags | contact form 7, cf7, honeypot, antispam, spam protection, bot protection, proof of work, hashcash |
 | Requires at least | 6.7 |
 | Tested up to | 7.0 |
-| Stable tag | 3.0.1 |
+| Stable tag | 3.1.0 |
 | Requires PHP | 7.4 |
 | Requires Plugins | contact-form-7 |
 | License | GNU GPLv3 |
@@ -165,6 +165,40 @@ Detection reason and details recorded for each blocked submission, visible in re
 ![Spam Status](assets/screenshot-7.png)
 
 ## Changelog
+
+### 3.1.0
+
+### Added
+* "Useful information" sidebar card with a recommendation to use a single honeypot field per form.
+
+### Changed
+* Honeypot fields now use `aria-hidden="true"` and `autocomplete="new-password"` to prevent browser profile autofill from filling hidden inputs and blocking real visitors.
+* Minimum submission time is now clamped to the token lifetime so it can never exceed it.
+* "Reset Settings" on the Tools tab now only resets Settings-tab values — custom rules are preserved.
+* Honeypot tag generator follows CF7's lowercase naming convention.
+* Settings tab range sliders and badges now live in the dedicated admin JavaScript file instead of an inline script.
+
+### Fixed
+* Settings validation centralized in schema with cross-field bounds enforced on every read and save.
+* Settings cache invalidated after programmatic writes.
+* Importer restricted to CF7 forms; errors passed via transient instead of URL parameters.
+* Upgrader rename_option guarded against data loss.
+* Dynamic confirm dialog uses `.text()` to prevent XSS.
+* Form_Panel::save hardened against programmatic saves.
+* Boolean setting keys derived from schema.
+* Settings schema rejects negatives and floats; min and step guarded in the attributes closure.
+* Token storage migrated from consumed-option to per-token transients.
+* Hardened update-package host validation.
+* base64_decode guarded in token verification.
+* Date passed as sprintf argument, not embedded in format string.
+* Realpath containment checks include trailing separator.
+* Form title and user agent truncated to fit column widths.
+* Assets dereference guarded in plugin info.
+* Cache lifetime comment corrected in readme.
+* Targeted transient deletion replaces full cache flush.
+* Truncation indicator based on the displayed value.
+* Template-not-found error_log gated behind WP_DEBUG.
+* Dead code removed; JS temporal dead zone hazard fixed.
 
 ### 3.0.1
 
@@ -362,6 +396,9 @@ Detection reason and details recorded for each blocked submission, visible in re
 * Initial release.
 
 ## Upgrade Notice
+
+### 3.1.0
+* Fixes browser autofill blocking real visitors as spam, scopes reset to preserve rules, and adds a helpful sidebar card. Recommended update for all users.
 
 ### 3.0.1
 * Fixes the WordPress compatibility warning in the plugin details, restores plugin icons, and preserves statistics during settings migration. Recommended update for all users.
