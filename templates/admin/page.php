@@ -126,10 +126,6 @@ $version_tooltip = sprintf(
 							?>
 						</p>
 					</details>
-					<details>
-						<summary><?php esc_html_e( 'Add proof-of-work for extra protection', 'simple-honeypot-cf7' ); ?></summary>
-						<p><?php esc_html_e( 'The token already blocks automated replays. Enabling proof-of-work on top of the token makes brute-force submissions much harder — often enough without needing multiple honeypots.', 'simple-honeypot-cf7' ); ?></p>
-					</details>
 				</div>
 			</div>
 		</aside>
