@@ -81,8 +81,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<tr>
 				<th scope="row"><?php esc_html_e( 'Reset all settings', 'simple-honeypot-cf7' ); ?></th>
 				<td>
-					<button type="button" class="button button-delete" data-action="reset_settings" data-confirm="<?php echo esc_attr__( 'This will reset all global settings to defaults. Reporting data and per-form settings will not be affected.', 'simple-honeypot-cf7' ); ?>" data-confirm-danger="1"><?php esc_html_e( 'Reset All Settings', 'simple-honeypot-cf7' ); ?></button>
-					<p class="description"><?php esc_html_e( 'Reset all global settings to their defaults. Reporting data and per-form settings are not affected.', 'simple-honeypot-cf7' ); ?></p>
+					<button type="button" class="button button-delete" data-action="reset_settings" data-confirm="<?php echo esc_attr__( 'This will reset the Settings tab to defaults. Rules, reporting data, and per-form settings will not be affected.', 'simple-honeypot-cf7' ); ?>" data-confirm-danger="1"><?php esc_html_e( 'Reset All Settings', 'simple-honeypot-cf7' ); ?></button>
+					<p class="description"><?php esc_html_e( 'Reset the Settings tab to its defaults. Rules, reporting data, and per-form settings are not affected.', 'simple-honeypot-cf7' ); ?></p>
 				</td>
 			</tr>
 		</table>

@@ -294,7 +294,7 @@ final class Settings_Page {
 		}
 
 		if ( 'settings-reset' === $updated ) {
-			$result['message'] = __( 'All global settings have been reset to defaults.', 'simple-honeypot-cf7' );
+			$result['message'] = __( 'The Settings tab has been reset to defaults.', 'simple-honeypot-cf7' );
 			return $result;
 		}
 

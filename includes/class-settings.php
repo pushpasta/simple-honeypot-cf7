@@ -531,13 +531,20 @@ final class Settings {
 	}
 
 	/**
-	 * Reset all global settings to defaults.
-	 * Report data and per-form settings are preserved.
+	 * Reset Settings-tab values to defaults.
+	 * Rules-tab values, per-form settings, and reporting data are preserved.
 	 *
 	 * @return void
 	 */
 	public static function reset_settings() {
-		update_option( self::SETTINGS_OPTION, self::default_settings(), false );
+		$current  = get_option( self::SETTINGS_OPTION, array() );
+		$defaults = self::default_settings();
+
+		foreach ( self::settings_tab_keys() as $key ) {
+			$current[ $key ] = $defaults[ $key ];
+		}
+
+		update_option( self::SETTINGS_OPTION, $current, false );
 
 		self::$settings_cache = null;
 	}
