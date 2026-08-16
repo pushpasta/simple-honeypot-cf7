@@ -25,15 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<footer class="insert-box">
 		<?php $tag->print( 'insert_box_content' ); ?>
-		<p class="description">
-			<?php
-			printf(
-				/* translators: %s: [honeypot] form tag. */
-				esc_html__( 'Only use one %s field per form. Browsers autofill hidden fields by name and position, so multiple honeypots increase the chance of a false positive.', 'simple-honeypot-cf7' ),
-				'<code>[honeypot]</code>'
-			);
-			?>
-		</p>
 	</footer>
 <?php else : ?>
 	<div class="control-box">

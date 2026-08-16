@@ -43,7 +43,7 @@ final class Tag_Generator {
 		}
 
 		$tag_generator = \WPCF7_TagGenerator::get_instance();
-		$tag_generator->add( 'honeypot', __( 'Honeypot', 'simple-honeypot-cf7' ), array( $this, 'render' ), array( 'version' => 2 ) );
+		$tag_generator->add( 'honeypot', __( 'honeypot', 'simple-honeypot-cf7' ), array( $this, 'render' ), array( 'version' => 2 ) );
 	}
 
 	/**
