@@ -369,6 +369,116 @@
 	}
 	);
 
+	// Settings tab: live outputs and badges for range settings. The
+	// minimum-time max follows the token lifetime so it can never exceed
+	// the current lifetime.
+	const honeypotRange = document.getElementById( 'honeypot_value_max_length' );
+	const honeypotOutput = document.getElementById( 'honeypot-value-max-length-value' );
+
+	if ( honeypotRange && honeypotOutput ) {
+		honeypotRange.addEventListener(
+			'input',
+			function () {
+				honeypotOutput.textContent = this.value;
+			}
+		);
+	}
+
+	const tokenRange = document.getElementById( 'max_age_minutes' );
+	const tokenOutput = document.getElementById( 'max-age-minutes-value' );
+	const tokenLabel = document.getElementById( 'max-age-minutes-label' );
+	const minTimeInput = document.getElementById( 'min_time_seconds' );
+	const minTimeMax = minTimeInput ? parseInt( minTimeInput.getAttribute( 'data-max-min-time' ), 10 ) : 3600;
+	const tokenLabels = [
+		{ min: 10, max: 10, text: 'Strict', css: 'inactive' },
+		{ min: 15, max: 20, text: 'Recommended', css: 'active' },
+		{ min: 25, max: 35, text: 'Moderate', css: 'info' },
+		{ min: 40, max: 60, text: 'Relaxed', css: 'inherited' }
+	];
+
+	function updateToken() {
+		const val = parseInt( this.value, 10 );
+
+		tokenOutput.textContent = val;
+
+		if ( minTimeInput ) {
+			minTimeInput.setAttribute( 'max', Math.min( minTimeMax, val * 60 ) );
+		}
+
+		for ( let i = 0; i < tokenLabels.length; i++ ) {
+			if ( val >= tokenLabels[ i ].min && val <= tokenLabels[ i ].max ) {
+				tokenLabel.textContent = tokenLabels[ i ].text;
+				tokenLabel.className = 'shp4cf7-badge shp4cf7-badge--' + tokenLabels[ i ].css;
+				break;
+			}
+		}
+	}
+
+	if ( tokenRange && tokenOutput && tokenLabel ) {
+		tokenRange.addEventListener( 'input', updateToken );
+		updateToken.call( tokenRange );
+	}
+
+	const rateLimitRange = document.getElementById( 'token_rate_limit' );
+	const rateLimitOutput = document.getElementById( 'token-rate-limit-value' );
+	const rateLimitLabel = document.getElementById( 'token-rate-limit-label' );
+	const rateLimitLabels = [
+		{ min: 0, max: 0, text: 'Disabled', css: 'inactive' },
+		{ min: 5, max: 5, text: 'Strict', css: 'inherited' },
+		{ min: 10, max: 15, text: 'Recommended', css: 'active' },
+		{ min: 20, max: 25, text: 'Moderate', css: 'info' },
+		{ min: 30, max: 30, text: 'Relaxed', css: 'inherited' }
+	];
+
+	function updateRateLimit() {
+		const val = parseInt( this.value, 10 );
+
+		rateLimitOutput.textContent = val;
+
+		for ( let i = 0; i < rateLimitLabels.length; i++ ) {
+			if ( val >= rateLimitLabels[ i ].min && val <= rateLimitLabels[ i ].max ) {
+				rateLimitLabel.textContent = rateLimitLabels[ i ].text;
+				rateLimitLabel.className = 'shp4cf7-badge shp4cf7-badge--' + rateLimitLabels[ i ].css;
+				break;
+			}
+		}
+	}
+
+	if ( rateLimitRange && rateLimitOutput && rateLimitLabel ) {
+		rateLimitRange.addEventListener( 'input', updateRateLimit );
+		updateRateLimit.call( rateLimitRange );
+	}
+
+	const powRange = document.getElementById( 'pow_complexity' );
+	const powOutput = document.getElementById( 'pow-complexity-value' );
+	const powLabel = document.getElementById( 'pow-complexity-label' );
+	const powLabels = [
+		{ min: 5, max: 5, text: 'Light', css: 'inactive' },
+		{ min: 10, max: 10, text: 'Moderate', css: 'info' },
+		{ min: 15, max: 15, text: 'Recommended', css: 'active' },
+		{ min: 20, max: 20, text: 'Strong', css: 'inherited' },
+		{ min: 25, max: 30, text: 'May slow mobile', css: 'warning' }
+	];
+
+	function updatePow() {
+		const val = parseInt( this.value, 10 );
+
+		powOutput.textContent = val;
+
+		for ( let i = 0; i < powLabels.length; i++ ) {
+			if ( val >= powLabels[ i ].min && val <= powLabels[ i ].max ) {
+				powLabel.textContent = powLabels[ i ].text;
+				powLabel.className = 'shp4cf7-badge shp4cf7-badge--' + powLabels[ i ].css;
+				break;
+			}
+		}
+	}
+
+	if ( powRange && powOutput && powLabel ) {
+		powRange.addEventListener( 'input', updatePow );
+		updatePow.call( powRange );
+	}
+
 	$( window ).on(
 		'beforeunload',
 		function () {
