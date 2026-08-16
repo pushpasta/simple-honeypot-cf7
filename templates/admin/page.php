@@ -116,15 +116,7 @@ $version_tooltip = sprintf(
 				<div class="inside">
 					<details>
 						<summary><?php esc_html_e( 'One honeypot per form', 'simple-honeypot-cf7' ); ?></summary>
-						<p>
-							<?php
-							printf(
-								/* translators: %s: [honeypot] form tag. */
-								esc_html__( 'Browsers autofill hidden fields by name and position, so multiple honeypots increase the chance of a false positive. Use a single %s tag per form.', 'simple-honeypot-cf7' ),
-								'<code>[honeypot]</code>'
-							);
-							?>
-						</p>
+						<p><?php esc_html_e( 'Honeypot fields use autocomplete="new-password" to reduce unwanted browser autofill. Multiple honeypot fields usually provide no meaningful additional protection and may make the form\'s anti-spam mechanism easier for bots to identify.', 'simple-honeypot-cf7' ); ?></p>
 					</details>
 					<details>
 						<summary><?php esc_html_e( 'Add proof-of-work for extra protection', 'simple-honeypot-cf7' ); ?></summary>

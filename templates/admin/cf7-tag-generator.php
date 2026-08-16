@@ -25,6 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<footer class="insert-box">
 		<?php $tag->print( 'insert_box_content' ); ?>
+		<p class="mail-tag-tip"><?php esc_html_e( 'Honeypot fields use autocomplete="new-password" to reduce unwanted browser autofill. Multiple honeypot fields usually provide no meaningful additional protection and may make the form\'s anti-spam mechanism easier for bots to identify.', 'simple-honeypot-cf7' ); ?></p>
 	</footer>
 <?php else : ?>
 	<div class="control-box">
