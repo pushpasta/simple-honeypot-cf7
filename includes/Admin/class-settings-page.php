@@ -430,6 +430,8 @@ final class Settings_Page {
 
 		$data = array(
 			'version'         => SIMPLE_HONEYPOT_CF7_VERSION,
+			'exported_at'     => current_time( 'c' ),
+			'site_url'        => home_url(),
 			'global_settings' => $global,
 			'form_settings'   => $forms,
 		);
