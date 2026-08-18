@@ -222,11 +222,7 @@ final class Importer {
 		}
 
 		if ( 'int' === $descriptor['type'] ) {
-			$int = absint( $value );
-			$min = isset( $descriptor['min'] ) ? $descriptor['min'] : 0;
-			$max = isset( $descriptor['max'] ) ? $descriptor['max'] : PHP_INT_MAX;
-
-			return max( $min, min( $max, $int ) );
+			return absint( $value );
 		}
 
 		// string type — used by custom_rules.
