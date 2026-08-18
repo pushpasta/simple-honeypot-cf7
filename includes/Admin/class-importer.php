@@ -258,6 +258,15 @@ final class Importer {
 				continue;
 			}
 
+			// Only update forms that already have stored settings.
+			// Forms without explicit per-form overrides inherit global
+			// defaults and should not receive imported overrides.
+			$existing = get_post_meta( $form_id, Settings::FORM_META, true );
+
+			if ( empty( $existing ) || ! is_array( $existing ) ) {
+				continue;
+			}
+
 			$clean = array();
 
 			// Only allowlist known form setting keys.
