@@ -123,37 +123,155 @@ final class Importer {
 			}
 		}
 
-		if ( ! is_array( $data ) || empty( $data['global_settings'] ) || ! is_array( $data['global_settings'] ) || ! isset( $data['global_settings']['time_check_enabled'] ) ) {
-			return array(
-				'success' => false,
-				'error'   => __( 'The file does not match the expected format and cannot be imported.', 'simple-honeypot-cf7' ),
-			);
-		}
+		// --- Extract and validate each layer independently. ---
 
-		$merged = wp_parse_args( $data['global_settings'], Settings::get_settings() );
+		$global = self::extract_global_settings(
+			is_array( $data['global_settings'] ) ? $data['global_settings'] : array()
+		);
+
+		$rules = self::extract_rule_settings(
+			is_array( $data['rule_settings'] ) ? $data['rule_settings'] : array()
+		);
+
+		// Merge rule keys into the global array before sanitization
+		// so sanitize_global() can handle them in one pass.
+		$merged = array_merge( $global, $rules );
 
 		Settings::update_settings( Settings::sanitize_global( $merged ) );
 
-		if ( ! empty( $data['form_settings'] ) && is_array( $data['form_settings'] ) && Contact_Form_7::is_active() ) {
-			foreach ( $data['form_settings'] as $form_id => $form_settings ) {
-				if ( ! is_numeric( $form_id ) || ! is_array( $form_settings ) ) {
-					continue;
-				}
+		$forms = is_array( $data['form_settings'] ) ? $data['form_settings'] : array();
 
-				if ( 'wpcf7_contact_form' !== get_post_type( (int) $form_id ) ) {
-					continue;
-				}
-
-				$allowed_modes                     = array( 'inherit', 'enabled', 'disabled' );
-				$time_mode                         = sanitize_key( isset( $form_settings['time_mode'] ) ? $form_settings['time_mode'] : 'inherit' );
-				$form_settings['time_mode']        = in_array( $time_mode, $allowed_modes, true ) ? $time_mode : 'inherit';
-				$form_settings['min_time_seconds'] = max( 0, absint( isset( $form_settings['min_time_seconds'] ) ? $form_settings['min_time_seconds'] : 0 ) );
-				Settings::update_form_settings( (int) $form_id, $form_settings );
-			}
-		}
+		self::import_form_settings( $forms );
 
 		// phpcs:enable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 
 		return array( 'success' => true );
+	}
+
+	/**
+	 * Extract and validate global (non-rule) settings from import data.
+	 *
+	 * Only schema-recognized keys with tab "settings" are kept. Unknown
+	 * keys are silently discarded. Missing keys are not filled here —
+	 * Settings::normalize_settings() handles that downstream.
+	 *
+	 * @param array $raw Raw global_settings from import.
+	 * @return array Validated settings keyed by schema name.
+	 */
+	private static function extract_global_settings( array $raw ) {
+		$extracted = array();
+		$schema    = Settings::setting_schema();
+
+		foreach ( $schema as $key => $descriptor ) {
+			if ( 'settings' !== $descriptor['tab'] ) {
+				continue;
+			}
+
+			if ( ! array_key_exists( $key, $raw ) ) {
+				continue;
+			}
+
+			$extracted[ $key ] = self::validate_value( $raw[ $key ], $descriptor );
+		}
+
+		return $extracted;
+	}
+
+	/**
+	 * Extract and validate rule settings from import data.
+	 *
+	 * Only schema-recognized keys with tab "rules" are kept.
+	 *
+	 * @param array $raw Raw rule_settings from import.
+	 * @return array Validated settings keyed by schema name.
+	 */
+	private static function extract_rule_settings( array $raw ) {
+		$extracted = array();
+		$schema    = Settings::setting_schema();
+
+		foreach ( $schema as $key => $descriptor ) {
+			if ( 'rules' !== $descriptor['tab'] ) {
+				continue;
+			}
+
+			if ( ! array_key_exists( $key, $raw ) ) {
+				continue;
+			}
+
+			$extracted[ $key ] = self::validate_value( $raw[ $key ], $descriptor );
+		}
+
+		return $extracted;
+	}
+
+	/**
+	 * Validate a single setting value against its schema descriptor.
+	 *
+	 * Treats all input as untrusted. Booleans are coerced via empty(),
+	 * integers are absint'd and clamped to min/max, strings are
+	 * sanitized with sanitize_text_field(). In doubt, the schema
+	 * default is returned.
+	 *
+	 * @param mixed $value      Raw value from import.
+	 * @param array $descriptor Schema descriptor.
+	 * @return mixed Validated value.
+	 */
+	private static function validate_value( $value, array $descriptor ) {
+		if ( 'bool' === $descriptor['type'] ) {
+			return ! empty( $value ) ? 1 : 0;
+		}
+
+		if ( 'int' === $descriptor['type'] ) {
+			$int = absint( $value );
+			$min = isset( $descriptor['min'] ) ? $descriptor['min'] : 0;
+			$max = isset( $descriptor['max'] ) ? $descriptor['max'] : PHP_INT_MAX;
+
+			return max( $min, min( $max, $int ) );
+		}
+
+		// string type — used by custom_rules.
+		if ( is_string( $value ) ) {
+			return $value;
+		}
+
+		return (string) $value;
+	}
+
+	/**
+	 * Import per-form settings from import data.
+	 *
+	 * Validates each form ID and its settings against known keys
+	 * before saving. Unknown keys are discarded.
+	 *
+	 * @param array $forms Raw form_settings from import.
+	 * @return void
+	 */
+	private static function import_form_settings( array $forms ) {
+		if ( empty( $forms ) || ! Contact_Form_7::is_active() ) {
+			return;
+		}
+
+		foreach ( $forms as $form_id => $form_settings ) {
+			if ( ! is_numeric( $form_id ) || ! is_array( $form_settings ) ) {
+				continue;
+			}
+
+			$form_id = (int) $form_id;
+
+			if ( 'wpcf7_contact_form' !== get_post_type( $form_id ) ) {
+				continue;
+			}
+
+			$clean = array();
+
+			// Only allowlist known form setting keys.
+			$allowed_modes = array( 'inherit', 'enabled', 'disabled' );
+			$time_mode     = sanitize_key( $form_settings['time_mode'] ?? 'inherit' );
+
+			$clean['time_mode']        = in_array( $time_mode, $allowed_modes, true ) ? $time_mode : 'inherit';
+			$clean['min_time_seconds'] = absint( $form_settings['min_time_seconds'] ?? 0 );
+
+			Settings::update_form_settings( $form_id, $clean );
+		}
 	}
 }
