@@ -29,14 +29,8 @@ final class Reporter {
 		$form_id    = $contact_form && method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
 		$form_title = $contact_form && method_exists( $contact_form, 'title' ) ? wp_strip_all_tags( $contact_form->title() ) : __( 'Unknown form', 'simple-honeypot-cf7' );
 
-		// Atomic increments — concurrent requests never overwrite each other.
-		Event_Logger::increment_counter( 'total' );
-
-		foreach ( $reasons as $reason ) {
-			Event_Logger::increment_counter( 'reason:' . sanitize_key( $reason['type'] ) );
-		}
-
-		Event_Logger::increment_counter( 'form:' . $form_id );
+		// Record stats per form — one option write per request.
+		Event_Logger::record_form_stat( $form_id, $reasons );
 
 		// Keep form titles for the display layer.
 		$form_titles = get_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', array() );

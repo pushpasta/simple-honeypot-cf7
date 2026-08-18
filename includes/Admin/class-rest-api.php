@@ -43,7 +43,7 @@ final class Rest_Api {
 					'action' => array(
 						'required'          => true,
 						'type'              => 'string',
-						'enum'              => array( 'reset_stats', 'reset_settings', 'purge_events', 'force_update_check' ),
+						'enum'              => array( 'reset_stats', 'reset_settings', 'purge_events', 'force_update_check', 'recalculate_stats' ),
 						'sanitize_callback' => 'sanitize_key',
 					),
 					'days'   => array(
@@ -104,6 +104,10 @@ final class Rest_Api {
 
 			case 'force_update_check':
 				$this->clear_plugin_update_cache();
+				break;
+
+			case 'recalculate_stats':
+				Event_Logger::aggregate_summary();
 				break;
 
 			default:

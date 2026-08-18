@@ -19,19 +19,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Cron_Handler {
 
 	/**
-	 * Cron hook name.
+	 * Cron hook name for event purging.
 	 *
 	 * @var string
 	 */
 	const HOOK = 'shp4cf7_purge_events';
 
 	/**
-	 * Register the cron hook callback.
+	 * Cron hook name for stats aggregation.
+	 *
+	 * @var string
+	 */
+	const STATS_HOOK = 'shp4cf7_aggregate_stats';
+
+	/**
+	 * Register the cron hook callbacks.
 	 *
 	 * @return void
 	 */
 	public static function register() {
 		add_action( self::HOOK, array( __CLASS__, 'run' ) );
+		add_action( self::STATS_HOOK, array( __CLASS__, 'aggregate_stats' ) );
 	}
 
 	/**
@@ -49,5 +57,14 @@ final class Cron_Handler {
 		}
 
 		Event_Logger::purge_excess_events( $settings['keep_recent_events'] );
+	}
+
+	/**
+	 * Aggregate per-form stats into the summary option.
+	 *
+	 * @return void
+	 */
+	public static function aggregate_stats() {
+		Event_Logger::aggregate_summary();
 	}
 }

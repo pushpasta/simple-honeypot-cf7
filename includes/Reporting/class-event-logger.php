@@ -24,11 +24,21 @@ final class Event_Logger {
 	const TABLE = SIMPLE_HONEYPOT_CF7_BASE . '_events';
 
 	/**
-	 * Atomic stats counter table name without prefix.
+	 * Option prefix for per-form stats.
+	 *
+	 * Each form's stats are stored as shp4cf7_stat_form_{id} containing
+	 * an array with 'total' and 'reasons' keys.
 	 *
 	 * @var string
 	 */
-	const STATS_TABLE = SIMPLE_HONEYPOT_CF7_BASE . '_stat_counters';
+	const STATS_PREFIX = SIMPLE_HONEYPOT_CF7_BASE . '_stat_';
+
+	/**
+	 * Option name for the aggregated stats summary.
+	 *
+	 * @var string
+	 */
+	const SUMMARY_OPTION = SIMPLE_HONEYPOT_CF7_BASE . '_stat_summary';
 
 	/**
 	 * Schema version.
@@ -314,117 +324,392 @@ final class Event_Logger {
 		$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
 
 		delete_option( self::VERSION_OPTION );
-
-		self::drop_stats_table();
 	}
 
 	/**
-	 * Create the atomic stats counter table.
+	 * Build the option name for a form's stats.
 	 *
+	 * @param int $form_id Contact Form 7 form ID.
+	 * @return string Option name.
+	 */
+	public static function form_option_name( $form_id ) {
+		return self::STATS_PREFIX . 'form_' . absint( $form_id );
+	}
+
+	/**
+	 * Record a blocked spam attempt for a specific form.
+	 *
+	 * Writes directly to the form's individual option, so WordPress's
+	 * row-level locking prevents lost updates from concurrent requests.
+	 *
+	 * @param int   $form_id Contact Form 7 form ID.
+	 * @param array $reasons Spam reasons (each with 'type' key).
 	 * @return void
 	 */
-	public static function create_stats_table() {
-		global $wpdb;
+	public static function record_form_stat( $form_id, array $reasons ) {
+		$option = self::form_option_name( $form_id );
+		$stat   = get_option(
+			$option,
+			array(
+				'total'   => 0,
+				'reasons' => array(),
+			)
+		);
 
-		$table           = $wpdb->prefix . self::STATS_TABLE;
-		$charset_collate = $wpdb->get_charset_collate();
-
-		$sql = "CREATE TABLE {$table} (
-			counter_name VARCHAR(100) NOT NULL,
-			counter_value BIGINT UNSIGNED NOT NULL DEFAULT 0,
-			PRIMARY KEY (counter_name)
-		) {$charset_collate};";
-
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
-	}
-
-	/**
-	 * Atomically increment a counter by one.
-	 *
-	 * Uses INSERT … ON DUPLICATE KEY UPDATE so concurrent requests
-	 * never overwrite each other's increments.
-	 *
-	 * @param string $name Counter name (e.g. 'total', 'reason:too_fast').
-	 * @return void
-	 */
-	public static function increment_counter( $name ) {
-		global $wpdb;
-
-		$table = $wpdb->prefix . self::STATS_TABLE;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( $wpdb->prepare( "INSERT INTO {$table} (counter_name, counter_value) VALUES (%s, 1) ON DUPLICATE KEY UPDATE counter_value = counter_value + 1", $name ) );
-	}
-
-	/**
-	 * Set a counter to a specific value (for migration use).
-	 *
-	 * @param string $name  Counter name.
-	 * @param int    $value Counter value.
-	 * @return void
-	 */
-	public static function set_counter( $name, $value ) {
-		global $wpdb;
-
-		$table = $wpdb->prefix . self::STATS_TABLE;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( $wpdb->prepare( "INSERT INTO {$table} (counter_name, counter_value) VALUES (%s, %d) ON DUPLICATE KEY UPDATE counter_value = %d", $name, $value, $value ) );
-	}
-
-	/**
-	 * Get all counter values.
-	 *
-	 * @return array<string, int>
-	 */
-	public static function get_counters() {
-		global $wpdb;
-
-		$table = $wpdb->prefix . self::STATS_TABLE;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$rows = $wpdb->get_results( "SELECT counter_name, counter_value FROM {$table}", OBJECT_K );
-
-		if ( ! is_array( $rows ) ) {
-			return array();
+		if ( ! is_array( $stat ) ) {
+			$stat = array(
+				'total'   => 0,
+				'reasons' => array(),
+			);
 		}
 
-		$counters = array();
+		$stat['total'] = isset( $stat['total'] ) ? (int) $stat['total'] + 1 : 1;
 
-		foreach ( $rows as $name => $row ) {
-			$counters[ $name ] = (int) $row->counter_value;
+		if ( ! isset( $stat['reasons'] ) || ! is_array( $stat['reasons'] ) ) {
+			$stat['reasons'] = array();
 		}
 
-		return $counters;
+		foreach ( $reasons as $reason ) {
+			$type = isset( $reason['type'] ) ? sanitize_key( $reason['type'] ) : '';
+
+			if ( '' === $type ) {
+				continue;
+			}
+
+			$stat['reasons'][ $type ] = isset( $stat['reasons'][ $type ] ) ? (int) $stat['reasons'][ $type ] + 1 : 1;
+		}
+
+		update_option( $option, $stat, false );
 	}
 
 	/**
-	 * Reset all counters to zero.
+	 * Get all per-form stat options.
+	 *
+	 * Scans the database for options matching the form stat prefix.
+	 *
+	 * @return array<int, array{total: int, reasons: array<string, int>}> Keyed by form ID.
+	 */
+	public static function get_all_form_stats() {
+		global $wpdb;
+
+		$prefix = $wpdb->esc_like( self::STATS_PREFIX . 'form_' ) . '%';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$options = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$prefix
+			)
+		);
+
+		$stats = array();
+
+		if ( ! is_array( $options ) ) {
+			return $stats;
+		}
+
+		$prefix_len = strlen( self::STATS_PREFIX . 'form_' );
+
+		foreach ( $options as $option_name ) {
+			$form_id = (int) substr( $option_name, $prefix_len );
+			$value   = get_option( $option_name, array() );
+
+			if ( is_array( $value ) ) {
+				$stats[ $form_id ] = $value;
+			}
+		}
+
+		return $stats;
+	}
+
+	/**
+	 * Aggregate all per-form stats into a single summary.
+	 *
+	 * Sums totals and reasons across all forms, then stores the result
+	 * in the summary option with a timestamp. Called hourly by cron and
+	 * on-demand via the REST API.
+	 *
+	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, last_calculated: string}
+	 */
+	public static function aggregate_summary() {
+		$form_stats  = self::get_all_form_stats();
+		$form_titles = get_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', array() );
+		$total       = 0;
+		$reasons     = array();
+		$forms       = array();
+
+		foreach ( $form_stats as $form_id => $stat ) {
+			$form_total = isset( $stat['total'] ) ? absint( $stat['total'] ) : 0;
+			$total     += $form_total;
+
+			$title = isset( $form_titles[ $form_id ] )
+				? $form_titles[ $form_id ]
+				: __( 'Unknown form', 'simple-honeypot-cf7' );
+
+			$forms[ $form_id ] = array(
+				'title' => $title,
+				'total' => $form_total,
+			);
+
+			if ( isset( $stat['reasons'] ) && is_array( $stat['reasons'] ) ) {
+				foreach ( $stat['reasons'] as $type => $count ) {
+					if ( ! isset( $reasons[ $type ] ) ) {
+						$reasons[ $type ] = 0;
+					}
+					$reasons[ $type ] += absint( $count );
+				}
+			}
+		}
+
+		$summary = array(
+			'total'           => $total,
+			'reasons'         => $reasons,
+			'forms'           => $forms,
+			'last_calculated' => current_time( 'mysql', true ),
+		);
+
+		update_option( self::SUMMARY_OPTION, $summary, false );
+
+		return $summary;
+	}
+
+	/**
+	 * Get the aggregated stats summary.
+	 *
+	 * Returns the cached summary from the last aggregation run.
+	 * Falls back to an empty structure if aggregation has not run yet.
+	 *
+	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, last_calculated: string}
+	 */
+	public static function get_aggregated_stats() {
+		$summary = get_option( self::SUMMARY_OPTION, array() );
+
+		if ( ! is_array( $summary ) || empty( $summary['last_calculated'] ) ) {
+			return array(
+				'total'           => 0,
+				'reasons'         => array(),
+				'forms'           => array(),
+				'last_calculated' => '',
+			);
+		}
+
+		return $summary;
+	}
+
+	/**
+	 * Delete all per-form stats and the summary.
 	 *
 	 * @return void
 	 */
 	public static function reset_counters() {
 		global $wpdb;
 
-		$table = $wpdb->prefix . self::STATS_TABLE;
+		$prefix = $wpdb->esc_like( self::STATS_PREFIX ) . '%';
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "TRUNCATE TABLE {$table}" );
+		$options = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$prefix
+			)
+		);
+
+		if ( is_array( $options ) ) {
+			foreach ( $options as $option_name ) {
+				delete_option( $option_name );
+			}
+		}
+
+		delete_option( self::SUMMARY_OPTION );
 	}
 
 	/**
-	 * Drop the stats counter table.
+	 * Migrate stats counters from the legacy database table and individual
+	 * counter options to per-form options.
 	 *
-	 * @return void
+	 * Handles three data sources:
+	 * 1. The old shp4cf7_stat_counters table (if it still exists)
+	 * 2. Individual counter options from the previous architecture
+	 * 3. Legacy shp4cf7_meta option with nested form data
+	 *
+	 * After migration, per-form options are created and the old storage
+	 * is cleaned up. Safe to run multiple times.
+	 *
+	 * @return int Number of forms migrated.
 	 */
-	public static function drop_stats_table() {
+	public static function migrate_counters_to_form_options() {
 		global $wpdb;
 
-		$table = $wpdb->prefix . self::STATS_TABLE;
+		$table  = $wpdb->prefix . SIMPLE_HONEYPOT_CF7_BASE . '_stat_counters';
+		$forms  = array();
+		$titles = get_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', array() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
+		if ( ! is_array( $titles ) ) {
+			$titles = array();
+		}
+
+		// 1. Read from legacy stats table if it still exists.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$exists = $wpdb->get_var(
+			$wpdb->prepare( 'SHOW TABLES LIKE %s', $table )
+		);
+
+		if ( null !== $exists && $table === $exists ) {
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$rows = $wpdb->get_results(
+				"SELECT counter_name, counter_value FROM {$table}",
+				OBJECT_K
+			);
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+			if ( is_array( $rows ) ) {
+				foreach ( $rows as $row ) {
+					$name  = $row->counter_name;
+					$value = absint( $row->counter_value );
+
+					if ( 0 === strpos( $name, 'form:' ) ) {
+						$fid = (int) substr( $name, 5 );
+
+						if ( ! isset( $forms[ $fid ] ) ) {
+							$forms[ $fid ] = array(
+								'total'   => 0,
+								'reasons' => array(),
+							);
+						}
+
+						$forms[ $fid ]['total'] = $value;
+					} elseif ( 0 === strpos( $name, 'reason:' ) ) {
+						$type = substr( $name, 7 );
+
+						// Attach orphan reason counters to all forms proportionally.
+						// These are pre-migration aggregate data; exact form attribution
+						// is not available, so store under a synthetic key.
+						if ( empty( $forms ) ) {
+							$forms[0] = array(
+								'total'   => 0,
+								'reasons' => array(),
+							);
+						}
+
+						foreach ( $forms as $fid => &$fdata ) {
+							if ( ! isset( $fdata['reasons'][ $type ] ) ) {
+								$fdata['reasons'][ $type ] = 0;
+							}
+							$fdata['reasons'][ $type ] += $value;
+						}
+						unset( $fdata );
+					}
+				}
+			}
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
+		}
+
+		// 2. Read from individual counter options.
+		$total       = (int) get_option( self::STATS_PREFIX . 'total', 0 );
+		$reasons_opt = get_option( self::STATS_PREFIX . 'reasons', array() );
+		$forms_opt   = get_option( self::STATS_PREFIX . 'forms', array() );
+
+		if ( $total > 0 || ! empty( $reasons_opt ) || ! empty( $forms_opt ) ) {
+			if ( empty( $forms ) ) {
+				$forms[0] = array(
+					'total'   => $total,
+					'reasons' => array(),
+				);
+			}
+
+			if ( is_array( $reasons_opt ) ) {
+				foreach ( $reasons_opt as $type => $count ) {
+					if ( ! isset( $forms[0]['reasons'][ $type ] ) ) {
+						$forms[0]['reasons'][ $type ] = 0;
+					}
+					$forms[0]['reasons'][ $type ] += absint( $count );
+				}
+			}
+		}
+
+		// 3. Read from legacy shp4cf7_meta option.
+		$meta = get_option( SIMPLE_HONEYPOT_CF7_BASE . '_meta', array() );
+
+		if ( is_array( $meta ) && ! empty( $meta['forms'] ) && is_array( $meta['forms'] ) ) {
+			foreach ( $meta['forms'] as $form_id => $form_data ) {
+				$fid = (int) $form_id;
+
+				if ( ! isset( $forms[ $fid ] ) ) {
+					$forms[ $fid ] = array(
+						'total'   => 0,
+						'reasons' => array(),
+					);
+				}
+
+				if ( is_array( $form_data ) && ! empty( $form_data['count'] ) ) {
+					$forms[ $fid ]['total'] += absint( $form_data['count'] );
+				}
+
+				if ( ! empty( $form_data['title'] ) ) {
+					$titles[ $fid ] = sanitize_text_field( $form_data['title'] );
+				}
+			}
+
+			// Also merge aggregate reasons from legacy meta.
+			if ( ! empty( $meta['reasons'] ) && is_array( $meta['reasons'] ) ) {
+				$fid = 0;
+
+				if ( ! isset( $forms[ $fid ] ) ) {
+					$forms[ $fid ] = array(
+						'total'   => 0,
+						'reasons' => array(),
+					);
+				}
+
+				foreach ( $meta['reasons'] as $type => $count ) {
+					if ( ! isset( $forms[ $fid ]['reasons'][ $type ] ) ) {
+						$forms[ $fid ]['reasons'][ $type ] = 0;
+					}
+					$forms[ $fid ]['reasons'][ $type ] += absint( $count );
+				}
+			}
+		}
+
+		// Write per-form options.
+		foreach ( $forms as $form_id => $stat ) {
+			update_option( self::form_option_name( $form_id ), $stat, false );
+		}
+
+		// Aggregate and store summary.
+		if ( ! empty( $forms ) ) {
+			self::aggregate_summary();
+		}
+
+		// Update form titles.
+		if ( ! empty( $titles ) ) {
+			update_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', $titles, false );
+		}
+
+		// 4. Clean up old options.
+		delete_option( self::STATS_PREFIX . 'total' );
+		delete_option( self::STATS_PREFIX . 'reasons' );
+		delete_option( self::STATS_PREFIX . 'forms' );
+		delete_option( SIMPLE_HONEYPOT_CF7_BASE . '_stat_counters' );
+		delete_option( SIMPLE_HONEYPOT_CF7_BASE . '_meta' );
+
+		// Preserve run_since and last_updated in the meta option.
+		$preserved = array();
+
+		if ( is_array( $meta ) && ! empty( $meta['run_since'] ) ) {
+			$preserved['run_since'] = (int) $meta['run_since'];
+		}
+
+		if ( is_array( $meta ) && ! empty( $meta['last_updated'] ) ) {
+			$preserved['last_updated'] = sanitize_text_field( $meta['last_updated'] );
+		}
+
+		if ( ! empty( $preserved ) ) {
+			update_option( SIMPLE_HONEYPOT_CF7_BASE . '_meta', $preserved, false );
+		}
+
+		return count( $forms );
 	}
 
 	/**

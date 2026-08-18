@@ -44,7 +44,7 @@ final class Upgrader {
 	 *
 	 * @var int
 	 */
-	const CURRENT_DB_VERSION = 3;
+	const CURRENT_DB_VERSION = 4;
 
 	/**
 	 * Legacy option names that were renamed in migration 2.
@@ -78,6 +78,10 @@ final class Upgrader {
 			self::migrate_to_3();
 		}
 
+		if ( $stored < 4 ) {
+			self::migrate_to_4();
+		}
+
 		update_option( self::MIGRATION_VERSION_OPTION, self::CURRENT_DB_VERSION, false );
 	}
 
@@ -101,7 +105,6 @@ final class Upgrader {
 		Settings::activate();
 		Settings::normalize_stored_settings();
 		Event_Logger::create_table();
-		Event_Logger::create_stats_table();
 		Event_Logger::migrate_from_options( Settings::META_OPTION );
 
 		// Record the update date for the admin header tooltip.
@@ -238,6 +241,19 @@ final class Upgrader {
 		if ( ! wp_next_scheduled( \SimpleHoneypotCF7\Reporting\Cron_Handler::HOOK ) ) {
 			wp_schedule_event( time(), 'daily', \SimpleHoneypotCF7\Reporting\Cron_Handler::HOOK );
 		}
+	}
+
+	/**
+	 * Migration v4: replace stats table and counters with per-form options.
+	 *
+	 * Reads the shp4cf7_stat_counters table, individual counter options,
+	 * and legacy shp4cf7_meta into per-form options. Drops the table
+	 * and cleans up obsolete options. Aggregates an initial summary.
+	 *
+	 * @return void
+	 */
+	private static function migrate_to_4() {
+		Event_Logger::migrate_counters_to_form_options();
 	}
 
 	/**

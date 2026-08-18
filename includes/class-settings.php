@@ -48,7 +48,6 @@ final class Settings {
 		global $wpdb;
 
 		\SimpleHoneypotCF7\Reporting\Event_Logger::drop_table();
-		\SimpleHoneypotCF7\Reporting\Event_Logger::drop_stats_table();
 
 		// Delete all shp4cf7_ options in one query.
 		$esc_prefix = $wpdb->esc_like( SIMPLE_HONEYPOT_CF7_BASE ) . '%';
@@ -253,11 +252,12 @@ final class Settings {
 	 */
 	public static function default_meta() {
 		return array(
-			'total'        => 0,
-			'run_since'    => time(),
-			'last_updated' => '',
-			'reasons'      => array(),
-			'forms'        => array(),
+			'total'           => 0,
+			'run_since'       => time(),
+			'last_updated'    => '',
+			'last_calculated' => '',
+			'reasons'         => array(),
+			'forms'           => array(),
 		);
 	}
 
@@ -383,9 +383,9 @@ final class Settings {
 	/**
 	 * Get report data merged with defaults.
 	 *
-	 * Reads counters from the atomic stats table and falls back to the
-	 * legacy option for pre-upgrade data. Run-since is preserved in the
-	 * option because it is not a counter.
+	 * Reads the pre-aggregated summary calculated by cron or on-demand.
+	 * Falls back to the legacy option for pre-upgrade data. Run-since
+	 * is preserved in the meta option because it is not a counter.
 	 *
 	 * @return array
 	 */
@@ -397,43 +397,19 @@ final class Settings {
 			$stats['run_since'] = (int) $existing['run_since'];
 		}
 
-		if ( is_array( $existing ) && ! empty( $existing['last_updated'] ) ) {
-			$stats['last_updated'] = sanitize_text_field( $existing['last_updated'] );
+		$summary = \SimpleHoneypotCF7\Reporting\Event_Logger::get_aggregated_stats();
+
+		if ( ! empty( $summary['last_calculated'] ) ) {
+			$stats['total']           = $summary['total'];
+			$stats['reasons']         = $summary['reasons'];
+			$stats['forms']           = $summary['forms'];
+			$stats['last_calculated'] = $summary['last_calculated'];
+
+			return $stats;
 		}
 
-		$counters = \SimpleHoneypotCF7\Reporting\Event_Logger::get_counters();
-
-		if ( empty( $counters ) ) {
-			return self::meta_from_legacy( $existing );
-		}
-
-		// Build total.
-		if ( isset( $counters['total'] ) ) {
-			$stats['total'] = $counters['total'];
-		}
-
-		// Build reasons breakdown.
-		foreach ( $counters as $name => $value ) {
-			if ( 0 === strpos( $name, 'reason:' ) ) {
-				$stats['reasons'][ substr( $name, 7 ) ] = $value;
-			}
-		}
-
-		// Build forms breakdown with titles.
-		$form_titles = get_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', array() );
-
-		foreach ( $counters as $name => $value ) {
-			if ( 0 === strpos( $name, 'form:' ) ) {
-				$form_id                    = substr( $name, 5 );
-				$title                      = isset( $form_titles[ $form_id ] ) ? $form_titles[ $form_id ] : __( 'Unknown form', 'simple-honeypot-cf7' );
-				$stats['forms'][ $form_id ] = array(
-					'title' => $title,
-					'count' => $value,
-				);
-			}
-		}
-
-		return $stats;
+		// No aggregated summary yet — check for legacy data.
+		return self::meta_from_legacy( $existing );
 	}
 
 	/**
@@ -455,19 +431,15 @@ final class Settings {
 			$stats['run_since'] = (int) $existing['run_since'];
 		}
 
-		if ( is_array( $existing ) && ! empty( $existing['last_updated'] ) ) {
-			$stats['last_updated'] = sanitize_text_field( $existing['last_updated'] );
-		}
-
 		update_option( self::META_OPTION, $stats, false );
 	}
 
 	/**
 	 * Build stats from the legacy option.
 	 *
-	 * On the first read after upgrade the counter table is empty.
-	 * This method migrates any existing data into the counter table
-	 * so subsequent reads are served from there.
+	 * On the first read after upgrade the aggregated summary may not
+	 * exist yet. This method migrates any remaining legacy data into
+	 * per-form options so it is not lost.
 	 *
 	 * @param array $existing The legacy stats option value.
 	 * @return array
@@ -475,56 +447,30 @@ final class Settings {
 	private static function meta_from_legacy( array $existing ) {
 		$stats = self::default_meta();
 
-		if ( ! empty( $existing['total'] ) ) {
-			// Migrate legacy counters to the atomic table.
-			$logger = '\SimpleHoneypotCF7\Reporting\Event_Logger';
+		if ( ! empty( $existing['run_since'] ) ) {
+			$stats['run_since'] = (int) $existing['run_since'];
+		}
 
-			$logger::set_counter( 'total', absint( $existing['total'] ) );
+		// Check if per-form options exist from a partial migration.
+		$form_stats = \SimpleHoneypotCF7\Reporting\Event_Logger::get_all_form_stats();
 
-			if ( ! empty( $existing['reasons'] ) && is_array( $existing['reasons'] ) ) {
-				foreach ( $existing['reasons'] as $type => $count ) {
-					$logger::set_counter( 'reason:' . sanitize_key( $type ), absint( $count ) );
-				}
-			}
-
-			if ( ! empty( $existing['forms'] ) && is_array( $existing['forms'] ) ) {
-				$form_titles = array();
-
-				foreach ( $existing['forms'] as $form_id => $form_data ) {
-					if ( is_array( $form_data ) && ! empty( $form_data['count'] ) ) {
-						$logger::set_counter( 'form:' . sanitize_key( (string) $form_id ), absint( $form_data['count'] ) );
-
-						if ( ! empty( $form_data['title'] ) ) {
-							$form_titles[ $form_id ] = sanitize_text_field( $form_data['title'] );
-						}
-					}
-				}
-
-				if ( ! empty( $form_titles ) ) {
-					update_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', $form_titles, false );
-				}
-			}
-
-			// Return the legacy data. The next call to get_meta() will
-			// serve from the counter table if migration succeeded.
-			$stats['total']   = absint( $existing['total'] );
-			$stats['reasons'] = isset( $existing['reasons'] ) && is_array( $existing['reasons'] ) ? $existing['reasons'] : array();
-			$stats['forms']   = isset( $existing['forms'] ) && is_array( $existing['forms'] ) ? $existing['forms'] : array();
-
-			if ( ! empty( $existing['run_since'] ) ) {
-				$stats['run_since'] = (int) $existing['run_since'];
-			}
+		if ( ! empty( $form_stats ) ) {
+			// Per-form options exist but summary hasn't been calculated.
+			// Run aggregation now.
+			$summary                  = \SimpleHoneypotCF7\Reporting\Event_Logger::aggregate_summary();
+			$stats['total']           = $summary['total'];
+			$stats['reasons']         = $summary['reasons'];
+			$stats['forms']           = $summary['forms'];
+			$stats['last_calculated'] = $summary['last_calculated'];
 
 			return $stats;
 		}
 
-		// No legacy data — return the option as-is (likely defaults).
-		$stats['total']   = isset( $existing['total'] ) ? absint( $existing['total'] ) : 0;
-		$stats['reasons'] = isset( $existing['reasons'] ) && is_array( $existing['reasons'] ) ? $existing['reasons'] : array();
-		$stats['forms']   = isset( $existing['forms'] ) && is_array( $existing['forms'] ) ? $existing['forms'] : array();
-
-		if ( ! empty( $existing['run_since'] ) ) {
-			$stats['run_since'] = (int) $existing['run_since'];
+		// Return whatever legacy data is available.
+		if ( ! empty( $existing['total'] ) ) {
+			$stats['total']   = absint( $existing['total'] );
+			$stats['reasons'] = isset( $existing['reasons'] ) && is_array( $existing['reasons'] ) ? $existing['reasons'] : array();
+			$stats['forms']   = isset( $existing['forms'] ) && is_array( $existing['forms'] ) ? $existing['forms'] : array();
 		}
 
 		return $stats;

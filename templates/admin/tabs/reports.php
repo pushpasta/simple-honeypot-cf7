@@ -54,6 +54,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</span>
 			</div>
 		</div>
+		<?php if ( ! empty( $stats['last_calculated'] ) ) : ?>
+			<p class="shp4cf7-stats-updated">
+				<?php
+				printf(
+					/* translators: %s: last calculation date and time in user locale */
+					esc_html__( 'Stats last calculated: %s', 'simple-honeypot-cf7' ),
+					esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $stats['last_calculated'] ) ) )
+				);
+				?>
+				<button type="button" class="button button-small shp4cf7-recalculate-btn" id="shp4cf7-recalculate-stats">
+					<span class="dashicons dashicons-update spin hidden" aria-hidden="true"></span>
+					<?php esc_html_e( 'Recalculate', 'simple-honeypot-cf7' ); ?>
+				</button>
+			</p>
+		<?php endif; ?>
 	</div>
 </div>
 

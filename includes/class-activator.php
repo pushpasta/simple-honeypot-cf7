@@ -39,7 +39,6 @@ final class Activator {
 	 */
 	private static function setup_events_table() {
 		Event_Logger::create_table();
-		Event_Logger::create_stats_table();
 		Event_Logger::migrate_from_options( Settings::META_OPTION );
 	}
 
@@ -51,6 +50,10 @@ final class Activator {
 	private static function setup_purge_cron() {
 		if ( ! wp_next_scheduled( Cron_Handler::HOOK ) ) {
 			wp_schedule_event( time(), 'daily', Cron_Handler::HOOK );
+		}
+
+		if ( ! wp_next_scheduled( Cron_Handler::STATS_HOOK ) ) {
+			wp_schedule_event( time(), 'hourly', Cron_Handler::STATS_HOOK );
 		}
 	}
 
