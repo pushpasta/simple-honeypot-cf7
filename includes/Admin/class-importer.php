@@ -81,10 +81,25 @@ final class Importer {
 		}
 
 		$version = isset( $data['version'] ) ? sanitize_text_field( $data['version'] ) : '';
-		if ( '' !== $version && version_compare( $version, '1.0.0', '<' ) ) {
+
+		if ( '' === $version ) {
+			return array(
+				'success' => false,
+				'error'   => __( 'The file is missing a version number and cannot be imported.', 'simple-honeypot-cf7' ),
+			);
+		}
+
+		if ( version_compare( $version, '1.0.0', '<' ) ) {
 			return array(
 				'success' => false,
 				'error'   => __( 'This export was created with an incompatible plugin version.', 'simple-honeypot-cf7' ),
+			);
+		}
+
+		if ( version_compare( $version, SIMPLE_HONEYPOT_CF7_VERSION, '>' ) ) {
+			return array(
+				'success' => false,
+				'error'   => __( 'This export was created with a newer version of the plugin. Please update before importing.', 'simple-honeypot-cf7' ),
 			);
 		}
 
