@@ -103,6 +103,26 @@ final class Importer {
 			);
 		}
 
+		// Pre-3.2.0 exports store rules inside global_settings.
+		// Move them to rule_settings so the rest of the importer can
+		// rely on a single structure.
+		if ( version_compare( $version, '3.2.0', '<' ) ) {
+			if ( ! empty( $data['global_settings'] ) && is_array( $data['global_settings'] ) ) {
+				if ( ! isset( $data['rule_settings'] ) || ! is_array( $data['rule_settings'] ) ) {
+					$data['rule_settings'] = array();
+				}
+
+				$rule_keys = array( 'custom_rules_enabled', 'custom_rules' );
+
+				foreach ( $rule_keys as $rule_key ) {
+					if ( isset( $data['global_settings'][ $rule_key ] ) ) {
+						$data['rule_settings'][ $rule_key ] = $data['global_settings'][ $rule_key ];
+						unset( $data['global_settings'][ $rule_key ] );
+					}
+				}
+			}
+		}
+
 		if ( ! is_array( $data ) || empty( $data['global_settings'] ) || ! is_array( $data['global_settings'] ) || ! isset( $data['global_settings']['time_check_enabled'] ) ) {
 			return array(
 				'success' => false,
