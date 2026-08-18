@@ -107,14 +107,6 @@ final class Upgrader {
 		Event_Logger::create_table();
 		Event_Logger::migrate_from_options( Settings::META_OPTION );
 
-		// Record the update date for the admin header tooltip.
-		$meta = get_option( Settings::META_OPTION, array() );
-
-		if ( is_array( $meta ) ) {
-			$meta['last_updated'] = gmdate( 'Y-m-d' );
-			update_option( Settings::META_OPTION, $meta, false );
-		}
-
 		set_transient( self::MIGRATION_CACHE_OPTION, self::CURRENT_DB_VERSION, 7 * DAY_IN_SECONDS );
 	}
 

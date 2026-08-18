@@ -694,19 +694,13 @@ final class Event_Logger {
 		delete_option( SIMPLE_HONEYPOT_CF7_BASE . '_stat_counters' );
 		delete_option( SIMPLE_HONEYPOT_CF7_BASE . '_meta' );
 
-		// Preserve run_since and last_updated in the meta option.
-		$preserved = array();
-
+		// Preserve run_since in the meta option for the activation date.
 		if ( is_array( $meta ) && ! empty( $meta['run_since'] ) ) {
-			$preserved['run_since'] = (int) $meta['run_since'];
-		}
-
-		if ( is_array( $meta ) && ! empty( $meta['last_updated'] ) ) {
-			$preserved['last_updated'] = sanitize_text_field( $meta['last_updated'] );
-		}
-
-		if ( ! empty( $preserved ) ) {
-			update_option( SIMPLE_HONEYPOT_CF7_BASE . '_meta', $preserved, false );
+			update_option(
+				SIMPLE_HONEYPOT_CF7_BASE . '_meta',
+				array( 'run_since' => (int) $meta['run_since'] ),
+				false
+			);
 		}
 
 		return count( $forms );

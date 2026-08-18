@@ -254,7 +254,6 @@ final class Settings {
 		return array(
 			'total'           => 0,
 			'run_since'       => time(),
-			'last_updated'    => '',
 			'last_calculated' => '',
 			'reasons'         => array(),
 			'forms'           => array(),
