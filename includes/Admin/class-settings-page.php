@@ -124,7 +124,7 @@ final class Settings_Page {
 
 			if ( empty( $result['success'] ) ) {
 				if ( ! empty( $result['error'] ) ) {
-					set_transient( SIMPLE_HONEYPOT_CF7_BASE . '_import_error_' . get_current_user_id(), sanitize_text_field( $result['error'] ), 90 );
+					set_transient( SIMPLE_HONEYPOT_CF7_BASE . '_import_error_' . get_current_user_id(), wp_kses( $result['error'], array( 'strong' => array() ) ), 90 );
 				}
 				$this->redirect( 'tools', 'import-failed' );
 				return;
