@@ -103,6 +103,35 @@ final class Importer {
 			);
 		}
 
+		// Site URL check — validate the checkbox value as a boolean
+		// with a safe default of true. Only '1' (checked) and '0'
+		// (unchecked) are valid; unrecognized values fall back to true
+		// (the restrictive default). A missing field means unchecked.
+		$raw_check = isset( $_POST[ SIMPLE_HONEYPOT_CF7_BASE . '_check_site_url' ] )
+			? sanitize_text_field( wp_unslash( $_POST[ SIMPLE_HONEYPOT_CF7_BASE . '_check_site_url' ] ) )
+			: '';
+
+		// '' = not in POST (unchecked), '0' = unchecked → false.
+		// '1' = checked → true. Anything else = invalid → true.
+		$check_site_url = ( '' !== $raw_check && '0' !== $raw_check );
+
+		if ( $check_site_url && ! empty( $data['site_url'] ) ) {
+			$exported_url = esc_url_raw( $data['site_url'] );
+			$current_url  = home_url();
+
+			if ( $exported_url !== $current_url ) {
+				return array(
+					'success' => false,
+					'error'   => sprintf(
+						/* translators: 1: exported site URL, 2: current site URL. */
+						__( 'This export was created on %1$s but the current site is %2$s. Import aborted.', 'simple-honeypot-cf7' ),
+						'<strong>' . esc_html( $exported_url ) . '</strong>',
+						'<strong>' . esc_html( $current_url ) . '</strong>'
+					),
+				);
+			}
+		}
+
 		// Pre-3.2.0 exports store rules inside global_settings.
 		// Move them to rule_settings so the rest of the importer can
 		// rely on a single structure.

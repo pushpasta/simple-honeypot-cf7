@@ -32,6 +32,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<input type="file" id="shp4cf7-import-file" name="import_file" accept=".json" class="shp4cf7-import-file-input" />
 						<label for="shp4cf7-import-file" class="button shp4cf7-import-file-label"><?php esc_html_e( 'Choose File', 'simple-honeypot-cf7' ); ?></label>
 						<button type="submit" id="shp4cf7-import-btn" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_import_settings' ); ?>" value="1" class="button button-primary" disabled><?php esc_html_e( 'Import Settings', 'simple-honeypot-cf7' ); ?></button>
+						<p>
+							<label>
+								<input type="checkbox" name="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_check_site_url' ); ?>" value="1" checked />
+								<?php esc_html_e( 'Reject if site URL does not match', 'simple-honeypot-cf7' ); ?>
+							</label>
+						</p>
 						<p class="description"><?php esc_html_e( 'Upload a previously exported JSON file. Settings in the file will overwrite current values. Settings not in the file remain unchanged.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
