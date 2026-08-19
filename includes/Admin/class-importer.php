@@ -92,14 +92,24 @@ final class Importer {
 		if ( version_compare( $version, '1.0.0', '<' ) ) {
 			return array(
 				'success' => false,
-				'error'   => __( 'This export was created with an incompatible plugin version.', 'simple-honeypot-cf7' ),
+				'error'   => sprintf(
+					/* translators: 1: exported plugin version, 2: installed plugin version. */
+					__( 'This export was created with version %1$s which is not compatible with version %2$s of the plugin.', 'simple-honeypot-cf7' ),
+					'<strong>' . esc_html( $version ) . '</strong>',
+					'<strong>' . esc_html( SIMPLE_HONEYPOT_CF7_VERSION ) . '</strong>'
+				),
 			);
 		}
 
 		if ( version_compare( $version, SIMPLE_HONEYPOT_CF7_VERSION, '>' ) ) {
 			return array(
 				'success' => false,
-				'error'   => __( 'This export was created with a newer version of the plugin. Please update before importing.', 'simple-honeypot-cf7' ),
+				'error'   => sprintf(
+					/* translators: 1: exported plugin version, 2: installed plugin version. */
+					__( 'This export was created with version %1$s but the installed version is %2$s. Please update the plugin before importing.', 'simple-honeypot-cf7' ),
+					'<strong>' . esc_html( $version ) . '</strong>',
+					'<strong>' . esc_html( SIMPLE_HONEYPOT_CF7_VERSION ) . '</strong>'
+				),
 			);
 		}
 
