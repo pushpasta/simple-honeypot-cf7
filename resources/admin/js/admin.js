@@ -238,6 +238,41 @@
 				}
 			);
 
+			// Recalculate stats button (Reports tab).
+			$( document ).on(
+				'click',
+				'#shp4cf7-recalculate-stats',
+				function () {
+					const $btn     = $( this );
+					const $spinner = $btn.find( '.dashicons-update' );
+
+					$btn.prop( 'disabled', true );
+					$spinner.removeClass( 'hidden' );
+
+					$.ajax(
+						{
+							url: simpleHoneypotCf7.restUrl,
+							method: 'POST',
+							contentType: 'application/json',
+							beforeSend: function ( xhr ) {
+								xhr.setRequestHeader( 'X-WP-Nonce', simpleHoneypotCf7.restNonce );
+							},
+							data: JSON.stringify( { action: 'recalculate_stats' } ),
+							dataType: 'json'
+						}
+					).done(
+						function () {
+							window.location.reload();
+						}
+					).fail(
+						function () {
+							$spinner.addClass( 'hidden' );
+							$btn.prop( 'disabled', false );
+						}
+					);
+				}
+			);
+
 			// ── Plugin settings form (Simple Honeypot admin page only) ──
 
 			const $form = $( '.shp4cf7-admin form' );
