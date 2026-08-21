@@ -257,6 +257,14 @@ final class Settings {
 			'last_calculated' => '',
 			'reasons'         => array(),
 			'forms'           => array(),
+			'by_period'       => array(
+				'today'       => 0,
+				'yesterday'   => 0,
+				'last_7_days' => 0,
+				'this_month'  => 0,
+				'last_month'  => 0,
+				'total'       => 0,
+			),
 		);
 	}
 
@@ -402,6 +410,7 @@ final class Settings {
 			$stats['total']           = $summary['total'];
 			$stats['reasons']         = $summary['reasons'];
 			$stats['forms']           = $summary['forms'];
+			$stats['by_period']       = $summary['by_period'];
 			$stats['last_calculated'] = $summary['last_calculated'];
 
 			return $stats;

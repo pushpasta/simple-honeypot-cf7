@@ -429,7 +429,7 @@ final class Event_Logger {
 	 * in the summary option with a timestamp. Called hourly by cron and
 	 * on-demand via the REST API.
 	 *
-	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, last_calculated: string}
+	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, by_period: array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int, total: int}, last_calculated: string}
 	 */
 	public static function aggregate_summary() {
 		$form_stats  = self::get_all_form_stats();
@@ -465,6 +465,7 @@ final class Event_Logger {
 			'total'           => $total,
 			'reasons'         => $reasons,
 			'forms'           => $forms,
+			'by_period'       => self::count_by_period(),
 			'last_calculated' => current_time( 'mysql', true ),
 		);
 
@@ -479,7 +480,7 @@ final class Event_Logger {
 	 * Returns the cached summary from the last aggregation run.
 	 * Falls back to an empty structure if aggregation has not run yet.
 	 *
-	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, last_calculated: string}
+	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, by_period: array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int, total: int}, last_calculated: string}
 	 */
 	public static function get_aggregated_stats() {
 		$summary = get_option( self::SUMMARY_OPTION, array() );
@@ -489,8 +490,20 @@ final class Event_Logger {
 				'total'           => 0,
 				'reasons'         => array(),
 				'forms'           => array(),
+				'by_period'       => array(
+					'today'       => 0,
+					'yesterday'   => 0,
+					'last_7_days' => 0,
+					'this_month'  => 0,
+					'last_month'  => 0,
+					'total'       => 0,
+				),
 				'last_calculated' => '',
 			);
+		}
+
+		if ( ! isset( $summary['by_period'] ) ) {
+			$summary['by_period'] = self::count_by_period();
 		}
 
 		return $summary;

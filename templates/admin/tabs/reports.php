@@ -75,7 +75,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="postbox shp4cf7-card" id="shp4cf7-breakdown">
 	<h2 class="hndle"><span class="dashicons dashicons-chart-pie"></span><span><?php esc_html_e( 'Breakdown', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
-		<?php if ( 0 === $spam_counts['total'] ) : ?>
+		<?php if ( 0 === $stats['by_period']['total'] ) : ?>
 			<div class="shp4cf7-empty-state">
 				<span class="dashicons dashicons-chart-pie"></span>
 				<p><?php esc_html_e( 'No data yet. Spam attempts will appear here once they are blocked.', 'simple-honeypot-cf7' ); ?></p>
@@ -87,17 +87,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<p class="description"><?php esc_html_e( 'How many spam attempts were blocked each day.', 'simple-honeypot-cf7' ); ?></p>
 					<dl class="shp4cf7-stats-list">
 						<dt><?php esc_html_e( 'Today', 'simple-honeypot-cf7' ); ?></dt>
-						<dd><?php echo esc_html( number_format_i18n( $spam_counts['today'] ) ); ?></dd>
+						<dd><?php echo esc_html( number_format_i18n( $stats['by_period']['today'] ) ); ?></dd>
 						<dt><?php esc_html_e( 'Yesterday', 'simple-honeypot-cf7' ); ?></dt>
-						<dd><?php echo esc_html( number_format_i18n( $spam_counts['yesterday'] ) ); ?></dd>
+						<dd><?php echo esc_html( number_format_i18n( $stats['by_period']['yesterday'] ) ); ?></dd>
 						<dt><?php esc_html_e( 'Last 7 days', 'simple-honeypot-cf7' ); ?></dt>
-						<dd><?php echo esc_html( number_format_i18n( $spam_counts['last_7_days'] ) ); ?></dd>
+						<dd><?php echo esc_html( number_format_i18n( $stats['by_period']['last_7_days'] ) ); ?></dd>
 						<dt><?php esc_html_e( 'This month', 'simple-honeypot-cf7' ); ?></dt>
-						<dd><?php echo esc_html( number_format_i18n( $spam_counts['this_month'] ) ); ?></dd>
+						<dd><?php echo esc_html( number_format_i18n( $stats['by_period']['this_month'] ) ); ?></dd>
 						<dt><?php esc_html_e( 'Last month', 'simple-honeypot-cf7' ); ?></dt>
-						<dd><?php echo esc_html( number_format_i18n( $spam_counts['last_month'] ) ); ?></dd>
+						<dd><?php echo esc_html( number_format_i18n( $stats['by_period']['last_month'] ) ); ?></dd>
 						<dt><strong><?php esc_html_e( 'Total', 'simple-honeypot-cf7' ); ?></strong></dt>
-						<dd><strong><?php echo esc_html( number_format_i18n( $spam_counts['total'] ) ); ?></strong></dd>
+						<dd><strong><?php echo esc_html( number_format_i18n( $stats['by_period']['total'] ) ); ?></strong></dd>
 					</dl>
 				</div>
 				<div class="shp4cf7-breakdown-box">
