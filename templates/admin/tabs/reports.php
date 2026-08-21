@@ -83,7 +83,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php else : ?>
 			<div class="shp4cf7-breakdown-grid">
 				<div class="shp4cf7-breakdown-box">
-					<h3><span class="dashicons dashicons-calendar"></span> <?php esc_html_e( 'By Time Period', 'simple-honeypot-cf7' ); ?></h3>
+					<h3><span class="dashicons dashicons-calendar"></span> <?php esc_html_e( 'By Time', 'simple-honeypot-cf7' ); ?></h3>
 					<p class="description"><?php esc_html_e( 'How many spam attempts were blocked each day.', 'simple-honeypot-cf7' ); ?></p>
 					<dl class="shp4cf7-stats-list">
 						<dt><?php esc_html_e( 'Today', 'simple-honeypot-cf7' ); ?></dt>
