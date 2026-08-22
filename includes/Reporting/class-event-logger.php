@@ -383,7 +383,9 @@ final class Event_Logger {
 	/**
 	 * Get all per-form stat options.
 	 *
-	 * Scans the database for options matching the form stat prefix.
+	 * Scans the database for options matching the form stat prefix and
+	 * fetches names and values in one query instead of one get_option()
+	 * call per form.
 	 *
 	 * @return array<int, array{total: int, reasons: array<string, int>}> Keyed by form ID.
 	 */
@@ -393,24 +395,25 @@ final class Event_Logger {
 		$prefix = $wpdb->esc_like( self::STATS_PREFIX . 'form_' ) . '%';
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$options = $wpdb->get_col(
+		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
+				"SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s",
 				$prefix
-			)
+			),
+			ARRAY_A
 		);
 
 		$stats = array();
 
-		if ( ! is_array( $options ) ) {
+		if ( ! is_array( $rows ) ) {
 			return $stats;
 		}
 
 		$prefix_len = strlen( self::STATS_PREFIX . 'form_' );
 
-		foreach ( $options as $option_name ) {
-			$form_id = (int) substr( $option_name, $prefix_len );
-			$value   = get_option( $option_name, array() );
+		foreach ( $rows as $row ) {
+			$form_id = (int) substr( $row['option_name'], $prefix_len );
+			$value   = maybe_unserialize( $row['option_value'] );
 
 			if ( is_array( $value ) ) {
 				$stats[ $form_id ] = $value;
