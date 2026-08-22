@@ -80,7 +80,9 @@ final class Importer {
 			);
 		}
 
-		$version = isset( $data['version'] ) ? sanitize_text_field( $data['version'] ) : '';
+		$version = isset( $data['version'] ) && is_string( $data['version'] )
+			? sanitize_text_field( $data['version'] )
+			: '';
 
 		if ( '' === $version ) {
 			return array(
@@ -174,21 +176,26 @@ final class Importer {
 
 		// --- Extract and validate each layer independently. ---
 
-		$global = self::extract_global_settings(
-			is_array( $data['global_settings'] ) ? $data['global_settings'] : array()
+		$global = self::extract_tab_settings(
+			is_array( isset( $data['global_settings'] ) ? $data['global_settings'] : null ) ? $data['global_settings'] : array(),
+			'settings'
 		);
 
-		$rules = self::extract_rule_settings(
-			is_array( $data['rule_settings'] ) ? $data['rule_settings'] : array()
+		$rules = self::extract_tab_settings(
+			is_array( isset( $data['rule_settings'] ) ? $data['rule_settings'] : null ) ? $data['rule_settings'] : array(),
+			'rules'
 		);
 
-		// Merge rule keys into the global array before sanitization
-		// so sanitize_global() can handle them in one pass.
-		$merged = array_merge( $global, $rules );
+		// Seed the merge with the currently stored settings so keys that
+		// are not part of the import file keep their existing values,
+		// then overlay the validated import keys.
+		$merged = array_merge( Settings::get_settings(), $global, $rules );
 
 		Settings::update_settings( Settings::sanitize_global( $merged ) );
 
-		$forms = is_array( $data['form_settings'] ) ? $data['form_settings'] : array();
+		$forms = isset( $data['form_settings'] ) && is_array( $data['form_settings'] )
+			? $data['form_settings']
+			: array();
 
 		self::import_form_settings( $forms );
 
@@ -198,21 +205,24 @@ final class Importer {
 	}
 
 	/**
-	 * Extract and validate global (non-rule) settings from import data.
+	 * Extract and validate one tab's settings from import data.
 	 *
-	 * Only schema-recognized keys with tab "settings" are kept. Unknown
-	 * keys are silently discarded. Missing keys are not filled here —
-	 * Settings::normalize_settings() handles that downstream.
+	 * Only schema-recognized keys belonging to the given tab are kept;
+	 * unknown or gibberish keys are silently ignored. Each key present
+	 * in the file is validated against its schema descriptor — invalid
+	 * types and out-of-scope values resolve to the schema default.
+	 * Keys missing from the file are not returned, so the seeded merge
+	 * with current settings leaves their stored values untouched.
 	 *
-	 * @param array $raw Raw global_settings from import.
+	 * @param array  $raw Raw settings for this tab from the import file.
+	 * @param string $tab Schema tab name ("settings" or "rules").
 	 * @return array Validated settings keyed by schema name.
 	 */
-	private static function extract_global_settings( array $raw ) {
+	private static function extract_tab_settings( array $raw, $tab ) {
 		$extracted = array();
-		$schema    = Settings::setting_schema();
 
-		foreach ( $schema as $key => $descriptor ) {
-			if ( 'settings' !== $descriptor['tab'] ) {
+		foreach ( Settings::setting_schema() as $key => $descriptor ) {
+			if ( $tab !== $descriptor['tab'] ) {
 				continue;
 			}
 
@@ -220,66 +230,10 @@ final class Importer {
 				continue;
 			}
 
-			$extracted[ $key ] = self::validate_value( $raw[ $key ], $descriptor );
+			$extracted[ $key ] = Settings::validate_typed_value( $raw[ $key ], $descriptor );
 		}
 
 		return $extracted;
-	}
-
-	/**
-	 * Extract and validate rule settings from import data.
-	 *
-	 * Only schema-recognized keys with tab "rules" are kept.
-	 *
-	 * @param array $raw Raw rule_settings from import.
-	 * @return array Validated settings keyed by schema name.
-	 */
-	private static function extract_rule_settings( array $raw ) {
-		$extracted = array();
-		$schema    = Settings::setting_schema();
-
-		foreach ( $schema as $key => $descriptor ) {
-			if ( 'rules' !== $descriptor['tab'] ) {
-				continue;
-			}
-
-			if ( ! array_key_exists( $key, $raw ) ) {
-				continue;
-			}
-
-			$extracted[ $key ] = self::validate_value( $raw[ $key ], $descriptor );
-		}
-
-		return $extracted;
-	}
-
-	/**
-	 * Validate a single setting value against its schema descriptor.
-	 *
-	 * Treats all input as untrusted. Booleans are coerced via empty(),
-	 * integers are absint'd and clamped to min/max, strings are
-	 * sanitized with sanitize_text_field(). In doubt, the schema
-	 * default is returned.
-	 *
-	 * @param mixed $value      Raw value from import.
-	 * @param array $descriptor Schema descriptor.
-	 * @return mixed Validated value.
-	 */
-	private static function validate_value( $value, array $descriptor ) {
-		if ( 'bool' === $descriptor['type'] ) {
-			return ! empty( $value ) ? 1 : 0;
-		}
-
-		if ( 'int' === $descriptor['type'] ) {
-			return absint( $value );
-		}
-
-		// string type — used by custom_rules.
-		if ( is_string( $value ) ) {
-			return $value;
-		}
-
-		return (string) $value;
 	}
 
 	/**

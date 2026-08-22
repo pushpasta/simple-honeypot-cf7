@@ -692,6 +692,50 @@ final class Settings {
 	}
 
 	/**
+	 * Validate an untrusted value against a schema descriptor.
+	 *
+	 * Used on import paths where values arrive from JSON rather than
+	 * POST data. Type mismatches fall back to the schema default
+	 * instead of being coerced: booleans must be true/false or 1/0
+	 * (int or string), integers must be whole numbers within the
+	 * descriptor's min/max/step bounds, and strings must actually be
+	 * strings.
+	 *
+	 * @param mixed $value      Raw value.
+	 * @param array $descriptor Schema descriptor from setting_schema().
+	 * @return mixed The validated value, or the schema default when invalid.
+	 */
+	public static function validate_typed_value( $value, array $descriptor ) {
+		if ( 'bool' === $descriptor['type'] ) {
+			if ( ! in_array( $value, array( true, false, 1, 0, '1', '0' ), true ) ) {
+				return $descriptor['default'];
+			}
+
+			return empty( $value ) ? 0 : 1;
+		}
+
+		if ( 'int' === $descriptor['type'] ) {
+			$is_whole = is_int( $value )
+				|| ( is_string( $value ) && 0 < strlen( $value ) && preg_match( '/^\d+$/', $value ) );
+
+			if ( ! $is_whole ) {
+				return $descriptor['default'];
+			}
+
+			return self::validate_step_int(
+				$value,
+				$descriptor['default'],
+				isset( $descriptor['min'] ) ? $descriptor['min'] : 0,
+				isset( $descriptor['max'] ) ? $descriptor['max'] : '',
+				isset( $descriptor['step'] ) ? $descriptor['step'] : 1
+			);
+		}
+
+		// string type — used by custom_rules.
+		return is_string( $value ) ? $value : $descriptor['default'];
+	}
+
+	/**
 	 * Sanitize global settings from untrusted input.
 	 *
 	 * Applies the schema bounds to every key, then runs the line-based
