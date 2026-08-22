@@ -263,7 +263,6 @@ final class Settings {
 				'last_7_days' => 0,
 				'this_month'  => 0,
 				'last_month'  => 0,
-				'total'       => 0,
 			),
 		);
 	}

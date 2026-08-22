@@ -225,7 +225,6 @@ final class Event_Logger {
 				'last_7_days' => 0,
 				'this_month'  => 0,
 				'last_month'  => 0,
-				'total'       => 0,
 			);
 		}
 
@@ -235,7 +234,6 @@ final class Event_Logger {
 			'last_7_days' => absint( $row['last_7_days'] ),
 			'this_month'  => absint( $row['this_month'] ),
 			'last_month'  => absint( $row['last_month'] ),
-			'total'       => absint( $row['total'] ),
 		);
 	}
 
@@ -429,18 +427,16 @@ final class Event_Logger {
 	 * in the summary option with a timestamp. Called hourly by cron and
 	 * on-demand via the REST API.
 	 *
-	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, by_period: array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int, total: int}, last_calculated: string}
+	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, by_period: array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int}, last_calculated: string}
 	 */
 	public static function aggregate_summary() {
 		$form_stats  = self::get_all_form_stats();
 		$form_titles = get_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', array() );
-		$total       = 0;
 		$reasons     = array();
 		$forms       = array();
 
 		foreach ( $form_stats as $form_id => $stat ) {
 			$form_total = isset( $stat['total'] ) ? absint( $stat['total'] ) : 0;
-			$total     += $form_total;
 
 			$title = isset( $form_titles[ $form_id ] )
 				? $form_titles[ $form_id ]
@@ -461,6 +457,11 @@ final class Event_Logger {
 			}
 		}
 
+		global $wpdb;
+		$table = $wpdb->prefix . self::TABLE;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
+
 		$summary = array(
 			'total'           => $total,
 			'reasons'         => $reasons,
@@ -480,7 +481,7 @@ final class Event_Logger {
 	 * Returns the cached summary from the last aggregation run.
 	 * Falls back to an empty structure if aggregation has not run yet.
 	 *
-	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, by_period: array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int, total: int}, last_calculated: string}
+	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, by_period: array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int}, last_calculated: string}
 	 */
 	public static function get_aggregated_stats() {
 		$summary = get_option( self::SUMMARY_OPTION, array() );
@@ -496,7 +497,6 @@ final class Event_Logger {
 					'last_7_days' => 0,
 					'this_month'  => 0,
 					'last_month'  => 0,
-					'total'       => 0,
 				),
 				'last_calculated' => '',
 			);
