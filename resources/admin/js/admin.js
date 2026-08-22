@@ -102,6 +102,11 @@
 				return $confirmDialog;
 			}
 
+			function renderConfirmMessage( raw ) {
+				const escaped = $( '<div>' ).text( raw ).html();
+				return escaped.replace( /&lt;(\/?)strong&gt;/g, '<$1strong>' );
+			}
+
 			function openConfirmDialog( $trigger ) {
 				const $dialog  = getConfirmDialog();
 				const isDanger = $trigger.data( 'confirm-danger' ) !== undefined;
@@ -114,9 +119,9 @@
 
 				if ( daysInput ) {
 					const daysValue = $( '#' + daysInput ).val() || '90';
-					$message.text( message.replace( '%d', daysValue ) );
+					$message.html( renderConfirmMessage( message.replace( '%d', daysValue ) ) );
 				} else {
-					$message.text( message );
+					$message.html( renderConfirmMessage( message ) );
 				}
 
 				if ( isDanger ) {
