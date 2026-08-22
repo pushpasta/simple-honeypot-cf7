@@ -206,9 +206,11 @@ final class Event_Logger {
 	 * Count events for common time periods.
 	 *
 	 * Returns counts for today, yesterday, last 7 days, this month,
-	 * last month, and total — in a single query.
+	 * and last month — in a single query. The all-time total is not
+	 * part of the result; consumers use count() or the aggregated
+	 * summary instead.
 	 *
-	 * @return array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int, total: int}
+	 * @return array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int}
 	 */
 	public static function count_by_period() {
 		global $wpdb;
