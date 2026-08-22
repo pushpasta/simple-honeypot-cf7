@@ -242,10 +242,18 @@ final class Upgrader {
 	 * and legacy shp4cf7_meta into per-form options. Drops the table
 	 * and cleans up obsolete options. Aggregates an initial summary.
 	 *
+	 * Schedules the hourly stats aggregation cron here because plugin
+	 * updates do not re-run the activation hook, mirroring the cron
+	 * reschedule in migration v3.
+	 *
 	 * @return void
 	 */
 	private static function migrate_to_4() {
 		Event_Logger::migrate_counters_to_form_options();
+
+		if ( ! wp_next_scheduled( \SimpleHoneypotCF7\Reporting\Cron_Handler::STATS_HOOK ) ) {
+			wp_schedule_event( time(), 'hourly', \SimpleHoneypotCF7\Reporting\Cron_Handler::STATS_HOOK );
+		}
 	}
 
 	/**
