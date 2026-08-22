@@ -54,28 +54,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</span>
 			</div>
 		</div>
-		<?php if ( ! empty( $stats['last_calculated'] ) ) : ?>
-			<p class="shp4cf7-stats-updated">
-				<?php
-				printf(
-					/* translators: %s: last calculation date and time in user locale */
-					esc_html__( 'Stats last calculated: %s', 'simple-honeypot-cf7' ),
-					esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $stats['last_calculated'] ) ) )
-				);
-				?>
-				<button type="button" class="button button-small shp4cf7-recalculate-btn" id="shp4cf7-recalculate-stats">
-					<span class="dashicons dashicons-update spin hidden" aria-hidden="true"></span>
-					<?php esc_html_e( 'Recalculate', 'simple-honeypot-cf7' ); ?>
-				</button>
-			</p>
-		<?php endif; ?>
 	</div>
 </div>
 
 <div class="postbox shp4cf7-card" id="shp4cf7-breakdown">
 	<h2 class="hndle"><span class="dashicons dashicons-chart-pie"></span><span><?php esc_html_e( 'Breakdown', 'simple-honeypot-cf7' ); ?></span></h2>
 	<div class="inside">
-		<?php if ( 0 === $stats['by_period']['total'] ) : ?>
+		<?php if ( 0 === $stats['total'] ) : ?>
 			<div class="shp4cf7-empty-state">
 				<span class="dashicons dashicons-chart-pie"></span>
 				<p><?php esc_html_e( 'No data yet. Spam attempts will appear here once they are blocked.', 'simple-honeypot-cf7' ); ?></p>
@@ -83,7 +68,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php else : ?>
 			<div class="shp4cf7-breakdown-grid">
 				<div class="shp4cf7-breakdown-box">
-					<h3><span class="dashicons dashicons-calendar"></span> <?php esc_html_e( 'By Time', 'simple-honeypot-cf7' ); ?></h3>
+					<h3>
+						<span class="dashicons dashicons-calendar"></span>
+						<?php esc_html_e( 'By Time', 'simple-honeypot-cf7' ); ?>
+						<span class="shp4cf7-box-total">
+							<?php
+							/* translators: %s: total number of spam attempts */
+							printf( esc_html__( 'Total: %s', 'simple-honeypot-cf7' ), esc_html( number_format_i18n( $stats['total'] ) ) );
+							?>
+						</span>
+					</h3>
 					<p class="description"><?php esc_html_e( 'How many spam attempts were blocked each day.', 'simple-honeypot-cf7' ); ?></p>
 					<dl class="shp4cf7-stats-list">
 						<dt><?php esc_html_e( 'Today', 'simple-honeypot-cf7' ); ?></dt>
@@ -96,14 +90,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<dd><?php echo esc_html( number_format_i18n( $stats['by_period']['this_month'] ) ); ?></dd>
 						<dt><?php esc_html_e( 'Last month', 'simple-honeypot-cf7' ); ?></dt>
 						<dd><?php echo esc_html( number_format_i18n( $stats['by_period']['last_month'] ) ); ?></dd>
-						<dt><strong><?php esc_html_e( 'Total', 'simple-honeypot-cf7' ); ?></strong></dt>
-						<dd><strong><?php echo esc_html( number_format_i18n( $stats['by_period']['total'] ) ); ?></strong></dd>
 					</dl>
 				</div>
 				<div class="shp4cf7-breakdown-box">
-					<h3><span class="dashicons dashicons-flag"></span> <?php esc_html_e( 'By Reason', 'simple-honeypot-cf7' ); ?></h3>
+					<?php
+					arsort( $stats['reasons'] );
+					$reason_total = array_sum( $stats['reasons'] );
+					?>
+					<h3>
+						<span class="dashicons dashicons-flag"></span>
+						<?php esc_html_e( 'By Reason', 'simple-honeypot-cf7' ); ?>
+						<span class="shp4cf7-box-total">
+							<?php
+							/* translators: %s: total spam attempts across all reasons */
+							printf( esc_html__( 'Total: %s', 'simple-honeypot-cf7' ), esc_html( number_format_i18n( $reason_total ) ) );
+							?>
+						</span>
+					</h3>
 					<p class="description"><?php esc_html_e( 'What triggered the spam detection most often.', 'simple-honeypot-cf7' ); ?></p>
-					<?php arsort( $stats['reasons'] ); ?>
 					<dl class="shp4cf7-stats-list">
 						<?php foreach ( $stats['reasons'] as $reason => $count ) : ?>
 							<dt><?php echo esc_html( $reason ); ?></dt>
@@ -112,7 +116,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</dl>
 				</div>
 				<div class="shp4cf7-breakdown-box">
-					<h3><span class="dashicons dashicons-forms"></span> <?php esc_html_e( 'By Form', 'simple-honeypot-cf7' ); ?></h3>
+					<?php
+					$form_total_sum = 0;
+					foreach ( $stats['forms'] as $form ) {
+						$form_total_sum += absint( isset( $form['total'] ) ? $form['total'] : 0 );
+					}
+					?>
+					<h3>
+						<span class="dashicons dashicons-forms"></span>
+						<?php esc_html_e( 'By Form', 'simple-honeypot-cf7' ); ?>
+						<span class="shp4cf7-box-total">
+							<?php
+							/* translators: %s: total spam attempts across all forms */
+							printf( esc_html__( 'Total: %s', 'simple-honeypot-cf7' ), esc_html( number_format_i18n( $form_total_sum ) ) );
+							?>
+						</span>
+					</h3>
 					<p class="description"><?php esc_html_e( 'Which forms received the most spam.', 'simple-honeypot-cf7' ); ?></p>
 					<dl class="shp4cf7-stats-list">
 						<?php foreach ( $stats['forms'] as $form_id => $form ) : ?>
@@ -127,7 +146,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								}
 								?>
 							</dt>
-							<dd><?php echo esc_html( number_format_i18n( absint( isset( $form['count'] ) ? $form['count'] : 0 ) ) ); ?></dd>
+							<dd><?php echo esc_html( number_format_i18n( absint( isset( $form['total'] ) ? $form['total'] : 0 ) ) ); ?></dd>
 						<?php endforeach; ?>
 					</dl>
 				</div>

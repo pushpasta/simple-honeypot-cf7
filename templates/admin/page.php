@@ -68,6 +68,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 
 		<aside class="shp4cf7-sidebar">
+			<?php if ( 'reports' === $current_tab && ! empty( $stats['last_calculated'] ) ) : ?>
+				<div class="postbox shp4cf7-card" id="shp4cf7-report-status">
+					<h2 class="hndle"><span class="dashicons dashicons-clock"></span><span><?php esc_html_e( 'Report Status', 'simple-honeypot-cf7' ); ?></span></h2>
+					<div class="inside">
+						<p class="description">
+							<?php
+							printf(
+								/* translators: %s: last calculation date and time in user locale */
+								esc_html__( 'Stats are refreshed automatically every hour and last updated %s. You can also refresh them manually at any time.', 'simple-honeypot-cf7' ),
+								'<strong>' . esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $stats['last_calculated'] ) ) ) . '</strong>'
+							);
+							?>
+						</p>
+						<button type="button" class="button button-small shp4cf7-recalculate-btn" id="shp4cf7-recalculate-stats">
+							<span class="dashicons dashicons-update spin hidden" aria-hidden="true"></span>
+							<?php esc_html_e( 'Recalculate', 'simple-honeypot-cf7' ); ?>
+						</button>
+					</div>
+				</div>
+			<?php endif; ?>
 			<div class="postbox shp4cf7-card" id="shp4cf7-help">
 				<h2 class="hndle"><span class="dashicons dashicons-sos"></span><span><?php esc_html_e( 'Help & Resources', 'simple-honeypot-cf7' ); ?></span></h2>
 				<div class="inside">
