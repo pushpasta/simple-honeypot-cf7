@@ -545,10 +545,11 @@ final class Event_Logger {
 	 * Migrate stats counters from the legacy database table and individual
 	 * counter options to per-form options.
 	 *
-	 * Handles three data sources:
-	 * 1. The old shp4cf7_stat_counters table (if it still exists)
-	 * 2. Individual counter options from the previous architecture
-	 * 3. Legacy shp4cf7_meta option with nested form data
+	 * Reads the shp4cf7_stat_counters table (if present) and the legacy
+	 * shp4cf7_meta option into per-form options. A counter is only
+	 * migrated when its form still exists and is a Contact Form 7 form;
+	 * stats for deleted or non-CF7 forms, and unattributable aggregate
+	 * reason counters, are discarded rather than guessed.
 	 *
 	 * After migration, per-form options are created and the old storage
 	 * is cleaned up. Safe to run multiple times.
@@ -566,7 +567,9 @@ final class Event_Logger {
 			$titles = array();
 		}
 
-		// 1. Read from legacy stats table if it still exists.
+		// 1. Read per-form counters from the legacy stats table if it
+		// still exists. Aggregate reason counters have no per-form
+		// attribution and are discarded.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$exists = $wpdb->get_var(
 			$wpdb->prepare( 'SHOW TABLES LIKE %s', $table )
@@ -585,38 +588,24 @@ final class Event_Logger {
 					$name  = $row->counter_name;
 					$value = absint( $row->counter_value );
 
-					if ( 0 === strpos( $name, 'form:' ) ) {
-						$fid = (int) substr( $name, 5 );
-
-						if ( ! isset( $forms[ $fid ] ) ) {
-							$forms[ $fid ] = array(
-								'total'   => 0,
-								'reasons' => array(),
-							);
-						}
-
-						$forms[ $fid ]['total'] = $value;
-					} elseif ( 0 === strpos( $name, 'reason:' ) ) {
-						$type = substr( $name, 7 );
-
-						// Attach orphan reason counters to all forms proportionally.
-						// These are pre-migration aggregate data; exact form attribution
-						// is not available, so store under a synthetic key.
-						if ( empty( $forms ) ) {
-							$forms[0] = array(
-								'total'   => 0,
-								'reasons' => array(),
-							);
-						}
-
-						foreach ( $forms as $fid => &$fdata ) {
-							if ( ! isset( $fdata['reasons'][ $type ] ) ) {
-								$fdata['reasons'][ $type ] = 0;
-							}
-							$fdata['reasons'][ $type ] += $value;
-						}
-						unset( $fdata );
+					if ( 0 !== strpos( $name, 'form:' ) ) {
+						continue;
 					}
+
+					$fid = (int) substr( $name, 5 );
+
+					if ( ! self::is_migratable_form( $fid ) ) {
+						continue;
+					}
+
+					if ( ! isset( $forms[ $fid ] ) ) {
+						$forms[ $fid ] = array(
+							'total'   => 0,
+							'reasons' => array(),
+						);
+					}
+
+					$forms[ $fid ]['total'] = $value;
 				}
 			}
 
@@ -624,35 +613,22 @@ final class Event_Logger {
 			$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
 		}
 
-		// 2. Read from individual counter options.
-		$total       = (int) get_option( self::STATS_PREFIX . 'total', 0 );
-		$reasons_opt = get_option( self::STATS_PREFIX . 'reasons', array() );
-		$forms_opt   = get_option( self::STATS_PREFIX . 'forms', array() );
+		// 2. Individual counter options (shp4cf7_stat_total/reasons/forms)
+		// hold site-wide aggregates without form attribution. They carry
+		// no migratable data and are removed in the cleanup below.
 
-		if ( $total > 0 || ! empty( $reasons_opt ) || ! empty( $forms_opt ) ) {
-			if ( empty( $forms ) ) {
-				$forms[0] = array(
-					'total'   => $total,
-					'reasons' => array(),
-				);
-			}
-
-			if ( is_array( $reasons_opt ) ) {
-				foreach ( $reasons_opt as $type => $count ) {
-					if ( ! isset( $forms[0]['reasons'][ $type ] ) ) {
-						$forms[0]['reasons'][ $type ] = 0;
-					}
-					$forms[0]['reasons'][ $type ] += absint( $count );
-				}
-			}
-		}
-
-		// 3. Read from legacy shp4cf7_meta option.
+		// 3. Read from legacy shp4cf7_meta option. Per-form counts and
+		// titles follow the same existence rule as above; site-wide
+		// aggregate reasons are unattributable and discarded.
 		$meta = get_option( SIMPLE_HONEYPOT_CF7_BASE . '_meta', array() );
 
 		if ( is_array( $meta ) && ! empty( $meta['forms'] ) && is_array( $meta['forms'] ) ) {
 			foreach ( $meta['forms'] as $form_id => $form_data ) {
 				$fid = (int) $form_id;
+
+				if ( ! self::is_migratable_form( $fid ) ) {
+					continue;
+				}
 
 				if ( ! isset( $forms[ $fid ] ) ) {
 					$forms[ $fid ] = array(
@@ -665,29 +641,15 @@ final class Event_Logger {
 					$forms[ $fid ]['total'] += absint( $form_data['count'] );
 				}
 
-				if ( ! empty( $form_data['title'] ) ) {
+				if ( is_array( $form_data ) && ! empty( $form_data['title'] ) ) {
 					$titles[ $fid ] = sanitize_text_field( $form_data['title'] );
 				}
 			}
+		}
 
-			// Also merge aggregate reasons from legacy meta.
-			if ( ! empty( $meta['reasons'] ) && is_array( $meta['reasons'] ) ) {
-				$fid = 0;
-
-				if ( ! isset( $forms[ $fid ] ) ) {
-					$forms[ $fid ] = array(
-						'total'   => 0,
-						'reasons' => array(),
-					);
-				}
-
-				foreach ( $meta['reasons'] as $type => $count ) {
-					if ( ! isset( $forms[ $fid ]['reasons'][ $type ] ) ) {
-						$forms[ $fid ]['reasons'][ $type ] = 0;
-					}
-					$forms[ $fid ]['reasons'][ $type ] += absint( $count );
-				}
-			}
+		// Update form titles first so the summary below picks them up.
+		if ( ! empty( $titles ) ) {
+			update_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', $titles, false );
 		}
 
 		// Write per-form options.
@@ -698,11 +660,6 @@ final class Event_Logger {
 		// Aggregate and store summary.
 		if ( ! empty( $forms ) ) {
 			self::aggregate_summary();
-		}
-
-		// Update form titles.
-		if ( ! empty( $titles ) ) {
-			update_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', $titles, false );
 		}
 
 		// 4. Clean up old options.
@@ -722,6 +679,20 @@ final class Event_Logger {
 		}
 
 		return count( $forms );
+	}
+
+	/**
+	 * Check whether a form still exists as a Contact Form 7 form.
+	 *
+	 * Used during migration so stats and titles are only carried over
+	 * for forms that can actually be attributed. Deleted posts return
+	 * false; trashed posts still resolve their post type and pass.
+	 *
+	 * @param int $form_id Candidate form ID.
+	 * @return bool True if the ID belongs to an existing wpcf7_contact_form.
+	 */
+	private static function is_migratable_form( $form_id ) {
+		return 'wpcf7_contact_form' === get_post_type( absint( $form_id ) );
 	}
 
 	/**
