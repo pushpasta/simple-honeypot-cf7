@@ -242,6 +242,9 @@ final class Event_Logger {
 	/**
 	 * Delete events older than a given number of days.
 	 *
+	 * Recalculates the aggregated summary when rows are removed so
+	 * report totals stay current without waiting for the hourly cron.
+	 *
 	 * @param int $days Retention period in days.
 	 * @return int Number of events deleted.
 	 */
@@ -255,6 +258,10 @@ final class Event_Logger {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$deleted = $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE time < %s", $cutoff ) );
 
+		if ( $deleted > 0 ) {
+			self::aggregate_summary();
+		}
+
 		return is_int( $deleted ) ? $deleted : 0;
 	}
 
@@ -262,7 +269,8 @@ final class Event_Logger {
 	 * Keep only the newest N events, delete the rest.
 	 *
 	 * Uses the auto-increment primary key for a fast index-only scan
-	 * instead of a subquery on `time`.
+	 * instead of a subquery on `time`. Recalculates the aggregated
+	 * summary when rows are removed.
 	 *
 	 * @param int $keep Number of events to keep.
 	 * @return int Number of events deleted.
@@ -293,11 +301,18 @@ final class Event_Logger {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$deleted = $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE id < %d", $cutoff ) );
 
+		if ( $deleted > 0 ) {
+			self::aggregate_summary();
+		}
+
 		return is_int( $deleted ) ? $deleted : 0;
 	}
 
 	/**
 	 * Delete all events.
+	 *
+	 * Refreshes the aggregated summary afterwards so report totals
+	 * immediately reflect the emptied log.
 	 *
 	 * @return void
 	 */
@@ -308,6 +323,8 @@ final class Event_Logger {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$wpdb->query( "TRUNCATE TABLE {$table}" );
+
+		self::aggregate_summary();
 	}
 
 	/**

@@ -73,8 +73,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php esc_html_e( 'By Time', 'simple-honeypot-cf7' ); ?>
 						<span class="shp4cf7-box-total">
 							<?php
-							/* translators: %s: total number of spam attempts */
-							printf( esc_html__( 'Total: %s', 'simple-honeypot-cf7' ), esc_html( number_format_i18n( $stats['total'] ) ) );
+							/* translators: %s: number of events currently stored in the log */
+							printf( esc_html__( 'In log: %s', 'simple-honeypot-cf7' ), esc_html( number_format_i18n( $stats['total'] ) ) );
 							?>
 						</span>
 					</h3>
@@ -102,8 +102,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php esc_html_e( 'By Reason', 'simple-honeypot-cf7' ); ?>
 						<span class="shp4cf7-box-total">
 							<?php
-							/* translators: %s: total spam attempts across all reasons */
-							printf( esc_html__( 'Total: %s', 'simple-honeypot-cf7' ), esc_html( number_format_i18n( $reason_total ) ) );
+							/* translators: %s: all-time number of spam attempts across all reasons */
+							printf( esc_html__( 'All-time: %s', 'simple-honeypot-cf7' ), esc_html( number_format_i18n( $reason_total ) ) );
 							?>
 						</span>
 					</h3>
@@ -127,8 +127,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php esc_html_e( 'By Form', 'simple-honeypot-cf7' ); ?>
 						<span class="shp4cf7-box-total">
 							<?php
-							/* translators: %s: total spam attempts across all forms */
-							printf( esc_html__( 'Total: %s', 'simple-honeypot-cf7' ), esc_html( number_format_i18n( $form_total_sum ) ) );
+							/* translators: %s: all-time number of spam attempts across all forms */
+							printf( esc_html__( 'All-time: %s', 'simple-honeypot-cf7' ), esc_html( number_format_i18n( $form_total_sum ) ) );
 							?>
 						</span>
 					</h3>
