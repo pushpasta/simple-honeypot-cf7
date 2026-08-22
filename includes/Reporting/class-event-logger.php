@@ -339,8 +339,11 @@ final class Event_Logger {
 	/**
 	 * Record a blocked spam attempt for a specific form.
 	 *
-	 * Writes directly to the form's individual option, so WordPress's
-	 * row-level locking prevents lost updates from concurrent requests.
+	 * Uses a read-modify-write cycle on the form's individual option.
+	 * Keeping one option per form limits object cache contention, but
+	 * concurrent requests can still race and lose an occasional
+	 * increment; this is accepted as a negligible drift for spam
+	 * statistics.
 	 *
 	 * @param int   $form_id Contact Form 7 form ID.
 	 * @param array $reasons Spam reasons (each with 'type' key).
