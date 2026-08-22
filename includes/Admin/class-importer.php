@@ -125,7 +125,17 @@ final class Importer {
 		// '1' = checked → true. Anything else = invalid → true.
 		$check_site_url = ( '' !== $raw_check && '0' !== $raw_check );
 
-		if ( $check_site_url && ! empty( $data['site_url'] ) ) {
+		if ( $check_site_url ) {
+			// Safeguard: with the check enabled there must be something to
+			// compare against. Exports without a site URL are rejected so
+			// the user can consciously uncheck the box instead.
+			if ( empty( $data['site_url'] ) || ! is_string( $data['site_url'] ) ) {
+				return array(
+					'success' => false,
+					'error'   => __( 'The file does not contain a site URL to verify against. Uncheck the site URL option if you want to import anyway.', 'simple-honeypot-cf7' ),
+				);
+			}
+
 			$exported_url = esc_url_raw( $data['site_url'] );
 			$current_url  = home_url();
 
