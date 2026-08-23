@@ -4,7 +4,7 @@
 
 Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
 
-![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.0-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-3.1.0-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
+![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.1-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-3.2.0-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
 
 ![Stars](https://img.shields.io/github/stars/pushpasta/simple-honeypot-cf7?style=plastic) ![Forks](https://img.shields.io/github/forks/pushpasta/simple-honeypot-cf7?style=plastic) ![Watchers](https://img.shields.io/github/watchers/pushpasta/simple-honeypot-cf7?style=plastic) ![Last Commit](https://img.shields.io/github/last-commit/pushpasta/simple-honeypot-cf7?style=plastic) ![Downloads](https://img.shields.io/github/downloads/pushpasta/simple-honeypot-cf7/total?style=plastic)
 
@@ -14,8 +14,8 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 | Donate link | [https://github.com/pushpasta/simple-honeypot-cf7/?sponsor](https://github.com/pushpasta/simple-honeypot-cf7/?sponsor) |
 | Tags | contact form 7, cf7, honeypot, antispam, spam protection, bot protection, proof of work, hashcash |
 | Requires at least | 6.7 |
-| Tested up to | 7.0 |
-| Stable tag | 3.1.0 |
+| Tested up to | 7.1 |
+| Stable tag | 3.2.0 |
 | Requires PHP | 7.4 |
 | Requires Plugins | contact-form-7 |
 | License | GNU GPLv3 |
@@ -165,6 +165,31 @@ Detection reason and details recorded for each blocked submission, visible in re
 ![Spam Status](assets/screenshot-7.png)
 
 ## Changelog
+
+### 3.2.0
+
+### Added
+* Site URL check when importing settings — imports warn when the file was exported from another site.
+* Settings exports now include an export timestamp and site URL.
+* "Recalculate Stats" button in the sidebar refreshes report totals on demand.
+
+### Changed
+* Spam statistics now store counters per form instead of a shared database table; existing data is migrated automatically.
+* Reports "By Time" figures come from the cached summary instead of live database queries on every page view.
+* Imports validate every value against the settings schema; keys missing from the file keep their current values instead of resetting to defaults.
+* Per-form overrides are only imported for forms that already have stored settings.
+* "By Time Period" box renamed to "By Time" with polished breakdown cards.
+* Tested up to WordPress 7.1.
+* Removed the version tooltip from the admin header.
+
+### Fixed
+* Migration keeps statistics only for forms that still exist, drops orphan aggregates, and schedules the hourly stats cron.
+* Purging events refreshes report totals immediately instead of waiting for the hourly cron.
+* Import aborts safely when the site URL check is ticked but the file contains no site URL.
+* Import rejects files without a version number or exported by a newer plugin version.
+* Pre-3.2.0 export formats are normalized on import.
+* Strong tags in import error messages and confirm dialogs render correctly.
+* Uninstall removes leftover site transients on single-site installs.
 
 ### 3.1.0
 
@@ -396,6 +421,9 @@ Detection reason and details recorded for each blocked submission, visible in re
 * Initial release.
 
 ## Upgrade Notice
+
+### 3.2.0
+* Reworks how spam statistics are stored with an automatic, safe migration of existing data. Recommended update for all users.
 
 ### 3.1.0
 * Fixes browser autofill blocking real visitors as spam, scopes reset to preserve rules, and adds a helpful sidebar card. Recommended update for all users.
