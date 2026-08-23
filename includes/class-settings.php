@@ -80,7 +80,7 @@ final class Settings {
 
 		// Delete site transients.
 		delete_site_transient( SIMPLE_HONEYPOT_CF7_BASE . '_github_release' );
-		self::cleanup_readme_transients();
+		self::delete_site_transient_rows();
 
 		// Delete per-form post meta.
 		self::delete_form_meta_settings();
@@ -800,38 +800,38 @@ final class Settings {
 	}
 
 	/**
-	 * Delete cached readme site transients for all known tags.
+	 * Delete all plugin site transients from the database.
 	 *
-	 * These are stored with the pattern shp4cf7_readme_{md5} in wp_sitemeta
-	 * and cannot be enumerated without a direct query.
+	 * Site transients are stored as _site_transient_shp4cf7_* rows in
+	 * wp_options on single site and wp_sitemeta on multisite. Their
+	 * names can contain hashes of the release tag, so they cannot be
+	 * enumerated individually and are removed by prefix instead.
 	 *
 	 * @return void
 	 */
-	private static function cleanup_readme_transients() {
-		if ( ! is_multisite() ) {
-			return;
-		}
-
+	private static function delete_site_transient_rows() {
 		global $wpdb;
 
-		$transient_prefix = SIMPLE_HONEYPOT_CF7_BASE . '_readme_';
-		$esc_prefix       = $wpdb->esc_like( '_site_transient_' . $transient_prefix ) . '%';
+		if ( is_multisite() ) {
+			$table  = $wpdb->sitemeta;
+			$column = 'meta_key';
+		} else {
+			$table  = $wpdb->options;
+			$column = 'option_name';
+		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$rows = $wpdb->get_col(
+		$value_prefix   = $wpdb->esc_like( '_site_transient_' . SIMPLE_HONEYPOT_CF7_BASE ) . '%';
+		$timeout_prefix = $wpdb->esc_like( '_site_transient_timeout_' . SIMPLE_HONEYPOT_CF7_BASE ) . '%';
+
+		// Table and column names cannot be parameterized.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query(
 			$wpdb->prepare(
-				"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
-				$esc_prefix
+				"DELETE FROM {$table} WHERE {$column} LIKE %s OR {$column} LIKE %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$value_prefix,
+				$timeout_prefix
 			)
 		);
-
-		if ( ! is_array( $rows ) ) {
-			return;
-		}
-
-		foreach ( $rows as $option_name ) {
-			$tag_hash = str_replace( '_site_transient_' . $transient_prefix, '', $option_name );
-			delete_site_transient( $transient_prefix . $tag_hash );
-		}
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 }
