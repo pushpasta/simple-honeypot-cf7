@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.1
 Requires Plugins: contact-form-7
-Stable tag: 3.1.0
+Stable tag: 3.2.0
 License: GNU GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -92,6 +92,31 @@ All plugin data is removed from the database, including settings, statistics, an
 7. **Spam Status:** Detection reason and details recorded for each blocked submission, visible in record-keeping plugins like Flamingo.
 
 == Changelog ==
+
+= 3.2.0 =
+
+= Added =
+* Site URL check when importing settings — imports warn when the file was exported from another site.
+* Settings exports now include an export timestamp and site URL.
+* "Recalculate Stats" button in the sidebar refreshes report totals on demand.
+
+= Changed =
+* Spam statistics now store counters per form instead of a shared database table; existing data is migrated automatically.
+* Reports "By Time" figures come from the cached summary instead of live database queries on every page view.
+* Imports validate every value against the settings schema; keys missing from the file keep their current values instead of resetting to defaults.
+* Per-form overrides are only imported for forms that already have stored settings.
+* "By Time Period" box renamed to "By Time" with polished breakdown cards.
+* Tested up to WordPress 7.1.
+* Removed the version tooltip from the admin header.
+
+= Fixed =
+* Migration keeps statistics only for forms that still exist, drops orphan aggregates, and schedules the hourly stats cron.
+* Purging events refreshes report totals immediately instead of waiting for the hourly cron.
+* Import aborts safely when the site URL check is ticked but the file contains no site URL.
+* Import rejects files without a version number or exported by a newer plugin version.
+* Pre-3.2.0 export formats are normalized on import.
+* Strong tags in import error messages and confirm dialogs render correctly.
+* Uninstall removes leftover site transients on single-site installs.
 
 = 3.1.0 =
 
@@ -323,6 +348,9 @@ All plugin data is removed from the database, including settings, statistics, an
 * Initial release.
 
 == Upgrade Notice ==
+
+= 3.2.0 =
+* Reworks how spam statistics are stored with an automatic, safe migration of existing data. Recommended update for all users.
 
 = 3.1.0 =
 * Fixes browser autofill blocking real visitors as spam, scopes reset to preserve rules, and adds a helpful sidebar card. Recommended update for all users.
