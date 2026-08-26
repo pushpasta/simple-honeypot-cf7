@@ -702,6 +702,106 @@ final class Event_Logger {
 	}
 
 	/**
+	 * Rebuild per-form reason counts from the events table.
+	 *
+	 * Reads every row in the events table, decodes the JSON-encoded
+	 * reasons, and tallies reason types per form. For each form that
+	 * still exists as a Contact Form 7 form the per-form option's
+	 * reasons array is replaced with the tallied counts. The total
+	 * field is preserved as-is.
+	 *
+	 * Intended to run once during migration v5 to restore historical
+	 * reason data that was lost when migration v4 created per-form
+	 * options with empty reason arrays.
+	 *
+	 * @return int Number of forms whose reasons were rebuilt.
+	 */
+	public static function rebuild_reasons_from_events() {
+		global $wpdb;
+
+		$table   = $wpdb->prefix . self::TABLE;
+		$counts  = array();
+		$last_id = 0;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		do {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT id, form_id, reasons FROM {$table} WHERE id > %d ORDER BY id LIMIT 1000",
+					$last_id
+				),
+				ARRAY_A
+			);
+
+			if ( ! is_array( $rows ) || empty( $rows ) ) {
+				break;
+			}
+
+			$batch_size = count( $rows );
+
+			foreach ( $rows as $row ) {
+				$last_id = (int) $row['id'];
+				$form_id = (int) $row['form_id'];
+				$decoded = json_decode( $row['reasons'], true );
+
+				if ( ! is_array( $decoded ) ) {
+					continue;
+				}
+
+				if ( ! isset( $counts[ $form_id ] ) ) {
+					$counts[ $form_id ] = array();
+				}
+
+				foreach ( $decoded as $reason ) {
+					$type = isset( $reason['type'] ) ? sanitize_key( $reason['type'] ) : '';
+
+					if ( '' === $type ) {
+						continue;
+					}
+
+					if ( ! isset( $counts[ $form_id ][ $type ] ) ) {
+						$counts[ $form_id ][ $type ] = 0;
+					}
+
+					++$counts[ $form_id ][ $type ];
+				}
+			}
+		} while ( 1000 === $batch_size );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		$rebuilt = 0;
+
+		foreach ( $counts as $form_id => $reasons ) {
+			if ( ! self::is_migratable_form( $form_id ) ) {
+				continue;
+			}
+
+			$option = self::form_option_name( $form_id );
+			$stat   = get_option(
+				$option,
+				array(
+					'total'   => 0,
+					'reasons' => array(),
+				)
+			);
+
+			if ( ! is_array( $stat ) ) {
+				$stat = array(
+					'total'   => 0,
+					'reasons' => array(),
+				);
+			}
+
+			$stat['reasons'] = $reasons;
+
+			update_option( $option, $stat, false );
+			++$rebuilt;
+		}
+
+		return $rebuilt;
+	}
+
+	/**
 	 * Check whether a form still exists as a Contact Form 7 form.
 	 *
 	 * Used during migration so stats and titles are only carried over

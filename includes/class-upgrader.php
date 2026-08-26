@@ -44,7 +44,7 @@ final class Upgrader {
 	 *
 	 * @var int
 	 */
-	const CURRENT_DB_VERSION = 4;
+	const CURRENT_DB_VERSION = 5;
 
 	/**
 	 * Legacy option names that were renamed in migration 2.
@@ -80,6 +80,10 @@ final class Upgrader {
 
 		if ( $stored < 4 ) {
 			self::migrate_to_4();
+		}
+
+		if ( $stored < 5 ) {
+			self::migrate_to_5();
 		}
 
 		update_option( self::MIGRATION_VERSION_OPTION, self::CURRENT_DB_VERSION, false );
@@ -254,6 +258,24 @@ final class Upgrader {
 		if ( ! wp_next_scheduled( \SimpleHoneypotCF7\Reporting\Cron_Handler::STATS_HOOK ) ) {
 			wp_schedule_event( time(), 'hourly', \SimpleHoneypotCF7\Reporting\Cron_Handler::STATS_HOOK );
 		}
+	}
+
+	/**
+	 * Migration v5: rebuild per-form reason counts from the events table.
+	 *
+	 * Migration v4 created per-form options with empty reason arrays,
+	 * discarding historical reason data. This migration reads the
+	 * events table, decodes each row's JSON-encoded reasons, tallies
+	 * reason types per form, and writes them back into the per-form
+	 * options. Forms that no longer exist are skipped. Afterwards the
+	 * aggregated summary is refreshed so reports reflect the restored
+	 * data immediately.
+	 *
+	 * @return void
+	 */
+	private static function migrate_to_5() {
+		Event_Logger::rebuild_reasons_from_events();
+		Event_Logger::aggregate_summary();
 	}
 
 	/**
