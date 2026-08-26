@@ -6,7 +6,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 7.1
 Requires Plugins: contact-form-7
-Stable tag: 3.2.0
+Stable tag: 3.2.1
 License: GNU GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -95,6 +95,11 @@ All plugin data is removed from the database, including settings, statistics, an
 
 Full changelog for all versions is in changelog.txt.
 
+= 3.2.1 =
+
+= Fixed =
+* "By Reason" breakdown was empty after upgrading from pre-3.2.0 because the v4 migration discarded historical reason data. A new migration now rebuilds per-form reason counts from the events table.
+
 = 3.2.0 =
 
 = Added =
@@ -122,5 +127,5 @@ Full changelog for all versions is in changelog.txt.
 
 == Upgrade Notice ==
 
-= 3.2.0 =
-* Reworks how spam statistics are stored with an automatic, safe migration of existing data. Recommended update for all users.
+= 3.2.1 =
+* Fixes the "By Reason" report section being empty after upgrading to 3.2.0. Historical reason data is automatically restored from the event log. Recommended update for all users on 3.2.0.
