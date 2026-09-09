@@ -73,6 +73,26 @@ final class Notices {
 	}
 
 	/**
+	 * Show a warning when Contact Form 7 is older than the minimum version.
+	 *
+	 * @return void
+	 */
+	public function contact_form_7_outdated() {
+		if ( ! Contact_Form_7::is_active() || Contact_Form_7::has_minimum_version() || ! current_user_can( 'activate_plugins' ) ) {
+			return;
+		}
+
+		self::render(
+			sprintf(
+				/* translators: %s: minimum Contact Form 7 version. */
+				esc_html__( 'Simple Honeypot for Contact Form 7 requires Contact Form 7 %s or newer. Please update Contact Form 7.', 'simple-honeypot-cf7' ),
+				Contact_Form_7::MIN_VERSION
+			),
+			'error'
+		);
+	}
+
+	/**
 	 * Show a warning when Proof of Work is enabled but the site is not on HTTPS.
 	 *
 	 * @return void

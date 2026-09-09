@@ -38,6 +38,7 @@ final class Admin {
 		add_action( 'admin_init', array( $this, 'run_upgrader' ) );
 		add_action( 'upgrader_process_complete', array( $this, 'on_plugin_update' ), 10, 2 );
 		add_action( 'admin_notices', array( $notices, 'contact_form_7_missing' ) );
+		add_action( 'admin_notices', array( $notices, 'contact_form_7_outdated' ) );
 		add_action( 'admin_notices', array( $notices, 'pow_requires_ssl' ) );
 		add_action( 'admin_notices', array( $notices, 'reset_form_notice' ) );
 		add_action( 'admin_notices', array( $notices, 'purge_events_notice' ) );
@@ -50,7 +51,7 @@ final class Admin {
 		add_filter( 'plugin_row_meta', array( $this, 'row_meta' ), 10, 2 );
 		add_filter( 'plugin_auto_update_setting_html', array( $this, 'auto_update_toggle' ), 10, 3 );
 
-		if ( Contact_Form_7::is_active() ) {
+		if ( Contact_Form_7::is_supported() ) {
 			add_filter( 'wpcf7_editor_panels', array( $form_panel, 'register_panel' ) );
 			add_action( 'wpcf7_after_save', array( $form_panel, 'save' ) );
 			add_action( 'wpcf7_admin_init', array( $tag_generator, 'register' ), 20, 0 );

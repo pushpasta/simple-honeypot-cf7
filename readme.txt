@@ -32,6 +32,12 @@ Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam rep
 
 == Installation ==
 
+= Requirements =
+
+* WordPress (6.7 or newer)
+* PHP (7.4 or newer)
+* Contact Form 7 (6.0 or newer)
+
 = Manual Installation =
 
 1. Upload the `simple-honeypot-cf7` folder to `/wp-content/plugins/`.
@@ -41,9 +47,21 @@ Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam rep
 
 == Frequently Asked Questions ==
 
+= What are the requirements? =
+
+Simple Honeypot for Contact Form 7 requires WordPress (6.7 or newer), PHP (7.4 or newer), and Contact Form 7 (6.0 or newer).
+
 = How does the honeypot work? =
 
 The plugin adds one or more hidden fields that are invisible to legitimate visitors. Automated bots often fill these fields, allowing spam submissions to be identified and blocked before they are processed. You can add multiple honeypot fields to a single form.
+
+= Does the plugin send form data to a third-party service? =
+
+No. All spam checks are performed locally on your website. No form submissions or visitor data are sent to external services.
+
+= Are existing forms without honeypots affected? =
+
+No. The plugin only runs on forms that include at least one `[honeypot]` tag. All other CF7 forms keep working exactly as before.
 
 = What is Proof of Work and how does it help? =
 
@@ -61,10 +79,6 @@ Yes. The plugin validates the time between page load and form submission. Submis
 
 The plugin supports IP addresses (with wildcards and CIDR) and email addresses (with wildcards). For keyword or pattern filtering, use the WordPress Disallowed Comment Keys setting (Settings → Discussion), which Contact Form 7 checks automatically.
 
-= Does the plugin send form data to a third-party service? =
-
-No. All spam checks are performed locally on your website. No form submissions or visitor data are sent to external services.
-
 = Will the honeypot value be stored in record plugins like Flamingo? =
 
 By default, honeypot fields are removed from submitted data before it is stored. You can optionally enable storage of honeypot values in the plugin settings (under Data) for debugging or security analysis.
@@ -72,10 +86,6 @@ By default, honeypot fields are removed from submitted data before it is stored.
 = Why was a submission marked as spam? =
 
 The Spam Log shows which rule triggered the detection, such as a filled honeypot field, a failed time check, a blocked keyword, or a custom IP or email rule.
-
-= Are existing forms without honeypots affected? =
-
-No. The plugin only runs on forms that include at least one `[honeypot]` tag. All other CF7 forms keep working exactly as before.
 
 = What happens when the plugin is uninstalled? =
 

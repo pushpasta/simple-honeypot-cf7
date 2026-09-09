@@ -56,23 +56,12 @@ final class Tag_Generator {
 	public function render( $contact_form, $args = array() ) {
 		$args = wp_parse_args( $args, array( 'content' => 'honeypot' ) );
 
-		if ( class_exists( '\WPCF7_TagGeneratorGenerator' ) && defined( 'WPCF7_VERSION' ) && version_compare( WPCF7_VERSION, '6.0', '>=' ) ) {
-			$this->template->render(
-				'admin/cf7-tag-generator.php',
-				array(
-					'args'   => $args,
-					'modern' => true,
-					'tag'    => new \WPCF7_TagGeneratorGenerator( $args['content'] ),
-				)
-			);
-			return;
-		}
-
 		$this->template->render(
 			'admin/cf7-tag-generator.php',
 			array(
 				'args'   => $args,
-				'modern' => false,
+				'modern' => true,
+				'tag'    => new \WPCF7_TagGeneratorGenerator( $args['content'] ),
 			)
 		);
 	}

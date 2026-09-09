@@ -14,6 +14,7 @@ use SimpleHoneypotCF7\Frontend\Form_Tag;
 use SimpleHoneypotCF7\Frontend\Posted_Data_Filter;
 use SimpleHoneypotCF7\Frontend\Spam_Checker;
 use SimpleHoneypotCF7\Reporting\Cron_Handler;
+use SimpleHoneypotCF7\Support\Contact_Form_7;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -53,21 +54,27 @@ final class Plugin {
 	private function register_hooks() {
 		load_plugin_textdomain( 'simple-honeypot-cf7', false, dirname( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ) . '/languages' );
 
-		$admin              = new Admin();
+		$admin   = new Admin();
+		$updater = new GitHub_Updater();
+
+		$admin->register_hooks();
+		$updater->register_hooks();
+		Cron_Handler::register();
+
+		if ( ! Contact_Form_7::is_supported() ) {
+			return;
+		}
+
 		$ajax_token         = new Ajax_Token();
 		$frontend_assets    = new Frontend_Assets();
 		$form_tag           = new Form_Tag();
 		$spam_checker       = new Spam_Checker();
 		$posted_data_filter = new Posted_Data_Filter();
-		$updater            = new GitHub_Updater();
 
-		$admin->register_hooks();
 		$ajax_token->register_hooks();
 		$frontend_assets->register_hooks();
 		$form_tag->register_hooks();
 		$spam_checker->register_hooks();
 		$posted_data_filter->register_hooks();
-		$updater->register_hooks();
-		Cron_Handler::register();
 	}
 }
