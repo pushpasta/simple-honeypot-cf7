@@ -55,6 +55,16 @@ final class Event_Logger {
 	const VERSION_OPTION = SIMPLE_HONEYPOT_CF7_BASE . '_events_db_version';
 
 	/**
+	 * Version of the timezone-aware period boundary logic.
+	 *
+	 * Bumped whenever the by-period bucket calculation changes so stored
+	 * summaries are rebuilt instead of being served with stale boundaries.
+	 *
+	 * @var int
+	 */
+	const PERIOD_BOUNDARY_VERSION = 2;
+
+	/**
 	 * Create or upgrade the events table.
 	 *
 	 * Uses dbDelta() so it is safe to call on every activation.
@@ -206,9 +216,12 @@ final class Event_Logger {
 	 * Count events for common time periods.
 	 *
 	 * Returns counts for today, yesterday, last 7 days, this month,
-	 * and last month — in a single query. The all-time total is not
-	 * part of the result; consumers use count() or the aggregated
-	 * summary instead.
+	 * and last month — in a single query. Boundaries are resolved in
+	 * the site timezone and converted to UTC instants, so the buckets
+	 * follow the same local day and month as the dates displayed in
+	 * the events table, regardless of the site's timezone or DST rules.
+	 * The all-time total is not part of the result; consumers use
+	 * count() or the aggregated summary instead.
 	 *
 	 * @return array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int}
 	 */
@@ -217,8 +230,34 @@ final class Event_Logger {
 
 		$table = $wpdb->prefix . self::TABLE;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$row = $wpdb->get_row( "SELECT SUM( time >= UTC_DATE() ) AS today, SUM( time >= UTC_DATE() - INTERVAL 1 DAY AND time < UTC_DATE() ) AS yesterday, SUM( time >= UTC_DATE() - INTERVAL 7 DAY ) AS last_7_days, SUM( time >= DATE_FORMAT( UTC_DATE(), '%Y-%m-01' ) ) AS this_month, SUM( time >= DATE_FORMAT( UTC_DATE() - INTERVAL 1 MONTH, '%Y-%m-01' ) AND time < DATE_FORMAT( UTC_DATE(), '%Y-%m-01' ) ) AS last_month, COUNT(*) AS total FROM {$table}", ARRAY_A );
+		$now         = new \DateTimeImmutable( 'now', wp_timezone() );
+		$today_start = $now->setTime( 0, 0, 0 );
+		$today_end   = $today_start->modify( '+1 day' );
+		$week_start  = $today_start->modify( '-6 days' );
+		$month_start = $today_start->modify( 'first day of this month' );
+		$last_month  = $month_start->modify( '-1 month' );
+
+		$to_utc = static function ( \DateTimeImmutable $instant ) {
+			return gmdate( 'Y-m-d H:i:s', $instant->getTimestamp() );
+		};
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT SUM( time >= %s AND time < %s ) AS today, SUM( time >= %s AND time < %s ) AS yesterday, SUM( time >= %s AND time < %s ) AS last_7_days, SUM( time >= %s ) AS this_month, SUM( time >= %s AND time < %s ) AS last_month, COUNT(*) AS total FROM {$table}",
+				$to_utc( $today_start ),
+				$to_utc( $today_end ),
+				$to_utc( $today_start->modify( '-1 day' ) ),
+				$to_utc( $today_start ),
+				$to_utc( $week_start ),
+				$to_utc( $today_end ),
+				$to_utc( $month_start ),
+				$to_utc( $last_month ),
+				$to_utc( $month_start )
+			),
+			ARRAY_A
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		if ( ! is_array( $row ) ) {
 			return array(
@@ -452,7 +491,7 @@ final class Event_Logger {
 	 * in the summary option with a timestamp. Called hourly by cron and
 	 * on-demand via the REST API.
 	 *
-	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, by_period: array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int}, last_calculated: string}
+	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, by_period: array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int}, boundary_version: int, last_calculated: string}
 	 */
 	public static function aggregate_summary() {
 		$form_stats  = self::get_all_form_stats();
@@ -488,11 +527,12 @@ final class Event_Logger {
 		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
 
 		$summary = array(
-			'total'           => $total,
-			'reasons'         => $reasons,
-			'forms'           => $forms,
-			'by_period'       => self::count_by_period(),
-			'last_calculated' => current_time( 'mysql', true ),
+			'total'            => $total,
+			'reasons'          => $reasons,
+			'forms'            => $forms,
+			'by_period'        => self::count_by_period(),
+			'boundary_version' => self::PERIOD_BOUNDARY_VERSION,
+			'last_calculated'  => current_time( 'mysql', true ),
 		);
 
 		update_option( self::SUMMARY_OPTION, $summary, false );
@@ -506,7 +546,7 @@ final class Event_Logger {
 	 * Returns the cached summary from the last aggregation run.
 	 * Falls back to an empty structure if aggregation has not run yet.
 	 *
-	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, by_period: array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int}, last_calculated: string}
+	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, by_period: array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int}, boundary_version: int, last_calculated: string}
 	 */
 	public static function get_aggregated_stats() {
 		$summary = get_option( self::SUMMARY_OPTION, array() );
@@ -525,6 +565,12 @@ final class Event_Logger {
 				),
 				'last_calculated' => '',
 			);
+		}
+
+		// Rebuild summaries produced by older boundary logic so period
+		// counts are resolved in the site timezone instead of UTC.
+		if ( empty( $summary['boundary_version'] ) || (int) $summary['boundary_version'] < self::PERIOD_BOUNDARY_VERSION ) {
+			return self::aggregate_summary();
 		}
 
 		if ( ! isset( $summary['by_period'] ) ) {

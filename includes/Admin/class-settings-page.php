@@ -161,6 +161,15 @@ final class Settings_Page {
 			$settings = Settings::get_settings();
 			$stats    = Settings::get_meta();
 
+			// The by-period buckets roll over at local midnight, so a
+			// summary calculated on a previous local day no longer matches
+			// the current Today/Yesterday/This month windows. Re-aggregate
+			// once when that happens instead of showing stale counts.
+			if ( ! empty( $stats['last_calculated'] ) && $this->summary_predates_local_day( $stats['last_calculated'] ) ) {
+				Event_Logger::aggregate_summary();
+				$stats = Settings::get_meta();
+			}
+
 			$per_page     = $settings['events_per_page'];
 			$total_events = Event_Logger::count();
 			$total_pages  = max( 1, (int) ceil( $total_events / $per_page ) );
@@ -206,6 +215,29 @@ final class Settings_Page {
 			'schema'     => Settings::setting_schema(),
 			'export_url' => $this->export_url(),
 		);
+	}
+
+	/**
+	 * Check whether a summary is stale relative to the local day.
+	 *
+	 * The by-period buckets roll over at local midnight, so a summary
+	 * calculated on a previous local day no longer reflects the current
+	 * Today / Yesterday / This month windows.
+	 *
+	 * @param string $last_calculated Summary timestamp in UTC.
+	 * @return bool True when the summary should be recalculated.
+	 */
+	private function summary_predates_local_day( $last_calculated ) {
+		$calculated = \DateTimeImmutable::createFromFormat( 'Y-m-d H:i:s', $last_calculated, new \DateTimeZone( 'UTC' ) );
+
+		if ( false === $calculated ) {
+			return true;
+		}
+
+		$local_calculated = $calculated->setTimezone( wp_timezone() );
+		$now              = new \DateTimeImmutable( 'now', wp_timezone() );
+
+		return $local_calculated->format( 'Y-m-d' ) !== $now->format( 'Y-m-d' );
 	}
 
 	/**
