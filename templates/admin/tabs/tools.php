@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<input type="hidden" name="tab" value="tools" />
 
 	<div class="postbox shp4cf7-card" id="shp4cf7-import-export">
-		<h2 class="hndle"><span class="dashicons dashicons-upload"></span><span><?php esc_html_e( 'Import &amp; Export', 'simple-honeypot-cf7' ); ?></span></h2>
+		<h2 class="hndle"><span class="dashicons dashicons-upload"></span><span><?php esc_html_e( 'Import & Export', 'simple-honeypot-cf7' ); ?></span></h2>
 		<div class="inside">
 			<p class="description"><?php esc_html_e( 'Export and import all plugin settings as a JSON file.', 'simple-honeypot-cf7' ); ?></p>
 			<table class="form-table" role="presentation">
@@ -73,7 +73,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<input type="number" id="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_purge_days' ); ?>" class="small-text" min="1" step="1" value="90" placeholder="90" />
 					<?php esc_html_e( 'days', 'simple-honeypot-cf7' ); ?>
 					<?php /* translators: %d: number of days */ ?>
-					<button type="button" class="button button-delete" data-action="purge_events" data-confirm="<?php echo esc_attr__( 'This will permanently delete event data older than <strong>%d</strong> day(s).', 'simple-honeypot-cf7' ); ?>" data-confirm-days="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_purge_days' ); ?>" data-confirm-danger="1"><?php esc_html_e( 'Purge Old Events', 'simple-honeypot-cf7' ); ?></button>
+					<button type="button" class="button button-delete" data-action="purge_events" data-confirm="<?php echo esc_attr( sprintf( __( 'This will permanently delete event data older than %d day(s).', 'simple-honeypot-cf7' ), '<strong>%d</strong>' ) ); ?>" data-confirm-days="<?php echo esc_attr( SIMPLE_HONEYPOT_CF7_BASE . '_purge_days' ); ?>" data-confirm-danger="1"><?php esc_html_e( 'Purge Old Events', 'simple-honeypot-cf7' ); ?></button>
 					<p class="description"><?php esc_html_e( 'Delete events older than the specified number of days.', 'simple-honeypot-cf7' ); ?></p>
 				</td>
 			</tr>

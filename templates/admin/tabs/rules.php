@@ -59,9 +59,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php
 			echo wp_kses(
 				sprintf(
-					/* translators: 1: URL to Discussion settings page. */
-					__( 'Need to block specific words or patterns? Use the <a href="%1$s">WordPress Disallowed Comment Keys</a> setting instead &mdash; Contact Form 7 checks it automatically.', 'simple-honeypot-cf7' ),
-					esc_url( admin_url( 'options-discussion.php' ) )
+					/* translators: %s: link to the WordPress Disallowed Comment Keys setting. */
+					__( 'Need to block specific words or patterns? Use the %s setting instead — Contact Form 7 checks it automatically.', 'simple-honeypot-cf7' ),
+					'<a href="' . esc_url( admin_url( 'options-discussion.php' ) ) . '">' . esc_html__( 'WordPress Disallowed Comment Keys', 'simple-honeypot-cf7' ) . '</a>'
 				),
 				array( 'a' => array( 'href' => array() ) )
 			);
