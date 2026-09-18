@@ -70,6 +70,14 @@ final class Upgrader {
 			return;
 		}
 
+		// Ensure the events table exists before migrations query it.
+		// Migration v5 reads the table directly and aggregate_summary()
+		// counts against it; on a fresh install the table is only created
+		// after run() returns, so creating it here prevents database
+		// errors (and stray output) during activation. dbDelta is
+		// idempotent, so this is also safe on upgrade paths.
+		Event_Logger::create_table();
+
 		if ( $stored < 2 ) {
 			self::migrate_to_2();
 		}
