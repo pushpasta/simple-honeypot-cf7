@@ -116,6 +116,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</dl>
 				</div>
 				<div class="shp4cf7-breakdown-box">
+					<h3>
+						<span class="dashicons dashicons-admin-site"></span>
+						<?php esc_html_e( 'By IP', 'simple-honeypot-cf7' ); ?>
+						<span class="shp4cf7-box-total">
+							<?php esc_html_e( 'Top 10', 'simple-honeypot-cf7' ); ?>
+						</span>
+					</h3>
+					<p class="description"><?php esc_html_e( 'Which IP addresses sent the most spam attempts.', 'simple-honeypot-cf7' ); ?></p>
+					<dl class="shp4cf7-stats-list">
+						<?php foreach ( $stats['by_ip'] as $ip => $count ) : ?>
+							<dt>
+								<?php
+								if ( '' !== $ip && filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+									/* translators: %s: IP address being looked up */
+									$abuseipdb_title = sprintf( __( 'Look up %s on AbuseIPDB', 'simple-honeypot-cf7' ), $ip );
+									printf(
+										'<a href="https://www.abuseipdb.com/check/%s" target="_blank" rel="noopener noreferrer" title="%s">%s</a>',
+										esc_attr( $ip ),
+										esc_attr( $abuseipdb_title ),
+										esc_html( $ip )
+									);
+								} else {
+									echo esc_html( $ip );
+								}
+								?>
+							</dt>
+							<dd><?php echo esc_html( number_format_i18n( absint( $count ) ) ); ?></dd>
+						<?php endforeach; ?>
+					</dl>
+				</div>
+				<div class="shp4cf7-breakdown-box">
 					<?php
 					$form_total_sum = 0;
 					foreach ( $stats['forms'] as $form ) {
