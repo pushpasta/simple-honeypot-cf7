@@ -407,18 +407,33 @@ final class Settings {
 		$summary = \SimpleHoneypotCF7\Reporting\Event_Logger::get_aggregated_stats();
 
 		if ( ! empty( $summary['last_calculated'] ) ) {
-			$stats['total']           = $summary['total'];
-			$stats['reasons']         = $summary['reasons'];
-			$stats['forms']           = $summary['forms'];
-			$stats['by_ip']           = isset( $summary['by_ip'] ) ? $summary['by_ip'] : array();
-			$stats['by_period']       = $summary['by_period'];
-			$stats['last_calculated'] = $summary['last_calculated'];
-
-			return $stats;
+			return self::stats_from_summary( $stats, $summary );
 		}
 
 		// No aggregated summary yet — check for legacy data.
-		return self::meta_from_legacy( $existing );
+		return self::meta_from_legacy( $stats, $existing );
+	}
+
+	/**
+	 * Merge an aggregated summary into the report structure.
+	 *
+	 * Both the cached read and the on-demand cold-cache warm-up map the
+	 * summary the same way, so the first view after an import or reset
+	 * matches steady state (all breakdowns included).
+	 *
+	 * @param array $stats   Report structure, including run_since.
+	 * @param array $summary Aggregated summary from Event_Logger.
+	 * @return array
+	 */
+	private static function stats_from_summary( array $stats, array $summary ) {
+		$stats['total']           = $summary['total'];
+		$stats['reasons']         = $summary['reasons'];
+		$stats['forms']           = $summary['forms'];
+		$stats['by_ip']           = isset( $summary['by_ip'] ) ? $summary['by_ip'] : array();
+		$stats['by_period']       = isset( $summary['by_period'] ) ? $summary['by_period'] : array();
+		$stats['last_calculated'] = $summary['last_calculated'];
+
+		return $stats;
 	}
 
 	/**
@@ -448,31 +463,22 @@ final class Settings {
 	 *
 	 * On the first read after upgrade the aggregated summary may not
 	 * exist yet. This method migrates any remaining legacy data into
-	 * per-form options so it is not lost.
+	 * per-form options so it is not lost. When per-form options exist
+	 * the summary is aggregated once and the full result is returned so
+	 * the first view matches steady state; later reads come from cache.
 	 *
+	 * @param array $stats    Base report structure, including run_since.
 	 * @param array $existing The legacy stats option value.
 	 * @return array
 	 */
-	private static function meta_from_legacy( array $existing ) {
-		$stats = self::default_meta();
-
-		if ( ! empty( $existing['run_since'] ) ) {
-			$stats['run_since'] = (int) $existing['run_since'];
-		}
-
+	private static function meta_from_legacy( array $stats, array $existing ) {
 		// Check if per-form options exist from a partial migration.
 		$form_stats = \SimpleHoneypotCF7\Reporting\Event_Logger::get_all_form_stats();
 
 		if ( ! empty( $form_stats ) ) {
-			// Per-form options exist but summary hasn't been calculated.
-			// Run aggregation now.
-			$summary                  = \SimpleHoneypotCF7\Reporting\Event_Logger::aggregate_summary();
-			$stats['total']           = $summary['total'];
-			$stats['reasons']         = $summary['reasons'];
-			$stats['forms']           = $summary['forms'];
-			$stats['last_calculated'] = $summary['last_calculated'];
-
-			return $stats;
+			// Per-form options exist but the summary hasn't been calculated.
+			// Aggregate once on cold cache and return the full summary.
+			return self::stats_from_summary( $stats, \SimpleHoneypotCF7\Reporting\Event_Logger::aggregate_summary() );
 		}
 
 		// Return whatever legacy data is available.

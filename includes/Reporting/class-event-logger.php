@@ -560,8 +560,11 @@ final class Event_Logger {
 	/**
 	 * Get the aggregated stats summary.
 	 *
-	 * Returns the cached summary from the last aggregation run.
-	 * Falls back to an empty structure if aggregation has not run yet.
+	 * Pure cache read — never aggregates. Returns the summary from the
+	 * last cron, upgrade, or on-demand aggregation, or an empty structure
+	 * if aggregation has not run yet. Stale boundary versions are rebuilt
+	 * by Upgrader::refresh_aggregated_stats_if_needed() during upgrade,
+	 * and the hourly cron keeps the cached summary current.
 	 *
 	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, by_ip: array<string, int>, by_period: array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int}, boundary_version: int, last_calculated: string}
 	 */
@@ -583,16 +586,6 @@ final class Event_Logger {
 				),
 				'last_calculated' => '',
 			);
-		}
-
-		// Rebuild summaries produced by older boundary logic so period
-		// counts are resolved in the site timezone instead of UTC.
-		if ( empty( $summary['boundary_version'] ) || (int) $summary['boundary_version'] < self::PERIOD_BOUNDARY_VERSION ) {
-			return self::aggregate_summary();
-		}
-
-		if ( ! isset( $summary['by_period'] ) ) {
-			$summary['by_period'] = self::count_by_period();
 		}
 
 		return $summary;

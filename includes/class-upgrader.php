@@ -66,35 +66,62 @@ final class Upgrader {
 	public static function run() {
 		$stored = (int) get_option( self::MIGRATION_VERSION_OPTION, 1 );
 
-		if ( $stored >= self::CURRENT_DB_VERSION ) {
+		if ( $stored < self::CURRENT_DB_VERSION ) {
+			// Ensure the events table exists before migrations query it.
+			// Migration v5 reads the table directly and aggregate_summary()
+			// counts against it; on a fresh install the table is only created
+			// after run() returns, so creating it here prevents database
+			// errors (and stray output) during activation. dbDelta is
+			// idempotent, so this is also safe on upgrade paths.
+			Event_Logger::create_table();
+
+			if ( $stored < 2 ) {
+				self::migrate_to_2();
+			}
+
+			if ( $stored < 3 ) {
+				self::migrate_to_3();
+			}
+
+			if ( $stored < 4 ) {
+				self::migrate_to_4();
+			}
+
+			if ( $stored < 5 ) {
+				self::migrate_to_5();
+			}
+
+			update_option( self::MIGRATION_VERSION_OPTION, self::CURRENT_DB_VERSION, false );
+		}
+
+		// Rebuild a cached summary produced by older aggregation boundary
+		// logic. Performed here during upgrade (not on page reads) so the
+		// refresh happens before the next admin page load.
+		self::refresh_aggregated_stats_if_needed();
+	}
+
+	/**
+	 * Refresh the aggregated summary when aggregation boundaries changed.
+	 *
+	 * Summaries written before the current PERIOD_BOUNDARY_VERSION may be
+	 * missing fields or computed with older rules. Page reads never
+	 * re-aggregate, so this runs during upgrade to refresh the cache
+	 * before the next admin page load.
+	 *
+	 * @return void
+	 */
+	public static function refresh_aggregated_stats_if_needed() {
+		$summary = get_option( Event_Logger::SUMMARY_OPTION, array() );
+
+		if ( ! is_array( $summary ) || empty( $summary['last_calculated'] ) ) {
 			return;
 		}
 
-		// Ensure the events table exists before migrations query it.
-		// Migration v5 reads the table directly and aggregate_summary()
-		// counts against it; on a fresh install the table is only created
-		// after run() returns, so creating it here prevents database
-		// errors (and stray output) during activation. dbDelta is
-		// idempotent, so this is also safe on upgrade paths.
-		Event_Logger::create_table();
+		$boundary = isset( $summary['boundary_version'] ) ? (int) $summary['boundary_version'] : 0;
 
-		if ( $stored < 2 ) {
-			self::migrate_to_2();
+		if ( $boundary < Event_Logger::PERIOD_BOUNDARY_VERSION ) {
+			Event_Logger::aggregate_summary();
 		}
-
-		if ( $stored < 3 ) {
-			self::migrate_to_3();
-		}
-
-		if ( $stored < 4 ) {
-			self::migrate_to_4();
-		}
-
-		if ( $stored < 5 ) {
-			self::migrate_to_5();
-		}
-
-		update_option( self::MIGRATION_VERSION_OPTION, self::CURRENT_DB_VERSION, false );
 	}
 
 	/**
