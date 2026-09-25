@@ -52,18 +52,7 @@ endif;
 				<td>
 				<?php
 				$ip = isset( $event['ip'] ) ? $event['ip'] : '';
-				if ( '' !== $ip && filter_var( $ip, FILTER_VALIDATE_IP ) ) {
-					/* translators: %s: IP address being looked up */
-					$abuseipdb_title = sprintf( __( 'Look up %s on AbuseIPDB', 'simple-honeypot-cf7' ), $ip );
-					printf(
-						'<a href="https://www.abuseipdb.com/check/%s" target="_blank" rel="noopener noreferrer" title="%s">%s</a>',
-						esc_attr( $ip ),
-						esc_attr( $abuseipdb_title ),
-						esc_html( $ip )
-					);
-				} else {
-					echo esc_html( $ip );
-				}
+				require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/tables/ip-link.php';
 				?>
 			</td>
 				<td><?php echo esc_html( isset( $event['user_agent'] ) ? $event['user_agent'] : '' ); ?></td>

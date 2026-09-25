@@ -191,6 +191,16 @@ final class Settings {
 				'max'     => 200,
 				'step'    => 1,
 			),
+			'ip_lookup_enabled'         => array(
+				'type'    => 'bool',
+				'default' => 1,
+				'tab'     => 'settings',
+			),
+			'ip_lookup_url'             => array(
+				'type'    => 'string',
+				'default' => 'https://www.abuseipdb.com/check/%ip%',
+				'tab'     => 'settings',
+			),
 		);
 	}
 
@@ -757,6 +767,22 @@ final class Settings {
 		$settings = self::normalize_settings( $settings );
 
 		$settings['custom_rules'] = self::sanitize_rules( $settings['custom_rules'] );
+
+		$lookup_url = trim( (string) $settings['ip_lookup_url'] );
+
+		if ( '' !== $lookup_url ) {
+			$lookup_url = esc_url_raw( $lookup_url );
+
+			if ( false === wp_http_validate_url( $lookup_url ) || false === stripos( $lookup_url, '%ip%' ) ) {
+				$lookup_url = self::setting_schema()['ip_lookup_url']['default'];
+			}
+		}
+
+		if ( ! empty( $settings['ip_lookup_enabled'] ) && '' === $lookup_url ) {
+			$lookup_url = self::setting_schema()['ip_lookup_url']['default'];
+		}
+
+		$settings['ip_lookup_url'] = $lookup_url;
 
 		return $settings;
 	}

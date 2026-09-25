@@ -171,6 +171,22 @@ $max_min_time = min( $schema['min_time_seconds']['max'], $settings['max_age_minu
 						<p class="description"><?php esc_html_e( 'Automatically removes events older than the specified number of days once daily. Set to 0 to disable.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
+				<tr>
+					<th scope="row"><label for="ip_lookup_enabled"><?php esc_html_e( 'Link IP addresses', 'simple-honeypot-cf7' ); ?></label></th>
+					<td>
+						<label>
+							<input type="checkbox" id="ip_lookup_enabled" name="ip_lookup_enabled" value="1" <?php checked( $settings['ip_lookup_enabled'], 1 ); ?> />
+							<?php esc_html_e( 'Link IP addresses in reports to an external lookup service.', 'simple-honeypot-cf7' ); ?>
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="ip_lookup_url"><?php esc_html_e( 'Lookup URL', 'simple-honeypot-cf7' ); ?></label></th>
+					<td>
+						<input type="text" class="regular-text" id="ip_lookup_url" name="ip_lookup_url" maxlength="255" value="<?php echo esc_attr( $settings['ip_lookup_url'] ); ?>" placeholder="<?php echo esc_attr( $schema['ip_lookup_url']['default'] ); ?>" />
+						<p class="description"><?php esc_html_e( 'Template for IP lookups in reports. Use %ip% as the IP address placeholder, e.g. https://www.abuseipdb.com/check/%ip%. Uncheck the box above or leave this empty to show IP addresses as plain text.', 'simple-honeypot-cf7' ); ?></p>
+					</td>
+				</tr>
 			</table>
 		</div>
 	</div>
