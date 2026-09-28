@@ -205,7 +205,22 @@ final class GitHub_Updater {
 			$sections['faq']          = isset( $readme['sections']['faq'] ) ? $this->readme_to_html( $readme['sections']['faq'] ) : '';
 		}
 
-		$sections['changelog'] = $this->readme_to_html( $release->body ?? '' );
+		$changelog = $this->readme_to_html( $release->body ?? '' );
+
+		// Prefix the changelog with the released version and date from the latest
+		// GitHub release so the section is self-identifying in the details modal.
+		if ( $version ) {
+			$published = empty( $release->published_at ) ? false : strtotime( $release->published_at );
+
+			$release_date = $published ? wp_date( 'Y/m/d', $published ) : '';
+			$heading      = $release_date
+				? sprintf( '<h4>%s (%s)</h4>', esc_html( $version ), esc_html( $release_date ) )
+				: sprintf( '<h4>%s</h4>', esc_html( $version ) );
+
+			$changelog = $heading . $changelog;
+		}
+
+		$sections['changelog'] = $changelog;
 
 		$upgrade_notice = '';
 		if ( ! empty( $release->body ) && preg_match( '/=+\s*Upgrade Notice\s*=+(.*?)(?====|$)/s', $release->body, $m ) ) {
