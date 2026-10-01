@@ -21,6 +21,17 @@ final class Rules {
 	use String_Helper;
 
 	/**
+	 * Option name prefix for the cached parse of the custom rules.
+	 *
+	 * Suffixed with the hash of the rules text to make the entry
+	 * content-addressed. Kept short because WordPress limits option
+	 * names to 191 characters.
+	 *
+	 * @var string
+	 */
+	const PARSED_CACHE_PREFIX = 'shp4cf7_parsed_rules_';
+
+	/**
 	 * Check posted data against user-defined rules.
 	 *
 	 * @param array $settings     Plugin settings.
@@ -38,7 +49,7 @@ final class Rules {
 
 		$email_values = self::get_email_values( $posted_data, $email_fields );
 
-		foreach ( self::parse( $settings['custom_rules'] ) as $rule ) {
+		foreach ( self::parsed_rules( $settings['custom_rules'] ) as $rule ) {
 			if ( self::matches( $rule, $ip, $email_values ) ) {
 				$reasons[] = Reason_Factory::create(
 					'custom_rule_' . $rule['type'],
@@ -94,6 +105,41 @@ final class Rules {
 				'label'   => self::truncate( $line ),
 			);
 		}
+
+		return $parsed;
+	}
+
+	/**
+	 * Get the parsed custom rules, reusing a cached parse when possible.
+	 *
+	 * Parsing runs detect_type() and sanitize_textarea_field() once per rule
+	 * line. The result is a pure function of the rules text, and that text
+	 * only changes when an admin saves the Rules tab, so re-parsing on every
+	 * submission repeats a large amount of work for a constant result.
+	 *
+	 * The cache key is the hash of the rules text. Editing a rule changes the
+	 * hash, so a stale entry is never looked up again rather than having to be
+	 * invalidated in place, and a cache hit is always correct because the key
+	 * covers the entire input. Superseded entries are removed by their expiry
+	 * rather than explicitly, which avoids coupling Settings to this class for
+	 * housekeeping alone.
+	 *
+	 * @param string $raw Raw rules textarea content.
+	 * @return array Parsed rules.
+	 */
+	private static function parsed_rules( $raw ) {
+		$raw    = (string) $raw;
+		$option = self::PARSED_CACHE_PREFIX . md5( $raw );
+
+		$cached = get_transient( $option );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$parsed = self::parse( $raw );
+
+		set_transient( $option, $parsed, DAY_IN_SECONDS );
 
 		return $parsed;
 	}
