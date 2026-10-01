@@ -21,6 +21,16 @@ final class Rules {
 	use String_Helper;
 
 	/**
+	 * Maximum subject length passed to wildcard matching.
+	 *
+	 * IPv6 addresses are at most 45 characters and email addresses at most
+	 * 254 (RFC 5321), so anything longer cannot be a legitimate match.
+	 *
+	 * @var int
+	 */
+	const MAX_MATCH_LENGTH = 254;
+
+	/**
 	 * Option name prefix for the cached parse of the custom rules.
 	 *
 	 * Suffixed with the hash of the rules text to make the entry
@@ -313,14 +323,19 @@ final class Rules {
 	}
 
 	/**
-	 * Compiled wildcard regex cache.
-	 *
-	 * @var string[]
-	 */
-	private static $wildcard_cache = array();
-
-	/**
 	 * Match pattern with wildcard support against target.
+	 *
+	 * Wildcards are resolved by walking the literal segments in order
+	 * instead of compiling a `.*` regex. Compiled `.*` runs can backtrack
+	 * catastrophically against long subjects — a pattern such as
+	 * `*a*a*a*a*a*` is the classic example — whereas this walk has no
+	 * backtracking engine and is O( target length * segments ) for every
+	 * input.
+	 *
+	 * Semantics are identical to the anchored regex this replaced
+	 * (`/^preg_quote( pattern, with * replaced by .* )$/i`): the first
+	 * and last literal segments are anchored to the start and end of the
+	 * target, and any segments in between must appear in order.
 	 *
 	 * @param string $pattern Pattern containing optional * wildcards.
 	 * @param string $target  String to check.
@@ -331,18 +346,61 @@ final class Rules {
 			return false;
 		}
 
+		// IPv6 addresses are at most 45 characters and email addresses at
+		// most 254 (RFC 5321), so a longer target cannot be a legitimate
+		// match. Bounding it also bounds the work per rule.
+		if ( strlen( $target ) > self::MAX_MATCH_LENGTH ) {
+			return false;
+		}
+
 		// Without a wildcard the pattern is a plain case-insensitive
-		// comparison, so return before touching the regex engine.
+		// comparison. Real blocklists are mostly exact IPs and addresses,
+		// so this is the common path and it avoids the regex engine.
 		if ( false === strpos( $pattern, '*' ) ) {
 			return 0 === strcasecmp( $pattern, $target );
 		}
 
-		if ( ! isset( self::$wildcard_cache[ $pattern ] ) ) {
-			$regex                            = preg_quote( $pattern, '/' );
-			$regex                            = str_replace( '\*', '.*', $regex );
-			self::$wildcard_cache[ $pattern ] = '/^' . $regex . '$/i';
+		$segments = explode( '*', $pattern );
+		$first    = array_shift( $segments );
+		$last     = array_pop( $segments );
+		$offset   = strlen( $first );
+
+		// The anchored first and last segments must fit inside the target.
+		// This check is what removes the degenerate a*a*a*a family: such a
+		// pattern is rejected on length before any searching happens, so
+		// there is nothing left to backtrack over.
+		if ( strlen( $target ) < $offset + strlen( $last ) ) {
+			return false;
 		}
 
-		return 1 === preg_match( self::$wildcard_cache[ $pattern ], $target );
+		if ( '' !== $first && 0 !== strncasecmp( $target, $first, $offset ) ) {
+			return false;
+		}
+
+		if ( '' !== $last && 0 !== strcasecmp( substr( $target, - strlen( $last ) ), $last ) ) {
+			return false;
+		}
+
+		// Segments in between must appear in order, each one starting where
+		// the previous ended and finishing before the trailing segment
+		// begins. Overlap is not allowed: in "*a*a" the two a's are distinct
+		// characters, so the pattern does not match "a".
+		$limit = strlen( $target ) - strlen( $last );
+
+		foreach ( $segments as $segment ) {
+			if ( '' === $segment ) {
+				continue;
+			}
+
+			$found = stripos( $target, $segment, $offset );
+
+			if ( false === $found || $found + strlen( $segment ) > $limit ) {
+				return false;
+			}
+
+			$offset = $found + strlen( $segment );
+		}
+
+		return true;
 	}
 }
