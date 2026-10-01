@@ -331,6 +331,12 @@ final class Rules {
 			return false;
 		}
 
+		// Without a wildcard the pattern is a plain case-insensitive
+		// comparison, so return before touching the regex engine.
+		if ( false === strpos( $pattern, '*' ) ) {
+			return 0 === strcasecmp( $pattern, $target );
+		}
+
 		if ( ! isset( self::$wildcard_cache[ $pattern ] ) ) {
 			$regex                            = preg_quote( $pattern, '/' );
 			$regex                            = str_replace( '\*', '.*', $regex );
