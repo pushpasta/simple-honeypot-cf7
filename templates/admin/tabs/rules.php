@@ -43,8 +43,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<textarea class="large-text code shp4cf7-rules" name="custom_rules" rows="16" placeholder="<?php echo esc_attr( "# Blocked by IT dept\n192.168.1.*\n10.0.0.0/24\n2001:db8::/32\n*@temporary-mail.com\nspammer@example.com" ); ?>"><?php echo esc_textarea( $settings['custom_rules'] ); ?></textarea>
 							<p class="description">
 								<?php
-								/* translators: * characters are literal wildcard symbols and must not be translated. */
-								esc_html_e( 'One rule per line. Lines starting with # are treated as comments. Each line is auto-detected as an IP or email based on format. Supported formats: IPv4, IPv6, wildcard *, and CIDR for IP addresses; wildcard * for email addresses. Unrecognized lines are removed on save.', 'simple-honeypot-cf7' );
+								/* translators: Asterisks are literal wildcard symbols and must not be translated. */
+								esc_html_e( 'One rule per line. Lines starting with # are treated as comments. Each line is auto-detected as an IP or email based on format. Supported formats: IPv4, IPv6, CIDR, and wildcard * for IP addresses; wildcard * for email addresses. An asterisk matches any sequence of characters, so 192.168.1.* matches every address in that range and *@example.com matches any account at that domain. Unrecognized lines are removed on save.', 'simple-honeypot-cf7' );
 								?>
 							</p>
 						</div>
