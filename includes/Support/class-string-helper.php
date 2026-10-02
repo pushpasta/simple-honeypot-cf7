@@ -1,6 +1,6 @@
 <?php
 /**
- * String utility helpers.
+ * Stateless string helpers.
  *
  * @package Simple_Honeypot_CF7
  */
@@ -12,45 +12,44 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Shared string formatting helpers for use across the plugin.
+ * Shared string helpers used across the plugin.
+ *
+ * A class rather than a trait: every helper here is stateless and static,
+ * so there is no behaviour to share with a using class. This was previously
+ * a trait, which made it possible to call a static method through the trait
+ * name, a construct PHP 8.5 deprecated. Keeping the helpers on a class makes
+ * the call site explicit and gives callers one documented truncation rule.
  */
-trait String_Helper {
+final class String_Helper {
 
 	/**
-	 * Shorten a value for logs and reports.
+	 * Truncate a string to a character length.
 	 *
-	 * @param string $value Value to truncate.
-	 * @param int    $length Maximum length. Defaults to setting or 100.
+	 * Deliberately pure: callers sanitize their own input before truncating,
+	 * so the same helper serves both log-value bounds and utf8mb4 column
+	 * bounds without hiding a sanitizer inside a utility.
+	 *
+	 * Truncating by characters rather than bytes matters for storage. A
+	 * VARCHAR(250) column holds 250 characters at up to 4 bytes each, so an
+	 * over-long INSERT under strict-mode MySQL would otherwise fail and drop
+	 * the value. The encoding is passed explicitly rather than inherited from
+	 * mb_internal_encoding().
+	 *
+	 * @param string $value  Value to truncate.
+	 * @param int    $length Maximum characters.
 	 * @return string
 	 */
-	protected function short_value( $value, $length = 0 ) {
-		if ( $length <= 0 ) {
-			$settings = \SimpleHoneypotCF7\Settings::get_settings();
-			$length   = absint( $settings['honeypot_value_max_length'] );
-		}
+	public static function truncate( $value, $length ) {
+		$value = (string) $value;
 
-		$value = sanitize_textarea_field( (string) $value );
+		if ( function_exists( 'mb_strlen' ) && function_exists( 'mb_substr' ) ) {
+			if ( mb_strlen( $value, 'UTF-8' ) <= $length ) {
+				return $value;
+			}
 
-		if ( function_exists( 'mb_substr' ) ) {
-			return mb_substr( $value, 0, $length );
+			return mb_substr( $value, 0, $length, 'UTF-8' );
 		}
 
 		return substr( $value, 0, $length );
-	}
-
-	/**
-	 * Sanitize and truncate a value to 200 characters.
-	 *
-	 * @param string $value Value to truncate.
-	 * @return string
-	 */
-	public static function truncate( $value ) {
-		$value = sanitize_textarea_field( (string) $value );
-
-		if ( function_exists( 'mb_substr' ) ) {
-			return mb_substr( $value, 0, 200 );
-		}
-
-		return substr( $value, 0, 200 );
 	}
 }

@@ -23,7 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Validates honeypot tokens, timing, field values, and user-defined rules.
  */
 final class Spam_Checker {
-	use String_Helper;
 
 	/**
 	 * Reporting service (lazy-initialized).
@@ -273,6 +272,26 @@ final class Spam_Checker {
 		}
 
 		return $fields;
+	}
+
+	/**
+	 * Shorten a value for the spam log message.
+	 *
+	 * The length comes from the honeypot settings rather than being fixed,
+	 * so an admin can widen or narrow how much of a filled honeypot value
+	 * appears in the reason text.
+	 *
+	 * @param string $value   Value to truncate.
+	 * @param int    $length Maximum characters. Defaults to the setting.
+	 * @return string
+	 */
+	private function short_value( $value, $length = 0 ) {
+		if ( $length <= 0 ) {
+			$settings = Settings::get_settings();
+			$length   = absint( $settings['honeypot_value_max_length'] );
+		}
+
+		return String_Helper::truncate( sanitize_textarea_field( (string) $value ), $length );
 	}
 
 	/**

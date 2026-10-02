@@ -30,7 +30,7 @@ final class Reason_Factory {
 			'type'    => sanitize_key( $type ),
 			'message' => wp_strip_all_tags( $message ),
 			'field'   => sanitize_key( $field ),
-			'value'   => String_Helper::truncate( $value ),
+			'value'   => String_Helper::truncate( sanitize_textarea_field( $value ), 200 ),
 		);
 	}
 }

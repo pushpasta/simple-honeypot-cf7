@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Custom rule parsing and matching engine.
  */
 final class Rules {
-	use String_Helper;
 
 	/**
 	 * Maximum subject length passed to wildcard matching.
@@ -112,7 +111,7 @@ final class Rules {
 			$parsed[] = array(
 				'type'    => $type,
 				'pattern' => $line,
-				'label'   => self::truncate( $line ),
+				'label'   => String_Helper::truncate( sanitize_textarea_field( $line ), 200 ),
 			);
 		}
 
