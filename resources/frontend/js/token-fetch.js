@@ -297,22 +297,28 @@
 						var message = ( err && err.message ) ? err.message : '',
 							wrapper, output;
 
-						if ( ! message ) {
-							return;
-						}
+					if ( ! message ) {
+						return;
+					}
 
-						form.classList.add( 'spam' );
+					form.classList.remove( 'init', 'resetting', 'submitting' );
+					form.classList.add( 'spam' );
 
-						wrapper = form.closest( '.wpcf7' );
-						output  = wrapper
-							? wrapper.querySelector( '.wpcf7-response-output' )
-							: null;
+					if ( form.wpcf7 ) {
+						form.wpcf7.status = 'spam';
+					}
 
-						if ( output ) {
-							output.textContent = message;
-							output.classList.remove( 'wpcf7-display-none' );
-							output.setAttribute( 'aria-hidden', 'false' );
-						}
+					form.setAttribute( 'data-status', 'spam' );
+
+					wrapper = form.closest( '.wpcf7' );
+					output  = wrapper
+						? wrapper.querySelector( '.wpcf7-response-output' )
+						: null;
+
+					if ( output ) {
+						output.textContent = message;
+						output.setAttribute( 'aria-hidden', 'false' );
+					}
 					}
 				);
 		},
