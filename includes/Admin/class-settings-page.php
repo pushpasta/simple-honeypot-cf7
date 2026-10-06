@@ -42,7 +42,7 @@ final class Settings_Page {
 	 */
 	public function register_menu() {
 		$hook = add_submenu_page(
-			Contact_Form_7::is_active() ? 'wpcf7' : 'options-general.php',
+			Contact_Form_7::is_active() ? 'wpcf7-dashboard' : 'options-general.php',
 			__( 'Simple Honeypot for Contact Form 7', 'simple-honeypot-cf7' ),
 			__( 'Simple Honeypot', 'simple-honeypot-cf7' ),
 			'manage_options',
