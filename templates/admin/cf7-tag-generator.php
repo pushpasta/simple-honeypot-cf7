@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php
 	$tag->print( 'field_type', array( 'select_options' => array( 'honeypot' => __( 'honeypot', 'simple-honeypot-cf7' ) ) ) );
 	$tag->print( 'field_name' );
-	$tag->print( 'class_attr' );
 	?>
 </div>
 
