@@ -117,12 +117,9 @@ final class Form_Tag {
 		$dynamic_name                       = Token::dynamic_name( $form_id, $field_index, $existing_names );
 		$this->rendered_names[ $form_id ][] = $dynamic_name;
 
-		$class = method_exists( $tag, 'get_class_option' ) ? $tag->get_class_option( 'wpcf7-form-control wpcf7-text' ) : 'wpcf7-form-control wpcf7-text';
-
 		$html = $this->template->get(
 			'frontend/honeypot-field.php',
 			array(
-				'class'        => $class,
 				'dynamic_name' => $dynamic_name,
 				'hiding_style' => Token::hiding_style( $form_id, $field_index ),
 				'tag_name'     => $tag_name,
