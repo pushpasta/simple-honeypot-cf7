@@ -9,8 +9,8 @@
  * Plugin URI:        https://pushpasta.github.io/simple-honeypot-cf7/
  * Description:       Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
  * Version:           3.2.1
- * Requires at least: 6.7
- * Requires PHP:      7.4
+ * Requires at least: 7.1
+ * Requires PHP:      8.3
  * Requires Plugins:  contact-form-7
  * Author:            pushpasta
  * Author URI:        https://github.com/pushpasta/

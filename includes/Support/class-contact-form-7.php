@@ -21,7 +21,7 @@ final class Contact_Form_7 {
 	 *
 	 * @var string
 	 */
-	const MIN_VERSION = '6.0';
+	const MIN_VERSION = '6.2';
 
 	/**
 	 * Check whether Contact Form 7 is active or loaded.

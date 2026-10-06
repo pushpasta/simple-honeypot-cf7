@@ -2,8 +2,8 @@
 Contributors: pushpasta
 Donate link: https://github.com/pushpasta/simple-honeypot-cf7/?sponsor
 Tags: contact form 7, cf7, honeypot, antispam, spam protection, bot protection, proof of work, hashcash
-Requires at least: 6.7
-Requires PHP: 7.4
+Requires at least: 7.1
+Requires PHP: 8.3
 Tested up to: 7.1
 Requires Plugins: contact-form-7
 Stable tag: 3.2.1
@@ -34,9 +34,9 @@ Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam rep
 
 = Requirements =
 
-* WordPress (6.7 or newer)
-* PHP (7.4 or newer)
-* Contact Form 7 (6.0 or newer)
+* WordPress (7.1 or newer)
+* PHP (8.3 or newer)
+* Contact Form 7 (6.2 or newer)
 
 = Manual Installation =
 
@@ -49,7 +49,7 @@ Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam rep
 
 = What are the requirements? =
 
-Simple Honeypot for Contact Form 7 requires WordPress (6.7 or newer), PHP (7.4 or newer), and Contact Form 7 (6.0 or newer).
+Simple Honeypot for Contact Form 7 requires WordPress (7.1 or newer), PHP (8.3 or newer), and Contact Form 7 (6.2 or newer).
 
 = How does the honeypot work? =
 
