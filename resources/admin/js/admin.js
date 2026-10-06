@@ -308,7 +308,7 @@
 			// Select tag generator output on focus.
 		$( document ).on(
 			'focus',
-			'.insert-box input.tag.code',
+			'.insert-box input[data-tag-part="tag"]',
 			function () {
 				$( this ).select();
 			}
