@@ -119,7 +119,7 @@
 
 				if ( daysInput ) {
 					const daysValue = $( '#' + daysInput ).val() || '90';
-					$message.html( renderConfirmMessage( message.replace( '%d', daysValue ) ) );
+					$message.html( renderConfirmMessage( message.replace( '%d', '<strong>' + daysValue + '</strong>' ) ) );
 				} else {
 					$message.html( renderConfirmMessage( message ) );
 				}
