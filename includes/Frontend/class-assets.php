@@ -45,6 +45,7 @@ final class Assets {
 	 */
 	public function register_hooks() {
 		add_action( 'wpcf7_enqueue_scripts', array( $this, 'enqueue' ) );
+		add_action( 'wpcf7_after_form', array( $this, 'add_noscript_notice' ), 10, 1 );
 	}
 
 	/**
@@ -73,5 +74,19 @@ final class Assets {
 				'prefix'  => '_' . SIMPLE_HONEYPOT_CF7_BASE,
 			)
 		);
+	}
+
+	/**
+	 * Add a noscript notice informing visitors that JavaScript is required.
+	 *
+	 * Only shown when JavaScript is disabled; the plugin requires JS to fetch
+	 * tokens for forms that use the honeypot field.
+	 *
+	 * @param \WPCF7_ContactForm|null $contact_form Contact Form 7 form instance.
+	 * @return void
+	 */
+	public function add_noscript_notice( $contact_form = null ) {
+		$notice = __( 'JavaScript is required to submit this form. Please enable JavaScript in your browser and try again.', 'simple-honeypot-cf7' );
+		echo '<noscript><p class="wpcf7-response-output wpcf7-validation-errors" role="alert">' . esc_html( $notice ) . '</p></noscript>';
 	}
 }
