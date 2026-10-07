@@ -619,6 +619,22 @@ final class Settings {
 	}
 
 	/**
+	 * Get the maximum length for stored honeypot values.
+	 *
+	 * The value is already within the configured bounds because
+	 * get_settings() normalizes against the schema. Callers should
+	 * use this rather than reading the setting directly, so every
+	 * storage path applies the same cap.
+	 *
+	 * @return int
+	 */
+	public static function get_honeypot_value_max_length() {
+		$settings = self::get_settings();
+
+		return absint( $settings['honeypot_value_max_length'] );
+	}
+
+	/**
 	 * Validate an inherit/enabled/disabled mode.
 	 *
 	 * @param string $mode Mode.
