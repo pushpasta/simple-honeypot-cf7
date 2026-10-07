@@ -1,5 +1,5 @@
 /* ==========================================================================
-	Simple Honeypot for CF7 - Admin Styles
+	Simple Honeypot for CF7 - Backend Styles
 	========================================================================== */
 
 /* Tab Navigation
@@ -280,32 +280,32 @@
 /* Postbox / Card Styling
 	========================================================================== */
 
-.shp4cf7-admin .shp4cf7-card {
+.shp4cf7-backend .shp4cf7-card {
 	margin-bottom: 24px;
 	border-radius: 4px;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 	transition: box-shadow 0.2s ease;
 }
 
-.shp4cf7-admin .shp4cf7-card:hover {
+.shp4cf7-backend .shp4cf7-card:hover {
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.shp4cf7-admin .shp4cf7-card .inside {
+.shp4cf7-backend .shp4cf7-card .inside {
 	padding: 0 16px 16px;
 }
 
-.shp4cf7-admin .shp4cf7-card .hndle {
+.shp4cf7-backend .shp4cf7-card .hndle {
 	padding: 14px 16px;
 	border-bottom: 1px solid #f0f0f1;
 	cursor: default;
 }
 
-.shp4cf7-admin .shp4cf7-card .hndle span {
+.shp4cf7-backend .shp4cf7-card .hndle span {
 	font-weight: 600;
 }
 
-.shp4cf7-admin .shp4cf7-card h2.hndle {
+.shp4cf7-backend .shp4cf7-card h2.hndle {
 	font-size: 20px;
 	margin: 0;
 	padding: 14px 16px;
@@ -315,44 +315,44 @@
 	background: #f5f5f5;
 }
 
-.shp4cf7-admin .shp4cf7-card .form-table th {
+.shp4cf7-backend .shp4cf7-card .form-table th {
 	width: 220px;
 	padding: 16px 10px 16px 0;
 	font-weight: 500;
 }
 
-.shp4cf7-admin .shp4cf7-card .form-table td {
+.shp4cf7-backend .shp4cf7-card .form-table td {
 	padding: 12px 0;
 }
 
-.shp4cf7-admin .shp4cf7-card .description {
+.shp4cf7-backend .shp4cf7-card .description {
 	margin-top: 6px;
 	color: #646970;
 }
 
-.shp4cf7-admin .shp4cf7-card .inside > .description {
+.shp4cf7-backend .shp4cf7-card .inside > .description {
 	margin: 0 0 12px;
 	padding: 0;
 }
 
-.shp4cf7-admin .shp4cf7-card details + details {
+.shp4cf7-backend .shp4cf7-card details + details {
 	margin-top: 8px;
 }
 
-.shp4cf7-admin .shp4cf7-card summary {
+.shp4cf7-backend .shp4cf7-card summary {
 	cursor: pointer;
 	font-weight: 600;
 }
 
-.shp4cf7-admin .shp4cf7-card summary::marker {
+.shp4cf7-backend .shp4cf7-card summary::marker {
 	color: #646970;
 }
 
-.shp4cf7-admin .shp4cf7-card details[open] summary {
+.shp4cf7-backend .shp4cf7-card details[open] summary {
 	margin-bottom: 8px;
 }
 
-.shp4cf7-admin .shp4cf7-card details p {
+.shp4cf7-backend .shp4cf7-card details p {
 	margin: 0;
 	color: #646970;
 }
@@ -360,29 +360,29 @@
 /* Form Section Grouping
 	========================================================================== */
 
-.shp4cf7-admin .form-table tr {
+.shp4cf7-backend .form-table tr {
 	transition: background-color 0.15s ease;
 }
 
-.shp4cf7-admin .form-table tr:hover {
+.shp4cf7-backend .form-table tr:hover {
 	background-color: #f9f9f9;
 }
 
-.shp4cf7-admin .form-table label {
+.shp4cf7-backend .form-table label {
 	cursor: pointer;
 }
 
-.shp4cf7-admin input[type="checkbox"] {
+.shp4cf7-backend input[type="checkbox"] {
 	margin-right: 6px;
 }
 
-.shp4cf7-admin .form-table input[type="number"],
-.shp4cf7-admin .form-table input[type="text"] {
+.shp4cf7-backend .form-table input[type="number"],
+.shp4cf7-backend .form-table input[type="text"] {
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 @supports (field-sizing: content) {
-	.shp4cf7-admin .form-table input[type="number"],
+	.shp4cf7-backend .form-table input[type="number"],
 	.shp4cf7-form-panel-box .form-table input[type="number"] {
 		width: auto;
 		field-sizing: content;
@@ -390,32 +390,32 @@
 	}
 }
 
-.shp4cf7-admin .form-table input[type="number"]:focus,
-.shp4cf7-admin .form-table input[type="text"]:focus {
+.shp4cf7-backend .form-table input[type="number"]:focus,
+.shp4cf7-backend .form-table input[type="text"]:focus {
 	border-color: #2271b1;
 	box-shadow: 0 0 0 1px #2271b1;
 	outline: none;
 }
 
-.shp4cf7-admin .form-table input[type="number"]:invalid,
-.shp4cf7-admin .form-table input[type="text"]:invalid {
+.shp4cf7-backend .form-table input[type="number"]:invalid,
+.shp4cf7-backend .form-table input[type="text"]:invalid {
 	border-color: #dc3232;
 	box-shadow: 0 0 0 1px #dc3232;
 }
 
-.shp4cf7-admin .shp4cf7-rules:invalid {
+.shp4cf7-backend .shp4cf7-rules:invalid {
 	border-color: #dc3232;
 	box-shadow: 0 0 0 1px #dc3232;
 }
 
-.shp4cf7-admin .shp4cf7-field-error {
+.shp4cf7-backend .shp4cf7-field-error {
 	color: #dc3232;
 	font-size: 13px;
 	margin-top: 6px;
 	display: none;
 }
 
-.shp4cf7-admin .shp4cf7-field-error.is-visible {
+.shp4cf7-backend .shp4cf7-field-error.is-visible {
 	display: block;
 }
 
@@ -424,9 +424,9 @@
 }
 
 /* Focus row highlighting - pure CSS */
-.shp4cf7-admin .form-table tr:has(input[type="text"]:focus),
-.shp4cf7-admin .form-table tr:has(input[type="number"]:focus),
-.shp4cf7-admin .form-table tr:has(textarea:focus) {
+.shp4cf7-backend .form-table tr:has(input[type="text"]:focus),
+.shp4cf7-backend .form-table tr:has(input[type="number"]:focus),
+.shp4cf7-backend .form-table tr:has(textarea:focus) {
 	background-color: #f0f6fc;
 }
 
@@ -495,10 +495,10 @@
 	border-collapse: collapse;
 }
 
-.shp4cf7-admin .shp4cf7-report-grid ~ .shp4cf7-table,
-.shp4cf7-admin .shp4cf7-report-grid ~ h2 + .shp4cf7-table,
-.shp4cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) + .shp4cf7-empty-state,
-.shp4cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) + .shp4cf7-table {
+.shp4cf7-backend .shp4cf7-report-grid ~ .shp4cf7-table,
+.shp4cf7-backend .shp4cf7-report-grid ~ h2 + .shp4cf7-table,
+.shp4cf7-backend h2:not(.nav-tab-wrapper):not(.hndle) + .shp4cf7-empty-state,
+.shp4cf7-backend h2:not(.nav-tab-wrapper):not(.hndle) + .shp4cf7-table {
 	max-width: none;
 }
 
@@ -632,7 +632,7 @@
 /* CF7 Form Panel
 	========================================================================== */
 
-.shp4cf7-admin .shp4cf7-form-panel-box {
+.shp4cf7-backend .shp4cf7-form-panel-box {
 	margin-top: 20px;
 	background: #f9f9f9;
 	border: 1px solid #e0e0e0;
@@ -640,43 +640,43 @@
 	padding: 16px;
 }
 
-.shp4cf7-admin .shp4cf7-form-panel-box .form-table th {
+.shp4cf7-backend .shp4cf7-form-panel-box .form-table th {
 	width: 200px;
 }
 
-.shp4cf7-admin .shp4cf7-form-panel-box .description {
+.shp4cf7-backend .shp4cf7-form-panel-box .description {
 	margin-top: 6px;
 }
 
 /* Button Styling
 	========================================================================== */
 
-.shp4cf7-admin .button {
+.shp4cf7-backend .button {
 	transition: all 0.2s ease;
 }
 
-.shp4cf7-admin .button:hover {
+.shp4cf7-backend .button:hover {
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.shp4cf7-admin .button-primary {
+.shp4cf7-backend .button-primary {
 	box-shadow: 0 1px 0 #2271b1;
 }
 
-.shp4cf7-admin .button-primary:hover {
+.shp4cf7-backend .button-primary:hover {
 	box-shadow: 0 1px 4px rgba(34, 113, 177, 0.3);
 }
 
-.shp4cf7-admin .button-delete {
+.shp4cf7-backend .button-delete {
 	background: #dc3232;
 	border-color: #a00;
 	color: #fff;
 	box-shadow: 0 1px 0 #a00;
 }
 
-.shp4cf7-admin .button-delete:hover,
-.shp4cf7-admin .button-delete:focus,
-.shp4cf7-admin .button-delete:active {
+.shp4cf7-backend .button-delete:hover,
+.shp4cf7-backend .button-delete:focus,
+.shp4cf7-backend .button-delete:active {
 	background: #fff;
 	color: #dc3232;
 	border-color: #dc3232;
@@ -686,7 +686,7 @@
 /* Section Headings
 	========================================================================== */
 
-.shp4cf7-admin h2 {
+.shp4cf7-backend h2 {
 	font-size: 24px;
 	font-weight: 600;
 	margin: 24px 0 12px;
@@ -697,20 +697,20 @@
 /* Notice Styling
 	========================================================================== */
 
-.shp4cf7-admin .notice {
+.shp4cf7-backend .notice {
 	margin: 16px 0;
 }
 
 /* Report Section Headings with Icon
 	========================================================================== */
 
-.shp4cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) {
+.shp4cf7-backend h2:not(.nav-tab-wrapper):not(.hndle) {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 }
 
-.shp4cf7-admin h2:not(.nav-tab-wrapper):not(.hndle) .dashicons {
+.shp4cf7-backend h2:not(.nav-tab-wrapper):not(.hndle) .dashicons {
 	color: #2271b1;
 	width: 24px;
 	height: 24px;
@@ -719,13 +719,13 @@
 /* Card Header with Icon
 	========================================================================== */
 
-.shp4cf7-admin .shp4cf7-card .hndle {
+.shp4cf7-backend .shp4cf7-card .hndle {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 }
 
-.shp4cf7-admin .shp4cf7-card .hndle .dashicons {
+.shp4cf7-backend .shp4cf7-card .hndle .dashicons {
 	color: #2271b1;
 	opacity: 0.8;
 }
@@ -764,18 +764,18 @@
 		grid-template-columns: 1fr;
 	}
 
-	.shp4cf7-admin .shp4cf7-card .form-table th {
+	.shp4cf7-backend .shp4cf7-card .form-table th {
 		width: auto;
 		display: block;
 		padding-bottom: 4px;
 	}
 
-	.shp4cf7-admin .shp4cf7-card .form-table td {
+	.shp4cf7-backend .shp4cf7-card .form-table td {
 		display: block;
 		padding-left: 0;
 	}
 
-	.shp4cf7-admin .shp4cf7-form-panel-box .form-table th {
+	.shp4cf7-backend .shp4cf7-form-panel-box .form-table th {
 		width: auto;
 	}
 
@@ -837,16 +837,16 @@
 /* Subtle Page Background Enhancement
 	========================================================================== */
 
-.shp4cf7-admin {
+.shp4cf7-backend {
 	padding-top: 12px;
 }
 
-.shp4cf7-admin > h1 {
+.shp4cf7-backend > h1 {
 	font-weight: 600;
 	margin-bottom: 4px;
 }
 
-.shp4cf7-admin > .description {
+.shp4cf7-backend > .description {
 	color: #646970;
 	margin-bottom: 16px;
 }
@@ -854,7 +854,7 @@
 /* Code / Monospace Fields
 	========================================================================== */
 
-.shp4cf7-admin code {
+.shp4cf7-backend code {
 	background: #f0f0f1;
 	padding: 2px 6px;
 	border-radius: 3px;
@@ -863,7 +863,7 @@
 /* Inline Help
 	========================================================================== */
 
-.shp4cf7-admin .form-table .description code {
+.shp4cf7-backend .form-table .description code {
 	background: transparent;
 	padding: 0;
 }

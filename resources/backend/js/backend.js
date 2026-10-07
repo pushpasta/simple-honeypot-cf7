@@ -5,7 +5,7 @@
 	let formDirty   = false;
 
 	function syncDirty() {
-		const $form = $( '.shp4cf7-admin form' );
+		const $form = $( '.shp4cf7-backend form' );
 		if ( ! $form.length ) {
 			return '';
 		}
@@ -87,12 +87,12 @@
 						'<div class="shp4cf7-dialog-inner">' +
 							'<div class="shp4cf7-confirm-header">' +
 								'<span class="dashicons dashicons-warning"></span>' +
-								'<strong>' + simpleHoneypotCf7.confirmTitle + '</strong>' +
+								'<strong>' + shp4cf7Backend.confirmTitle + '</strong>' +
 							'</div>' +
 							'<p class="shp4cf7-confirm-message"></p>' +
 							'<div class="shp4cf7-dialog-actions">' +
-								'<button type="button" class="button button-primary shp4cf7-confirm-yes" disabled>' + simpleHoneypotCf7.confirmYes + '</button>' +
-								'<button type="button" class="button shp4cf7-confirm-no">' + simpleHoneypotCf7.confirmNo + '</button>' +
+								'<button type="button" class="button button-primary shp4cf7-confirm-yes" disabled>' + shp4cf7Backend.confirmYes + '</button>' +
+								'<button type="button" class="button shp4cf7-confirm-no">' + shp4cf7Backend.confirmNo + '</button>' +
 							'</div>' +
 						'</div>' +
 					'</dialog>'
@@ -140,16 +140,16 @@
 			function startCountdown( $button, seconds ) {
 				let remaining = seconds;
 				clearInterval( countdownTimer );
-				$button.text( simpleHoneypotCf7.confirmYes + ' (' + remaining + 's)' );
+				$button.text( shp4cf7Backend.confirmYes + ' (' + remaining + 's)' );
 
 				countdownTimer = setInterval(
 					function () {
 						remaining--;
 						if ( remaining <= 0 ) {
 							clearInterval( countdownTimer );
-							$button.text( simpleHoneypotCf7.confirmYes ).prop( 'disabled', false );
+							$button.text( shp4cf7Backend.confirmYes ).prop( 'disabled', false );
 						} else {
-							$button.text( simpleHoneypotCf7.confirmYes + ' (' + remaining + 's)' );
+							$button.text( shp4cf7Backend.confirmYes + ' (' + remaining + 's)' );
 						}
 					},
 					1000
@@ -205,22 +205,22 @@
 
 							$.ajax(
 								{
-									url: simpleHoneypotCf7.restUrl,
+									url: shp4cf7Backend.restUrl,
 									method: 'POST',
 									contentType: 'application/json',
 									beforeSend: function ( xhr ) {
-										xhr.setRequestHeader( 'X-WP-Nonce', simpleHoneypotCf7.restNonce );
+										xhr.setRequestHeader( 'X-WP-Nonce', shp4cf7Backend.restNonce );
 									},
 									data: JSON.stringify( payload ),
 									dataType: 'json'
 								}
 							).done(
 								function () {
-									window.location.href = simpleHoneypotCf7.tabUrl + '&updated=' + redirectKey;
+									window.location.href = shp4cf7Backend.tabUrl + '&updated=' + redirectKey;
 								}
 							).fail(
 								function () {
-									window.location.href = simpleHoneypotCf7.tabUrl + '&updated=action-failed';
+									window.location.href = shp4cf7Backend.tabUrl + '&updated=action-failed';
 								}
 							);
 					} else if ( $pendingTrigger.attr( 'href' ) ) {
@@ -256,11 +256,11 @@
 
 					$.ajax(
 						{
-							url: simpleHoneypotCf7.restUrl,
+							url: shp4cf7Backend.restUrl,
 							method: 'POST',
 							contentType: 'application/json',
 							beforeSend: function ( xhr ) {
-								xhr.setRequestHeader( 'X-WP-Nonce', simpleHoneypotCf7.restNonce );
+								xhr.setRequestHeader( 'X-WP-Nonce', shp4cf7Backend.restNonce );
 							},
 							data: JSON.stringify( { action: 'recalculate_stats' } ),
 							dataType: 'json'
@@ -280,7 +280,7 @@
 
 			// ── Plugin settings form (Simple Honeypot admin page only) ──
 
-			const $form = $( '.shp4cf7-admin form' );
+			const $form = $( '.shp4cf7-backend form' );
 
 			if ( ! $form.length ) {
 					return;
@@ -342,7 +342,7 @@
 
 					// Guard: import with no file.
 					if ( isImport && ( ! $importFile.length || ! $importFile[ 0 ].files.length ) ) {
-						showFieldError( $importFile.next( 'label' ), simpleHoneypotCf7.selectFile );
+						showFieldError( $importFile.next( 'label' ), shp4cf7Backend.selectFile );
 						valid = false;
 					}
 
@@ -361,10 +361,10 @@
 							const label = $input.closest( 'tr' ).find( 'label' ).text();
 
 							if ( min !== undefined && num < parseInt( min, 10 ) ) {
-								showFieldError( $input, label + ': ' + simpleHoneypotCf7.valueTooLow.replace( '%s', min ) );
+								showFieldError( $input, label + ': ' + shp4cf7Backend.valueTooLow.replace( '%s', min ) );
 								valid = false;
 							} else if ( max !== undefined && num > parseInt( max, 10 ) ) {
-								showFieldError( $input, label + ': ' + simpleHoneypotCf7.valueTooHigh.replace( '%s', max ) );
+								showFieldError( $input, label + ': ' + shp4cf7Backend.valueTooHigh.replace( '%s', max ) );
 								valid = false;
 							}
 						}
@@ -375,7 +375,7 @@
 					if ( $rules.length && ! $rules.prop( 'disabled' ) ) {
 						const errors = validateRules( $rules.val() );
 						if ( errors.length ) {
-							showFieldError( $rules, simpleHoneypotCf7.invalidRules.replace( '%s', errors.join( ', ' ) ) );
+							showFieldError( $rules, shp4cf7Backend.invalidRules.replace( '%s', errors.join( ', ' ) ) );
 							valid = false;
 						}
 					}
@@ -523,7 +523,7 @@
 		'beforeunload',
 		function () {
 			if ( formDirty ) {
-				return simpleHoneypotCf7.unsavedChanges;
+				return shp4cf7Backend.unsavedChanges;
 			}
 		}
 	);

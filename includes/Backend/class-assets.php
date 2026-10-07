@@ -48,7 +48,7 @@ final class Assets {
 		}
 
 		wp_enqueue_style(
-			'simple-honeypot-cf7-admin',
+			'simple-honeypot-cf7-backend',
 			self::get_asset_url( 'resources/backend/css/backend.css' ),
 			array(),
 			SIMPLE_HONEYPOT_CF7_VERSION,
@@ -56,7 +56,7 @@ final class Assets {
 		);
 
 		wp_enqueue_script(
-			'simple-honeypot-cf7-admin',
+			'simple-honeypot-cf7-backend',
 			self::get_asset_url( 'resources/backend/js/backend.js' ),
 			array( 'jquery' ),
 			SIMPLE_HONEYPOT_CF7_VERSION,
@@ -64,8 +64,8 @@ final class Assets {
 		);
 
 		wp_localize_script(
-			'simple-honeypot-cf7-admin',
-			'simpleHoneypotCf7',
+			'simple-honeypot-cf7-backend',
+			'shp4cf7Backend',
 			array(
 				'unsavedChanges' => __( 'You have unsaved changes.', 'simple-honeypot-cf7' ),
 				'confirmTitle'   => __( 'Are you sure?', 'simple-honeypot-cf7' ),

@@ -59,7 +59,7 @@ final class Assets {
 		}
 
 		wp_enqueue_script(
-			'simple-honeypot-cf7-token-fetch',
+			'simple-honeypot-cf7-frontend',
 			self::get_asset_url( 'resources/frontend/js/frontend.js' ),
 			array(),
 			SIMPLE_HONEYPOT_CF7_VERSION,
@@ -67,7 +67,7 @@ final class Assets {
 		);
 
 		wp_localize_script(
-			'simple-honeypot-cf7-token-fetch',
+			'simple-honeypot-cf7-frontend',
 			'shp4cf7',
 			array(
 				'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
