@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Records blocked submissions for the admin report screen.
+ * Records blocked submissions for the backend report screen.
  */
 final class Reporter {
 

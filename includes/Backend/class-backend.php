@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Registers all admin-facing hooks.
+ * Registers all backend-facing hooks.
  */
 final class Backend {
 

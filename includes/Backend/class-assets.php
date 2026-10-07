@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Enqueues styles and scripts on plugin admin screens.
+ * Enqueues styles and scripts on plugin backend screens.
  */
 final class Assets {
 

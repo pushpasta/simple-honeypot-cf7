@@ -96,7 +96,7 @@ final class Settings {
 	 * placement. Integer settings may define 'min', 'max', and 'step';
 	 * out-of-range or off-step integer values fall back to the 'default'
 	 * (recommended) value. All consumers — saves, imports, reads, upgrades,
-	 * and the admin UI — derive their behavior from this map.
+	 * and the backend UI — derive their behavior from this map.
 	 *
 	 * @return array<string, array{type: string, default: mixed, tab: string, min?: int, max?: int, step?: int}>
 	 */
@@ -607,7 +607,7 @@ final class Settings {
 	 *
 	 * The minimum time can never exceed the token lifetime, or every
 	 * submission is flagged as too fast once the token expires. Used for
-	 * admin input bounds and per-form clamping.
+	 * backend input bounds and per-form clamping.
 	 *
 	 * @return int
 	 */

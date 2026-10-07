@@ -278,7 +278,7 @@
 				}
 			);
 
-			// ── Plugin settings form (Simple Honeypot admin page only) ──
+			// ── Plugin settings form (Simple Honeypot backend page only) ──
 
 			const $form = $( '.shp4cf7-backend form' );
 
