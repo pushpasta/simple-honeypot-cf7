@@ -70,8 +70,9 @@ final class Assets {
 			'simple-honeypot-cf7-token-fetch',
 			'shp4cf7',
 			array(
-				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'prefix'  => '_' . SIMPLE_HONEYPOT_CF7_BASE,
+				'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
+				'failMessage' => __( 'Unable to submit this form. Please try again.', 'simple-honeypot-cf7' ),
+				'prefix'      => '_' . SIMPLE_HONEYPOT_CF7_BASE,
 			)
 		);
 	}

@@ -292,14 +292,12 @@
 						form.requestSubmit( submitter );
 					}
 				)
-				.catch(
+.catch(
 					function ( err ) {
 						var message = ( err && err.message ) ? err.message : '',
 							wrapper, output;
 
-						if ( ! message ) {
-							return;
-						}
+						message = message || shp4cf7.failMessage;
 
 						form.classList.remove( 'init', 'resetting', 'submitting' );
 						form.classList.add( 'spam' );
@@ -312,8 +310,8 @@
 
 						wrapper = form.closest( '.wpcf7' );
 						output  = wrapper
-						? wrapper.querySelector( '.wpcf7-response-output' )
-						: null;
+							? wrapper.querySelector( '.wpcf7-response-output' )
+							: null;
 
 						if ( output ) {
 							output.textContent = message;
