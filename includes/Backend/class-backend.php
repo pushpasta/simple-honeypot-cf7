@@ -1,11 +1,11 @@
 <?php
 /**
- * Admin hook coordinator.
+ * Backend hook coordinator.
  *
  * @package Simple_Honeypot_CF7
  */
 
-namespace SimpleHoneypotCF7\Admin;
+namespace SimpleHoneypotCF7\Backend;
 
 use SimpleHoneypotCF7\Reporting\Event_Logger;
 use SimpleHoneypotCF7\Settings;
@@ -19,10 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Registers all admin-facing hooks.
  */
-final class Admin {
+final class Backend {
 
 	/**
-	 * Register WordPress admin hooks.
+	 * Register WordPress backend hooks.
 	 *
 	 * @return void
 	 */

@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		<?php else : ?>
 			<?php
-			require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/tables/forms-overview-table.php';
+			require SIMPLE_HONEYPOT_CF7_PATH . 'templates/backend/tables/forms-overview-table.php';
 			?>
 		<?php endif; ?>
 	</div>

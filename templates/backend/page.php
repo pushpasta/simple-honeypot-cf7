@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin page shell.
+ * Backend page shell.
  *
  * @package Simple_Honeypot_CF7
  */
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php if ( ! empty( $notice ) ) : ?>
 		<?php
 		$notice_type = isset( $notice_type ) ? $notice_type : 'success';
-		\SimpleHoneypotCF7\Admin\Notices::render( $notice, $notice_type );
+		\SimpleHoneypotCF7\Backend\Notices::render( $notice, $notice_type );
 		?>
 	<?php endif; ?>
 

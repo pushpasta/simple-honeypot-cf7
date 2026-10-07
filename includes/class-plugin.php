@@ -7,7 +7,7 @@
 
 namespace SimpleHoneypotCF7;
 
-use SimpleHoneypotCF7\Admin\Admin;
+use SimpleHoneypotCF7\Backend\Backend;
 use SimpleHoneypotCF7\Frontend\Ajax_Token;
 use SimpleHoneypotCF7\Frontend\Assets as Frontend_Assets;
 use SimpleHoneypotCF7\Frontend\Form_Tag;
@@ -54,10 +54,10 @@ final class Plugin {
 	private function register_hooks() {
 		load_plugin_textdomain( 'simple-honeypot-cf7', false, dirname( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME ) . '/languages' );
 
-		$admin   = new Admin();
+		$backend = new Backend();
 		$updater = new GitHub_Updater();
 
-		$admin->register_hooks();
+		$backend->register_hooks();
 		$updater->register_hooks();
 		Cron_Handler::register();
 

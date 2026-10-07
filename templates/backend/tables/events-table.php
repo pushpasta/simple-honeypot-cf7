@@ -52,7 +52,7 @@ endif;
 				<td>
 				<?php
 				$ip = isset( $event['ip'] ) ? $event['ip'] : '';
-				require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/tables/ip-link.php';
+				require SIMPLE_HONEYPOT_CF7_PATH . 'templates/backend/tables/ip-link.php';
 				?>
 			</td>
 				<td><?php echo esc_html( isset( $event['user_agent'] ) ? $event['user_agent'] : '' ); ?></td>

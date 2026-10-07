@@ -5,7 +5,7 @@
  * @package Simple_Honeypot_CF7
  */
 
-namespace SimpleHoneypotCF7\Admin;
+namespace SimpleHoneypotCF7\Backend;
 
 use SimpleHoneypotCF7\Settings;
 use SimpleHoneypotCF7\Support\Template;
@@ -58,7 +58,7 @@ final class Form_Panel {
 		$form_id = method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
 
 		$this->template->render(
-			'admin/cf7-form-panel.php',
+			'backend/cf7-form-panel.php',
 			array(
 				'form_id'       => $form_id,
 				'form_settings' => Settings::get_form_settings( $form_id ),

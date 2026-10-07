@@ -5,7 +5,7 @@
  * @package Simple_Honeypot_CF7
  */
 
-namespace SimpleHoneypotCF7\Admin;
+namespace SimpleHoneypotCF7\Backend;
 
 use SimpleHoneypotCF7\Support\Template;
 
@@ -57,7 +57,7 @@ final class Tag_Generator {
 		$args = wp_parse_args( $args, array( 'content' => 'honeypot' ) );
 
 		$this->template->render(
-			'admin/cf7-tag-generator.php',
+			'backend/cf7-tag-generator.php',
 			array(
 				'args'   => $args,
 				'modern' => true,

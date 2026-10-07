@@ -1,11 +1,11 @@
 <?php
 /**
- * Admin assets.
+ * Backend assets.
  *
  * @package Simple_Honeypot_CF7
  */
 
-namespace SimpleHoneypotCF7\Admin;
+namespace SimpleHoneypotCF7\Backend;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -37,7 +37,7 @@ final class Assets {
 	}
 
 	/**
-	 * Enqueue admin assets when needed.
+	 * Enqueue backend assets when needed.
 	 *
 	 * @param string $hook Current admin screen hook.
 	 * @return void

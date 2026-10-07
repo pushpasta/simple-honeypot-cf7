@@ -1,11 +1,11 @@
 <?php
 /**
- * Admin settings page.
+ * Backend settings page.
  *
  * @package Simple_Honeypot_CF7
  */
 
-namespace SimpleHoneypotCF7\Admin;
+namespace SimpleHoneypotCF7\Backend;
 
 use SimpleHoneypotCF7\Reporting\Event_Logger;
 use SimpleHoneypotCF7\Settings;
@@ -90,14 +90,14 @@ final class Settings_Page {
 		$notice_info = $this->update_notice();
 
 		$this->template->render(
-			'admin/page.php',
+			'backend/page.php',
 			array(
 				'current_tab'  => $current_tab,
 				'notice'       => $notice_info['message'],
 				'notice_type'  => $notice_info['type'],
 				'tabs'         => $tabs,
 				'tab_context'  => $this->tab_context( $current_tab ),
-				'tab_template' => 'admin/tabs/' . $current_tab . '.php',
+				'tab_template' => 'backend/tabs/' . $current_tab . '.php',
 			)
 		);
 	}

@@ -5,7 +5,7 @@
  * @package Simple_Honeypot_CF7
  */
 
-namespace SimpleHoneypotCF7\Admin;
+namespace SimpleHoneypotCF7\Backend;
 
 use SimpleHoneypotCF7\Reporting\Event_Logger;
 use SimpleHoneypotCF7\Settings;

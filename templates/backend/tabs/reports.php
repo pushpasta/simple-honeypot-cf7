@@ -132,7 +132,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<dt>
 								<?php
 								$ip = (string) $ip;
-								require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/tables/ip-link.php';
+								require SIMPLE_HONEYPOT_CF7_PATH . 'templates/backend/tables/ip-link.php';
 								?>
 							</dt>
 							<dd><?php echo esc_html( number_format_i18n( absint( $count ) ) ); ?></dd>
@@ -184,8 +184,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="inside">
 		<?php
 		$events = $stats['events'];
-		require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/tables/events-table.php';
-		require SIMPLE_HONEYPOT_CF7_PATH . 'templates/admin/tables/events-pagination.php';
+		require SIMPLE_HONEYPOT_CF7_PATH . 'templates/backend/tables/events-table.php';
+		require SIMPLE_HONEYPOT_CF7_PATH . 'templates/backend/tables/events-pagination.php';
 		?>
 	</div>
 </div>
