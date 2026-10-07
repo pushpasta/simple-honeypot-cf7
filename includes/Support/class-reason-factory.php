@@ -19,18 +19,19 @@ final class Reason_Factory {
 	/**
 	 * Build a reason entry.
 	 *
-	 * @param string $type    Reason type.
-	 * @param string $message Human-readable message.
-	 * @param string $field   Field name (optional).
-	 * @param string $value   Matched or submitted value (optional).
+	 * @param string $type       Reason type.
+	 * @param string $message    Human-readable message.
+	 * @param string $field      Field name (optional).
+	 * @param string $value      Matched or submitted value (optional).
+	 * @param int    $max_length Maximum characters to store (optional).
 	 * @return array{type: string, message: string, field: string, value: string}
 	 */
-	public static function create( $type, $message, $field = '', $value = '' ) {
+	public static function create( $type, $message, $field = '', $value = '', $max_length = 200 ) {
 		return array(
 			'type'    => sanitize_key( $type ),
 			'message' => wp_strip_all_tags( $message ),
 			'field'   => sanitize_key( $field ),
-			'value'   => String_Helper::truncate( sanitize_textarea_field( $value ), 200 ),
+			'value'   => String_Helper::truncate( sanitize_textarea_field( $value ), $max_length ),
 		);
 	}
 }
