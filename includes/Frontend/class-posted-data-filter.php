@@ -44,32 +44,34 @@ final class Posted_Data_Filter {
 		$form_id      = $contact_form && method_exists( $contact_form, 'id' ) ? (int) $contact_form->id() : 0;
 		$prefix       = Token::form_prefix( $form_id );
 
-		// Build the list of valid field names from form tags.
-		$valid_names = $this->get_valid_field_names( $contact_form );
+		$honeypot_tags = array();
+		$valid_names   = $this->get_valid_field_names( $contact_form );
+		$prev_names    = array();
+		$token_data    = array();
 
 		// Add dynamic honeypot field names so they are not removed.
 		$tokens = Token::posted_tokens( $form_id );
 
 		if ( ! empty( $tokens ) ) {
 			$token_data = Token::validate_form_token( $tokens[0], $form_id );
+		}
 
-			if ( ! empty( $token_data['dynamic_names'] ) ) {
-				foreach ( $token_data['dynamic_names'] as $dynamic_name ) {
-					$valid_names[] = sanitize_key( $dynamic_name );
-				}
+		if ( ! empty( $token_data['dynamic_names'] ) ) {
+			$honeypot_tags = $this->get_honeypot_tags( $contact_form );
 
-				/*
-				 * Handle tick boundary: also add previous tick's names
-				 * so they are not stripped from posted data.
-				 */
-				$current_tick  = (int) floor( time() / Token::TICK_SECONDS );
-				$prev_tick     = $current_tick - 1;
-				$honeypot_tags = $this->get_honeypot_tags( $contact_form );
-				$prev_names    = Token::generate_names_for_tick( $form_id, count( $honeypot_tags ), $prev_tick, $valid_names );
+			foreach ( $token_data['dynamic_names'] as $dynamic_name ) {
+				$valid_names[] = sanitize_key( $dynamic_name );
+			}
 
-				foreach ( $prev_names as $prev_name ) {
-					$valid_names[] = sanitize_key( $prev_name );
-				}
+			/*
+			 * Handle tick boundary: also add previous tick's names
+			 * so they are not stripped from posted data.
+			 */
+			$current_tick = (int) floor( time() / Token::TICK_SECONDS );
+			$prev_names   = Token::generate_names_for_tick( $form_id, count( $honeypot_tags ), $current_tick - 1, $valid_names );
+
+			foreach ( $prev_names as $prev_name ) {
+				$valid_names[] = sanitize_key( $prev_name );
 			}
 		}
 
@@ -91,40 +93,30 @@ final class Posted_Data_Filter {
 			}
 		}
 
-		$tokens = Token::posted_tokens( $form_id );
+		if ( ! empty( $token_data['dynamic_names'] ) ) {
+			foreach ( $honeypot_tags as $index => $tag ) {
+				$dynamic_name = isset( $token_data['dynamic_names'][ $index ] ) ? $token_data['dynamic_names'][ $index ] : '';
 
-		if ( ! empty( $tokens ) ) {
-			$token_data = Token::validate_form_token( $tokens[0], $form_id );
+				if ( '' === $dynamic_name && isset( $prev_names[ $index ] ) ) {
+					$dynamic_name = $prev_names[ $index ];
+				}
 
-			if ( ! empty( $token_data['dynamic_names'] ) ) {
-				$honeypot_tags = $this->get_honeypot_tags( $contact_form );
-				$current_tick  = (int) floor( time() / Token::TICK_SECONDS );
-				$prev_names    = Token::generate_names_for_tick( $form_id, count( $honeypot_tags ), $current_tick - 1, $valid_names );
+				if ( '' === $dynamic_name ) {
+					continue;
+				}
 
-				foreach ( $honeypot_tags as $index => $tag ) {
-					$dynamic_name = isset( $token_data['dynamic_names'][ $index ] ) ? $token_data['dynamic_names'][ $index ] : '';
+				$dynamic_name = sanitize_key( $dynamic_name );
 
-					if ( '' === $dynamic_name && isset( $prev_names[ $index ] ) ) {
-						$dynamic_name = $prev_names[ $index ];
-					}
+				$value = isset( $posted_data[ $dynamic_name ] ) ? sanitize_textarea_field( wp_unslash( $posted_data[ $dynamic_name ] ) ) : '';
 
-					if ( '' === $dynamic_name ) {
-						continue;
-					}
+				if ( mb_strlen( $value ) > 200 ) {
+					$value = mb_substr( $value, 0, 200 );
+				}
 
-					$dynamic_name = sanitize_key( $dynamic_name );
+				unset( $posted_data[ $dynamic_name ] );
 
-					$value = isset( $posted_data[ $dynamic_name ] ) ? sanitize_textarea_field( wp_unslash( $posted_data[ $dynamic_name ] ) ) : '';
-
-					if ( mb_strlen( $value ) > 200 ) {
-						$value = mb_substr( $value, 0, 200 );
-					}
-
-					unset( $posted_data[ $dynamic_name ] );
-
-					if ( ! empty( $settings['store_honeypot_value'] ) && '' !== $value ) {
-						$posted_data[ 'honeypot_' . sanitize_key( $tag->name ) ] = $value;
-					}
+				if ( ! empty( $settings['store_honeypot_value'] ) && '' !== $value ) {
+					$posted_data[ 'honeypot_' . sanitize_key( $tag->name ) ] = $value;
 				}
 			}
 		}
