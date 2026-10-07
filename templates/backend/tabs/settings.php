@@ -123,12 +123,13 @@ $max_min_time = min( $schema['min_time_seconds']['max'], $settings['max_age_minu
 		<div class="inside">
 			<table class="form-table" role="presentation">
 				<tr>
-					<th scope="row"><label for="store_honeypot_value"><?php esc_html_e( 'Store honeypot value', 'simple-honeypot-cf7' ); ?></label></th>
+					<th scope="row"><label for="store_honeypot_value"><?php esc_html_e( 'Retain honeypot value', 'simple-honeypot-cf7' ); ?></label></th>
 					<td>
 						<label>
 							<input type="checkbox" id="store_honeypot_value" name="store_honeypot_value" value="1" <?php checked( $settings['store_honeypot_value'], 1 ); ?> />
 							<?php esc_html_e( 'Keep filled honeypot values in posted data for record plugins such as Flamingo.', 'simple-honeypot-cf7' ); ?>
 						</label>
+						<p class="description"><?php esc_html_e( 'This setting only controls the value passed to Contact Form 7 and record plugins. Blocked submissions are always logged in the event log, regardless of this setting.', 'simple-honeypot-cf7' ); ?></p>
 					</td>
 				</tr>
 				<tr>
