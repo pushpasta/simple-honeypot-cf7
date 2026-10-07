@@ -9,6 +9,7 @@ namespace SimpleHoneypotCF7\Frontend;
 
 use SimpleHoneypotCF7\Settings;
 use SimpleHoneypotCF7\Support\Contact_Form_7;
+use SimpleHoneypotCF7\Support\String_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -108,10 +109,7 @@ final class Posted_Data_Filter {
 				$dynamic_name = sanitize_key( $dynamic_name );
 
 				$value = isset( $posted_data[ $dynamic_name ] ) ? sanitize_textarea_field( wp_unslash( $posted_data[ $dynamic_name ] ) ) : '';
-
-				if ( mb_strlen( $value ) > 200 ) {
-					$value = mb_substr( $value, 0, 200 );
-				}
+				$value = String_Helper::truncate( $value, Settings::get_honeypot_value_max_length() );
 
 				unset( $posted_data[ $dynamic_name ] );
 
