@@ -19,7 +19,7 @@ final class Assets {
 	/**
 	 * Return the URL for an asset, using the minified version when available.
 	 *
-	 * @param string $relative_path Path relative to the plugin root, e.g. 'resources/admin/css/backend.css'.
+	 * @param string $relative_path Path relative to the plugin root, e.g. 'resources/backend/css/backend.css'.
 	 * @return string The URL to the asset.
 	 */
 	private static function get_asset_url( $relative_path ) {
@@ -49,7 +49,7 @@ final class Assets {
 
 		wp_enqueue_style(
 			'simple-honeypot-cf7-admin',
-			self::get_asset_url( 'resources/admin/css/backend.css' ),
+			self::get_asset_url( 'resources/backend/css/backend.css' ),
 			array(),
 			SIMPLE_HONEYPOT_CF7_VERSION,
 			'all'
@@ -57,7 +57,7 @@ final class Assets {
 
 		wp_enqueue_script(
 			'simple-honeypot-cf7-admin',
-			self::get_asset_url( 'resources/admin/js/backend.js' ),
+			self::get_asset_url( 'resources/backend/js/backend.js' ),
 			array( 'jquery' ),
 			SIMPLE_HONEYPOT_CF7_VERSION,
 			true

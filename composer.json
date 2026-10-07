@@ -17,11 +17,11 @@
         "make-pot": "wp i18n make-pot . languages/simple-honeypot-cf7.pot --headers='{\"Report-Msgid-Bugs-To\":\"https://github.com/pushpasta/simple-honeypot-cf7/issues\"}'",
         "locales-yml": "php .github/scripts/generate-locale-options.php",
         "minify:css": [
-            "php .github/scripts/minify-assets.php resources/admin/css/backend.css resources/admin/css/backend.min.css",
+            "php .github/scripts/minify-assets.php resources/backend/css/backend.css resources/backend/css/backend.min.css",
             "php .github/scripts/minify-assets.php resources/frontend/css/frontend.css resources/frontend/css/frontend.min.css"
         ],
         "minify:js": [
-            "php .github/scripts/minify-assets.php resources/admin/js/backend.js resources/admin/js/backend.min.js",
+            "php .github/scripts/minify-assets.php resources/backend/js/backend.js resources/backend/js/backend.min.js",
             "php .github/scripts/minify-assets.php resources/frontend/js/frontend.js resources/frontend/js/frontend.min.js"
         ],
         "minify": [
