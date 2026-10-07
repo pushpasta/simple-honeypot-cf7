@@ -114,8 +114,8 @@
 				const $yes     = $dialog.find( '.shp4cf7-confirm-yes' );
 				const $message = $dialog.find( '.shp4cf7-confirm-message' );
 
-				const message     = $trigger.data( 'confirm' );
-				const daysInput   = $trigger.data( 'confirm-days' );
+				const message   = $trigger.data( 'confirm' );
+				const daysInput = $trigger.data( 'confirm-days' );
 
 				if ( daysInput ) {
 					const daysValue = $( '#' + daysInput ).val() || '90';
@@ -306,15 +306,15 @@
 			}
 
 			// Select tag generator output on focus.
-		$( document ).on(
-			'focus',
-			'.insert-box input[data-tag-part="tag"]',
-			function () {
-				$( this ).select();
-			}
-		);
+			$( document ).on(
+				'focus',
+				'.insert-box input[data-tag-part="tag"]',
+				function () {
+					$( this ).select();
+				}
+			);
 
-		initialData = syncDirty();
+			initialData = syncDirty();
 
 			$form.on(
 				'change input',
@@ -406,13 +406,13 @@
 			// Apply initial disabled state on page load.
 			$form.find( '.shp4cf7-custom-rules-toggle input:not(:checked)' ).trigger( 'change' );
 
-	}
+		}
 	);
 
 	// Settings tab: live outputs and badges for range settings. The
 	// minimum-time max follows the token lifetime so it can never exceed
 	// the current lifetime.
-	const honeypotRange = document.getElementById( 'honeypot_value_max_length' );
+	const honeypotRange  = document.getElementById( 'honeypot_value_max_length' );
 	const honeypotOutput = document.getElementById( 'honeypot-value-max-length-value' );
 
 	if ( honeypotRange && honeypotOutput ) {
@@ -424,12 +424,12 @@
 		);
 	}
 
-	const tokenRange = document.getElementById( 'max_age_minutes' );
-	const tokenOutput = document.getElementById( 'max-age-minutes-value' );
-	const tokenLabel = document.getElementById( 'max-age-minutes-label' );
+	const tokenRange   = document.getElementById( 'max_age_minutes' );
+	const tokenOutput  = document.getElementById( 'max-age-minutes-value' );
+	const tokenLabel   = document.getElementById( 'max-age-minutes-label' );
 	const minTimeInput = document.getElementById( 'min_time_seconds' );
-	const minTimeMax = minTimeInput ? parseInt( minTimeInput.getAttribute( 'data-max-min-time' ), 10 ) : 3600;
-	const tokenLabels = [
+	const minTimeMax   = minTimeInput ? parseInt( minTimeInput.getAttribute( 'data-max-min-time' ), 10 ) : 3600;
+	const tokenLabels  = [
 		{ min: 10, max: 10, text: 'Strict', css: 'inactive' },
 		{ min: 15, max: 20, text: 'Recommended', css: 'active' },
 		{ min: 25, max: 35, text: 'Moderate', css: 'info' },
@@ -445,10 +445,10 @@
 			minTimeInput.setAttribute( 'max', Math.min( minTimeMax, val * 60 ) );
 		}
 
-		for ( let i = 0; i < tokenLabels.length; i++ ) {
+		for ( let i = 0, labelCount = tokenLabels.length; i < labelCount; i++ ) {
 			if ( val >= tokenLabels[ i ].min && val <= tokenLabels[ i ].max ) {
 				tokenLabel.textContent = tokenLabels[ i ].text;
-				tokenLabel.className = 'shp4cf7-badge shp4cf7-badge--' + tokenLabels[ i ].css;
+				tokenLabel.className   = 'shp4cf7-badge shp4cf7-badge--' + tokenLabels[ i ].css;
 				break;
 			}
 		}
@@ -459,9 +459,9 @@
 		updateToken.call( tokenRange );
 	}
 
-	const rateLimitRange = document.getElementById( 'token_rate_limit' );
+	const rateLimitRange  = document.getElementById( 'token_rate_limit' );
 	const rateLimitOutput = document.getElementById( 'token-rate-limit-value' );
-	const rateLimitLabel = document.getElementById( 'token-rate-limit-label' );
+	const rateLimitLabel  = document.getElementById( 'token-rate-limit-label' );
 	const rateLimitLabels = [
 		{ min: 0, max: 0, text: 'Disabled', css: 'inactive' },
 		{ min: 5, max: 5, text: 'Strict', css: 'inherited' },
@@ -475,10 +475,10 @@
 
 		rateLimitOutput.textContent = val;
 
-		for ( let i = 0; i < rateLimitLabels.length; i++ ) {
+		for ( let i = 0, labelCount = rateLimitLabels.length; i < labelCount; i++ ) {
 			if ( val >= rateLimitLabels[ i ].min && val <= rateLimitLabels[ i ].max ) {
 				rateLimitLabel.textContent = rateLimitLabels[ i ].text;
-				rateLimitLabel.className = 'shp4cf7-badge shp4cf7-badge--' + rateLimitLabels[ i ].css;
+				rateLimitLabel.className   = 'shp4cf7-badge shp4cf7-badge--' + rateLimitLabels[ i ].css;
 				break;
 			}
 		}
@@ -489,9 +489,9 @@
 		updateRateLimit.call( rateLimitRange );
 	}
 
-	const powRange = document.getElementById( 'pow_complexity' );
+	const powRange  = document.getElementById( 'pow_complexity' );
 	const powOutput = document.getElementById( 'pow-complexity-value' );
-	const powLabel = document.getElementById( 'pow-complexity-label' );
+	const powLabel  = document.getElementById( 'pow-complexity-label' );
 	const powLabels = [
 		{ min: 5, max: 5, text: 'Light', css: 'inactive' },
 		{ min: 10, max: 10, text: 'Moderate', css: 'info' },
@@ -505,10 +505,10 @@
 
 		powOutput.textContent = val;
 
-		for ( let i = 0; i < powLabels.length; i++ ) {
+		for ( let i = 0, labelCount = powLabels.length; i < labelCount; i++ ) {
 			if ( val >= powLabels[ i ].min && val <= powLabels[ i ].max ) {
 				powLabel.textContent = powLabels[ i ].text;
-				powLabel.className = 'shp4cf7-badge shp4cf7-badge--' + powLabels[ i ].css;
+				powLabel.className   = 'shp4cf7-badge shp4cf7-badge--' + powLabels[ i ].css;
 				break;
 			}
 		}

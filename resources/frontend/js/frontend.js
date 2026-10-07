@@ -292,33 +292,33 @@
 						form.requestSubmit( submitter );
 					}
 				)
-.catch(
-					function ( err ) {
-						var message = ( err && err.message ) ? err.message : '',
-							wrapper, output;
+			.catch(
+				function ( err ) {
+					var message = ( err && err.message ) ? err.message : '',
+						wrapper, output;
 
-						message = message || shp4cf7.failMessage;
+					message = message || shp4cf7.failMessage;
 
-						form.classList.remove( 'init', 'resetting', 'submitting' );
-						form.classList.add( 'spam' );
+					form.classList.remove( 'init', 'resetting', 'submitting' );
+					form.classList.add( 'spam' );
 
-						if ( form.wpcf7 ) {
-							form.wpcf7.status = 'spam';
-						}
-
-						form.setAttribute( 'data-status', 'spam' );
-
-						wrapper = form.closest( '.wpcf7' );
-						output  = wrapper
-							? wrapper.querySelector( '.wpcf7-response-output' )
-							: null;
-
-						if ( output ) {
-							output.textContent = message;
-							output.setAttribute( 'aria-hidden', 'false' );
-						}
+					if ( form.wpcf7 ) {
+						form.wpcf7.status = 'spam';
 					}
-				);
+
+					form.setAttribute( 'data-status', 'spam' );
+
+					wrapper = form.closest( '.wpcf7' );
+					output  = wrapper
+						? wrapper.querySelector( '.wpcf7-response-output' )
+						: null;
+
+					if ( output ) {
+						output.textContent = message;
+						output.setAttribute( 'aria-hidden', 'false' );
+					}
+				}
+			);
 		},
 		true
 	);
