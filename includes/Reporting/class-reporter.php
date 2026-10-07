@@ -40,13 +40,20 @@ final class Reporter {
 			update_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', $form_titles, false );
 		}
 
-		Event_Logger::insert(
+		$event_id = Event_Logger::insert(
 			$form_id,
 			$form_title,
 			Request::remote_ip(),
 			Request::user_agent(),
 			array_map( array( $this, 'sanitize_reason' ), $reasons )
 		);
+
+		if ( false === $event_id && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			global $wpdb;
+
+			// phpcs:ignore WordPress.PHP.error_log_error_log,WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Developer-facing diagnostics for failed event writes.
+			error_log( sprintf( 'Simple Honeypot CF7: failed to record spam event — %s', $wpdb->last_error ) );
+		}
 	}
 
 	/**
