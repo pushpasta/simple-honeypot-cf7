@@ -21,7 +21,7 @@ final class Assets {
 	/**
 	 * Return the URL for an asset, using the minified version when available.
 	 *
-	 * @param string $relative_path Path relative to the plugin root, e.g. 'resources/frontend/js/token-fetch.js'.
+	 * @param string $relative_path Path relative to the plugin root, e.g. 'resources/frontend/js/frontend.js'.
 	 * @return string The URL to the asset.
 	 */
 	private static function get_asset_url( $relative_path ) {
@@ -60,7 +60,7 @@ final class Assets {
 
 		wp_enqueue_script(
 			'simple-honeypot-cf7-token-fetch',
-			self::get_asset_url( 'resources/frontend/js/token-fetch.js' ),
+			self::get_asset_url( 'resources/frontend/js/frontend.js' ),
 			array(),
 			SIMPLE_HONEYPOT_CF7_VERSION,
 			true
@@ -78,7 +78,7 @@ final class Assets {
 
 		wp_enqueue_style(
 			'simple-honeypot-cf7-frontend',
-			self::get_asset_url( 'resources/frontend/css/noscript-notice.css' ),
+			self::get_asset_url( 'resources/frontend/css/frontend.css' ),
 			array(),
 			SIMPLE_HONEYPOT_CF7_VERSION
 		);
