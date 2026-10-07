@@ -75,6 +75,13 @@ final class Assets {
 				'prefix'      => '_' . SIMPLE_HONEYPOT_CF7_BASE,
 			)
 		);
+
+		wp_enqueue_style(
+			'simple-honeypot-cf7-frontend',
+			self::get_asset_url( 'resources/frontend/css/noscript-notice.css' ),
+			array(),
+			SIMPLE_HONEYPOT_CF7_VERSION
+		);
 	}
 
 	/**

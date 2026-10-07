@@ -16,7 +16,10 @@
         "cbf": "phpcbf",
         "make-pot": "wp i18n make-pot . languages/simple-honeypot-cf7.pot --headers='{\"Report-Msgid-Bugs-To\":\"https://github.com/pushpasta/simple-honeypot-cf7/issues\"}'",
         "locales-yml": "php .github/scripts/generate-locale-options.php",
-        "minify:css": "php .github/scripts/minify-assets.php resources/admin/css/admin.css resources/admin/css/admin.min.css",
+        "minify:css": [
+            "php .github/scripts/minify-assets.php resources/admin/css/admin.css resources/admin/css/admin.min.css",
+            "php .github/scripts/minify-assets.php resources/frontend/css/noscript-notice.css resources/frontend/css/noscript-notice.min.css"
+        ],
         "minify:js": [
             "php .github/scripts/minify-assets.php resources/admin/js/admin.js resources/admin/js/admin.min.js",
             "php .github/scripts/minify-assets.php resources/frontend/js/token-fetch.js resources/frontend/js/token-fetch.min.js"
