@@ -39,7 +39,7 @@ final class Assets {
 	/**
 	 * Enqueue backend assets when needed.
 	 *
-	 * @param string $hook Current admin screen hook.
+	 * @param string $hook Current backend screen hook.
 	 * @return void
 	 */
 	public function enqueue( $hook ) {

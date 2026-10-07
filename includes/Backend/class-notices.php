@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Renders admin notices.
+ * Renders backend notices.
  */
 final class Notices {
 

@@ -32,7 +32,7 @@ final class Upgrader {
 	/**
 	 * Transient name that caches the last successfully applied migration version.
 	 *
-	 * Used to skip migration checks on admin page loads when nothing
+	 * Used to skip migration checks on backend page loads when nothing
 	 * has changed.
 	 *
 	 * @var string
@@ -96,7 +96,7 @@ final class Upgrader {
 
 		// Rebuild a cached summary produced by older aggregation boundary
 		// logic. Performed here during upgrade (not on page reads) so the
-		// refresh happens before the next admin page load.
+		// refresh happens before the next backend page load.
 		self::refresh_aggregated_stats_if_needed();
 	}
 
@@ -106,7 +106,7 @@ final class Upgrader {
 	 * Summaries written before the current PERIOD_BOUNDARY_VERSION may be
 	 * missing fields or computed with older rules. Page reads never
 	 * re-aggregate, so this runs during upgrade to refresh the cache
-	 * before the next admin page load.
+	 * before the next backend page load.
 	 *
 	 * @return void
 	 */
@@ -129,7 +129,7 @@ final class Upgrader {
 	 *
 	 * Skips all work when the transient matches the current version,
 	 * avoiding redundant dbDelta() calls and option lookups on every
-	 * admin page load.
+	 * backend page load.
 	 *
 	 * @return void
 	 */

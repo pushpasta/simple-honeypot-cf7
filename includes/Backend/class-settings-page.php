@@ -305,7 +305,7 @@ final class Settings_Page {
 	 * @return string
 	 */
 	private function update_notice() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only status parameter used for admin notices.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only status parameter used to pick the backend notice shown after save.
 		$get = wp_unslash( $_GET );
 
 		$result = array(

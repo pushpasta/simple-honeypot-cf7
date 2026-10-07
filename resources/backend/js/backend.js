@@ -69,7 +69,7 @@
 	$(
 		function () {
 
-			// Confirm dialog system — registered on all admin pages so
+			// Confirm dialog system — registered on all backend pages so
 			// elements outside the plugin settings form (e.g. the CF7
 			// editor "Restore to defaults" link) still receive a
 			// confirmation dialog before navigating away.

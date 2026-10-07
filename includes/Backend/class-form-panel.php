@@ -78,8 +78,8 @@ final class Form_Panel {
 		}
 
 		// wpcf7_after_save can fire from programmatic saves (importer,
-		// WP-CLI, REST) that bypass CF7's own admin nonce check. Only
-		// process genuine admin POST submissions with the right caps.
+		// WP-CLI, REST) that bypass CF7's own form-editor nonce check. Only
+		// process genuine wp-admin POST submissions with the right caps.
 		if ( ! is_admin() || 'POST' !== $_SERVER['REQUEST_METHOD'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- See capability check below.
 			return;
 		}
@@ -109,7 +109,7 @@ final class Form_Panel {
 	}
 
 	/**
-	 * Handle admin_post request to reset per-form settings to defaults.
+	 * Handle the wp-admin POST request to reset per-form settings to defaults.
 	 *
 	 * @return void
 	 */

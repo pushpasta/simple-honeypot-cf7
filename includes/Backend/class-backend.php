@@ -62,7 +62,7 @@ final class Backend {
 	/**
 	 * Run pending database migrations and event table setup.
 	 *
-	 * Uses a transient to skip redundant work on most admin page loads.
+	 * Uses a transient to skip redundant work on most backend page loads.
 	 * The transient stores the last successfully applied DB version and
 	 * is checked via Upgrader::maybe_run().
 	 *
@@ -77,7 +77,7 @@ final class Backend {
 	 *
 	 * Hooked to upgrader_process_complete so migrations execute right
 	 * after a WordPress-initiated plugin update, without waiting for
-	 * the next admin page load.
+	 * the next backend page load.
 	 *
 	 * @param object $upgrader_object WP_Upgrader instance.
 	 * @param array  $options         Update options (action, type, plugins).
