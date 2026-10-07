@@ -60,7 +60,7 @@ final class Reporter {
 			'type'    => sanitize_key( isset( $reason['type'] ) ? $reason['type'] : '' ),
 			'message' => wp_strip_all_tags( isset( $reason['message'] ) ? $reason['message'] : '' ),
 			'field'   => sanitize_key( isset( $reason['field'] ) ? $reason['field'] : '' ),
-			'value'   => sanitize_text_field( isset( $reason['value'] ) ? $reason['value'] : '' ),
+			'value'   => sanitize_textarea_field( isset( $reason['value'] ) ? $reason['value'] : '' ),
 		);
 	}
 }
