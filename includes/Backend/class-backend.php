@@ -27,12 +27,13 @@ final class Backend {
 	 * @return void
 	 */
 	public function register_hooks() {
-		$assets        = new Assets();
-		$notices       = new Notices();
-		$settings_page = new Settings_Page();
-		$form_panel    = new Form_Panel();
-		$tag_generator = new Tag_Generator();
-		$rest_api      = new Rest_Api();
+		$assets           = new Assets();
+		$notices          = new Notices();
+		$settings_page    = new Settings_Page();
+		$form_panel       = new Form_Panel();
+		$tag_generator    = new Tag_Generator();
+		$rest_api         = new Rest_Api();
+		$dashboard_widget = new Dashboard_Widget();
 
 		add_action( 'admin_enqueue_scripts', array( $assets, 'enqueue' ) );
 		add_action( 'admin_init', array( $this, 'run_upgrader' ) );
@@ -56,6 +57,7 @@ final class Backend {
 			add_action( 'wpcf7_after_save', array( $form_panel, 'save' ) );
 			add_action( 'wpcf7_admin_init', array( $tag_generator, 'register' ), 20, 0 );
 			add_action( 'admin_post_' . SIMPLE_HONEYPOT_CF7_BASE . '_reset_form_settings', array( $form_panel, 'reset_form_settings' ) );
+			$dashboard_widget->register();
 		}
 	}
 

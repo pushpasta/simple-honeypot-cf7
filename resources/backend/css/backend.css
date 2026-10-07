@@ -946,3 +946,67 @@
 		margin: 16px;
 	}
 }
+
+/* CF7 Dashboard Widget
+	========================================================================== */
+
+.shp4cf7-dashboard-widget {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.shp4cf7-dashboard-widget-stat {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 12px;
+	background: #f6f7f7;
+	border: 1px solid #e0e0e0;
+	border-left: 4px solid #2271b1;
+	border-radius: 4px;
+}
+
+.shp4cf7-dashboard-widget-stat-icon.dashicons {
+	width: 36px;
+	height: 36px;
+	font-size: 18px;
+	line-height: 36px;
+	background: #fff;
+	border-radius: 50%;
+	color: #2271b1;
+	flex-shrink: 0;
+}
+
+.shp4cf7-dashboard-widget-stat-body {
+	min-width: 0;
+}
+
+.shp4cf7-dashboard-widget-stat-value {
+	display: block;
+	font-size: 20px;
+	line-height: 1.2;
+	color: #1d2327;
+}
+
+.shp4cf7-dashboard-widget-stat-label {
+	display: block;
+	color: #646970;
+	font-size: 12px;
+}
+
+.shp4cf7-dashboard-widget-note {
+	margin: 0;
+	color: #646970;
+	font-size: 12px;
+}
+
+.shp4cf7-dashboard-widget-footer {
+	margin: 0;
+	padding-top: 10px;
+	border-top: 1px solid #f0f0f1;
+}
+
+.shp4cf7-dashboard-widget-footer a {
+	text-decoration: none;
+}
