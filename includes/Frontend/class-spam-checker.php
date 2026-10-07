@@ -281,17 +281,11 @@ final class Spam_Checker {
 	 * so an admin can widen or narrow how much of a filled honeypot value
 	 * appears in the reason text.
 	 *
-	 * @param string $value   Value to truncate.
-	 * @param int    $length Maximum characters. Defaults to the setting.
+	 * @param string $value Value to truncate.
 	 * @return string
 	 */
-	private function short_value( $value, $length = 0 ) {
-		if ( $length <= 0 ) {
-			$settings = Settings::get_settings();
-			$length   = absint( $settings['honeypot_value_max_length'] );
-		}
-
-		return String_Helper::truncate( sanitize_textarea_field( (string) $value ), $length );
+	private function short_value( $value ) {
+		return String_Helper::truncate( sanitize_textarea_field( (string) $value ), Settings::get_honeypot_value_max_length() );
 	}
 
 	/**
@@ -305,6 +299,14 @@ final class Spam_Checker {
 	private function check_honeypot_value( array &$reasons, $dynamic_name, $field_name ) {
 		$dynamic_name = sanitize_key( $dynamic_name );
 		$field_name   = empty( $field_name ) ? __( 'unknown field', 'simple-honeypot-cf7' ) : sanitize_key( $field_name );
+
+		/*
+		 * Reads here come from raw $_POST rather than posted data:
+		 * Posted_Data_Filter removes the dynamic field from posted data
+		 * unconditionally and only re-adds it under the honeypot_* key when
+		 * store_honeypot_value is on, so the submitted value is no longer
+		 * reachable via get_posted_data().
+		 */
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading Contact Form 7 submission data.
 		if ( ! array_key_exists( $dynamic_name, $_POST ) ) {
@@ -340,7 +342,8 @@ final class Spam_Checker {
 					$this->short_value( $value )
 				),
 				$field_name,
-				$value
+				$value,
+				Settings::get_honeypot_value_max_length()
 			);
 		}
 	}
