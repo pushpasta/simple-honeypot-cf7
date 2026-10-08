@@ -14,7 +14,7 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 
 == Description ==
 
-Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam reporting for Contact Form 7. Everything runs on your server — no external services, no visitor tracking. <strong>Requires JavaScript</strong> in the browser.
+Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam reporting for Contact Form 7. Everything runs on your server — no external services, no visitor tracking. **Requires JavaScript** in the browser.
 
 = Features =
 
