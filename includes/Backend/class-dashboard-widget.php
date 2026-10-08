@@ -41,6 +41,10 @@ final class Dashboard_Widget {
 			return;
 		}
 
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		wp_add_dashboard_widget(
 			SIMPLE_HONEYPOT_CF7_BASE . '_dashboard_overview',
 			__( 'Simple Honeypot Overview', 'simple-honeypot-cf7' ),
