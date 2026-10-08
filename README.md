@@ -4,7 +4,7 @@
 
 Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for Contact Form 7.
 
-![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue) ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.1-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-3.2.1-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
+![WordPress](https://img.shields.io/badge/WordPress-7.1%2B-blue) ![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4) ![Tested up to](https://img.shields.io/badge/Tested%20up%20to-7.1-success) ![Stable tag](https://img.shields.io/badge/Stable%20tag-3.3.0-blueviolet) ![License](https://img.shields.io/badge/License-GNU%20GPLv3-green)
 
 ![Stars](https://img.shields.io/github/stars/pushpasta/simple-honeypot-cf7?style=plastic) ![Forks](https://img.shields.io/github/forks/pushpasta/simple-honeypot-cf7?style=plastic) ![Watchers](https://img.shields.io/github/watchers/pushpasta/simple-honeypot-cf7?style=plastic) ![Last Commit](https://img.shields.io/github/last-commit/pushpasta/simple-honeypot-cf7?style=plastic) ![Downloads](https://img.shields.io/github/downloads/pushpasta/simple-honeypot-cf7/total?style=plastic)
 
@@ -13,17 +13,17 @@ Lightweight honeypot, timing, proof-of-work, and rule-based spam protection for 
 | Contributors | pushpasta |
 | Donate link | [https://github.com/pushpasta/simple-honeypot-cf7/?sponsor](https://github.com/pushpasta/simple-honeypot-cf7/?sponsor) |
 | Tags | contact form 7, cf7, honeypot, antispam, spam protection, bot protection, proof of work, hashcash |
-| Requires at least | 6.7 |
+| Requires at least | 7.1 |
 | Tested up to | 7.1 |
-| Stable tag | 3.2.1 |
-| Requires PHP | 7.4 |
+| Stable tag | 3.3.0 |
+| Requires PHP | 8.3 |
 | Requires Plugins | contact-form-7 |
 | License | GNU GPLv3 |
 | License URI | [https://www.gnu.org/licenses/gpl-3.0.html](https://www.gnu.org/licenses/gpl-3.0.html) |
 
 ## Description
 
-Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam reporting for Contact Form 7. Everything runs on your server — no external services, no visitor tracking. <strong>Requires JavaScript</strong> in the browser.
+Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam reporting for Contact Form 7. Everything runs on your server — no external services, no visitor tracking. **Requires JavaScript** in the browser.
 
 ### Features
 
@@ -41,6 +41,12 @@ Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam rep
 
 ## Installation
 
+### Requirements
+
+* WordPress (7.1 or newer)
+* PHP (8.3 or newer)
+* Contact Form 7 (6.2 or newer)
+
 ### Manual Installation
 
 1. Upload the `simple-honeypot-cf7` folder to `/wp-content/plugins/`.
@@ -51,9 +57,30 @@ Hidden honeypot fields, timing checks, proof-of-work, custom rules, and spam rep
 ## FAQ
 
 <details>
+<summary>What are the requirements?</summary>
+
+Simple Honeypot for Contact Form 7 requires WordPress (7.1 or newer), PHP (8.3 or newer), and Contact Form 7 (6.2 or newer).
+
+</details>
+
+<details>
 <summary>How does the honeypot work?</summary>
 
 The plugin adds one or more hidden fields that are invisible to legitimate visitors. Automated bots often fill these fields, allowing spam submissions to be identified and blocked before they are processed. You can add multiple honeypot fields to a single form.
+
+</details>
+
+<details>
+<summary>Does the plugin send form data to a third-party service?</summary>
+
+No. All spam checks are performed locally on your website. No form submissions or visitor data are sent to external services.
+
+</details>
+
+<details>
+<summary>Are existing forms without honeypots affected?</summary>
+
+No. The plugin only runs on forms that include at least one `[honeypot]` tag. All other CF7 forms keep working exactly as before.
 
 </details>
 
@@ -86,13 +113,6 @@ The plugin supports IP addresses (with wildcards and CIDR) and email addresses (
 </details>
 
 <details>
-<summary>Does the plugin send form data to a third-party service?</summary>
-
-No. All spam checks are performed locally on your website. No form submissions or visitor data are sent to external services.
-
-</details>
-
-<details>
 <summary>Will the honeypot value be stored in record plugins like Flamingo?</summary>
 
 By default, honeypot fields are removed from submitted data before it is stored. You can optionally enable storage of honeypot values in the plugin settings (under Data) for debugging or security analysis.
@@ -103,13 +123,6 @@ By default, honeypot fields are removed from submitted data before it is stored.
 <summary>Why was a submission marked as spam?</summary>
 
 The Spam Log shows which rule triggered the detection, such as a filled honeypot field, a failed time check, a blocked keyword, or a custom IP or email rule.
-
-</details>
-
-<details>
-<summary>Are existing forms without honeypots affected?</summary>
-
-No. The plugin only runs on forms that include at least one `[honeypot]` tag. All other CF7 forms keep working exactly as before.
 
 </details>
 
