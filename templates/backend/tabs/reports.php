@@ -67,7 +67,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		<?php else : ?>
 			<p class="description" style="margin-bottom: 1em;">
-				<?php esc_html_e( 'Note: "Spam Attempts Blocked" shows events currently stored (based on your retention settings). "By Form", "By Reason", and "By IP" totals are cumulative counts recorded at blocking time, so they may be higher if older events have been purged.', 'simple-honeypot-cf7' ); ?>
+				<?php esc_html_e( 'Note: All report figures are calculated from the currently stored event log and follow your retention settings. The "By IP" box always shows the top 10 IP addresses.', 'simple-honeypot-cf7' ); ?>
 			</p>
 			<div class="shp4cf7-breakdown-grid">
 				<div class="shp4cf7-breakdown-box">

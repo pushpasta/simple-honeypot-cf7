@@ -65,7 +65,7 @@ final class Event_Logger {
 	 *
 	 * @var int
 	 */
-	const PERIOD_BOUNDARY_VERSION = 3;
+	const PERIOD_BOUNDARY_VERSION = 4;
 
 	/**
 	 * Create or upgrade the events table.
@@ -467,46 +467,44 @@ final class Event_Logger {
 	}
 
 	/**
-	 * Aggregate all per-form stats into a single summary.
+	 * Aggregate all events into a single summary.
 	 *
-	 * Sums totals and reasons across all forms, then stores the result
-	 * in the summary option with a timestamp. Called hourly by cron and
-	 * on-demand via the REST API.
+	 * Every breakdown — total, By Form, By Reason, By IP, and By Time —
+	 * is derived from the stored events table, so all report figures
+	 * follow the retention settings and stay mutually consistent.
+	 * Stores the result in the summary option with a timestamp. Called
+	 * hourly by cron and on-demand via the REST API.
 	 *
 	 * @return array{total: int, reasons: array<string, int>, forms: array<int, array{title: string, total: int}>, by_ip: array<string, int>, by_period: array{today: int, yesterday: int, last_7_days: int, this_month: int, last_month: int}, boundary_version: int, last_calculated: string}
 	 */
 	public static function aggregate_summary() {
-		$form_stats  = self::get_all_form_stats();
-		$form_titles = get_option( SIMPLE_HONEYPOT_CF7_BASE . '_form_titles', array() );
-		$reasons     = array();
-		$forms       = array();
+		global $wpdb;
+		$table = $wpdb->prefix . self::TABLE;
 
-		foreach ( $form_stats as $form_id => $stat ) {
-			$form_total = isset( $stat['total'] ) ? absint( $stat['total'] ) : 0;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
 
-			$title = isset( $form_titles[ $form_id ] )
-				? $form_titles[ $form_id ]
-				: __( 'Unknown form', 'simple-honeypot-cf7' );
+		$forms = array();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows = $wpdb->get_results(
+			"SELECT form_id, MIN(form_title) AS title, COUNT(*) AS cnt FROM {$table} GROUP BY form_id ORDER BY cnt DESC, form_id ASC",
+			ARRAY_A
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
-			$forms[ $form_id ] = array(
-				'title' => $title,
-				'total' => $form_total,
-			);
+		if ( is_array( $rows ) ) {
+			foreach ( $rows as $row ) {
+				$form_id = (int) $row['form_id'];
+				$title   = isset( $row['title'] ) ? trim( (string) $row['title'] ) : '';
 
-			if ( isset( $stat['reasons'] ) && is_array( $stat['reasons'] ) ) {
-				foreach ( $stat['reasons'] as $type => $count ) {
-					if ( ! isset( $reasons[ $type ] ) ) {
-						$reasons[ $type ] = 0;
-					}
-					$reasons[ $type ] += absint( $count );
-				}
+				$forms[ $form_id ] = array(
+					'title' => '' === $title ? __( 'Unknown form', 'simple-honeypot-cf7' ) : $title,
+					'total' => absint( $row['cnt'] ),
+				);
 			}
 		}
 
-		global $wpdb;
-		$table = $wpdb->prefix . self::TABLE;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
+		$reasons = self::tally_reasons_from_events();
 
 		$by_ip = array();
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -535,6 +533,66 @@ final class Event_Logger {
 		update_option( self::SUMMARY_OPTION, $summary, false );
 
 		return $summary;
+	}
+
+	/**
+	 * Tally reason types across all stored events.
+	 *
+	 * Reads the reasons column in batches so the By Reason breakdown
+	 * matches the events currently stored, consistent with the other
+	 * report figures and the retention settings.
+	 *
+	 * @return array<string, int> Reason type counts keyed by type.
+	 */
+	private static function tally_reasons_from_events() {
+		global $wpdb;
+
+		$table   = $wpdb->prefix . self::TABLE;
+		$counts  = array();
+		$last_id = 0;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		do {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT id, reasons FROM {$table} WHERE id > %d ORDER BY id LIMIT 1000",
+					$last_id
+				),
+				ARRAY_A
+			);
+
+			if ( ! is_array( $rows ) || empty( $rows ) ) {
+				break;
+			}
+
+			$batch_size = count( $rows );
+
+			foreach ( $rows as $row ) {
+				$last_id = (int) $row['id'];
+				$decoded = json_decode( (string) $row['reasons'], true );
+
+				if ( ! is_array( $decoded ) ) {
+					continue;
+				}
+
+				foreach ( $decoded as $reason ) {
+					$type = isset( $reason['type'] ) ? sanitize_key( $reason['type'] ) : '';
+
+					if ( '' === $type ) {
+						continue;
+					}
+
+					if ( ! isset( $counts[ $type ] ) ) {
+						$counts[ $type ] = 0;
+					}
+
+					++$counts[ $type ];
+				}
+			}
+		} while ( 1000 === $batch_size );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		return $counts;
 	}
 
 	/**
