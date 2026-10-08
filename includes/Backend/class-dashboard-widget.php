@@ -74,7 +74,7 @@ final class Dashboard_Widget {
 		$template->render(
 			'backend/dashboard-widget.php',
 			array(
-				'stats'       => Settings::get_meta(),
+				'stats'       => Settings::get_reports_stats(),
 				'reports_url' => admin_url( 'admin.php?page=simple-honeypot-cf7&tab=reports' ),
 			)
 		);

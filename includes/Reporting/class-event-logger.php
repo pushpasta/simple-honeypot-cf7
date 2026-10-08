@@ -630,6 +630,29 @@ final class Event_Logger {
 	}
 
 	/**
+	 * Check whether a cached summary is stale relative to the local day.
+	 *
+	 * The by-period buckets roll over at local midnight, so a summary
+	 * calculated on a previous local day no longer reflects the current
+	 * Today / Yesterday / This month windows.
+	 *
+	 * @param string $last_calculated Summary timestamp in UTC.
+	 * @return bool True when the summary should be recalculated.
+	 */
+	public static function summary_predates_local_day( $last_calculated ) {
+		$calculated = \DateTimeImmutable::createFromFormat( 'Y-m-d H:i:s', $last_calculated, new \DateTimeZone( 'UTC' ) );
+
+		if ( false === $calculated ) {
+			return true;
+		}
+
+		$local_calculated = $calculated->setTimezone( wp_timezone() );
+		$now              = new \DateTimeImmutable( 'now', wp_timezone() );
+
+		return $local_calculated->format( 'Y-m-d' ) !== $now->format( 'Y-m-d' );
+	}
+
+	/**
 	 * Delete all per-form stats and the summary.
 	 *
 	 * @return void

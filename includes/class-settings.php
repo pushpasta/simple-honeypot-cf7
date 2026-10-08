@@ -425,6 +425,28 @@ final class Settings {
 	}
 
 	/**
+	 * Get report data current for the local day.
+	 *
+	 * Same as get_meta(), but re-aggregates once when the cached summary
+	 * was calculated on a previous local day so the by-period buckets
+	 * reflect the current Today / Yesterday / This month windows. Shared
+	 * by the Reports tab and the dashboard widget so both screens always
+	 * show the same figures.
+	 *
+	 * @return array
+	 */
+	public static function get_reports_stats() {
+		$stats = self::get_meta();
+
+		if ( ! empty( $stats['last_calculated'] ) && \SimpleHoneypotCF7\Reporting\Event_Logger::summary_predates_local_day( $stats['last_calculated'] ) ) {
+			\SimpleHoneypotCF7\Reporting\Event_Logger::aggregate_summary();
+			$stats = self::get_meta();
+		}
+
+		return $stats;
+	}
+
+	/**
 	 * Merge an aggregated summary into the report structure.
 	 *
 	 * Both the cached read and the on-demand cold-cache warm-up map the
