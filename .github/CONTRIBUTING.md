@@ -4,36 +4,34 @@ Thank you for your interest in contributing!
 
 ## Issues
 
-Before opening an issue, please:
+Before opening an issue:
 
-* Search existing issues to avoid duplicates.
-* Review the documentation and FAQ.
-* Verify that the issue still occurs with the latest version.
+- Search existing issues to avoid duplicates.
+- Review the documentation and FAQ.
+- Verify the issue still occurs on the latest version.
 
 ## Pull Requests
 
-When submitting a pull request, please:
+When submitting a pull request:
 
-* Keep changes focused and relevant.
-* Include testing details where applicable.
-* Update documentation when necessary.
+- Keep changes focused and relevant.
+- Describe how the change was tested.
+- Update documentation when needed.
 
 ## Translations
 
-Translation contributions are always welcome.
+Translations are always welcome. See the [languages directory](https://github.com/pushpasta/simple-honeypot-cf7/tree/main/languages) for available translations and contribution guidelines.
 
-Please see [the languages directory](https://github.com/pushpasta/simple-honeypot-cf7/tree/main/languages) for information about available translations, translation guidelines, and how to contribute.
+## Security
+
+Report vulnerabilities privately through [GitHub Security Advisories](https://github.com/pushpasta/simple-honeypot-cf7/security/advisories/new) instead of a public issue. See [SECURITY.md](SECURITY.md) for the policy and secure-by-default practices.
 
 ## Development
 
-### Requirements
+Match the PHP, WordPress, and Contact Form 7 versions listed in the [plugin readme](../README.md#requirements) when developing and testing.
 
-* PHP 7.4 or higher
-* WordPress 6.7 or higher
-* Contact Form 7
+This project follows the WordPress Coding Standards, enforced through PHPCS (`phpcs.xml`). Check and fix your changes with:
 
-### Coding Standards
-
-This project follows the WordPress Coding Standards.
-
-Using PHPCS is recommended to help ensure consistent code quality and style.
+- `composer install` — install development tooling.
+- `composer cs` — check coding standards.
+- `composer cbf` — auto-fix fixable issues.
