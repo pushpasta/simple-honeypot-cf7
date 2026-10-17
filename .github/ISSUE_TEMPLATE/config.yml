@@ -3,8 +3,8 @@ blank_issues_enabled: false
 contact_links:
   - name: Documentation
     url: https://github.com/pushpasta/simple-honeypot-cf7
-    about: Read the documentation and FAQ first.
+    about: Read the documentation and FAQ first
 
   - name: Support & Questions
     url: https://github.com/pushpasta/simple-honeypot-cf7/discussions
-    about: Ask questions and get community help.
+    about: Ask questions and get community help
