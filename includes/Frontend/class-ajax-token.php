@@ -63,7 +63,7 @@ final class Ajax_Token {
 		$ip    = Request::remote_ip();
 		$limit = $settings['token_rate_limit'];
 
-		if ( ! empty( $ip ) && ! Token::check_rate_limit( $ip, $limit ) ) {
+		if ( ! Token::check_rate_limit( $ip, $limit ) ) {
 			$response = method_exists( $contact_form, 'message' )
 				? $contact_form->message( 'mail_sent_ng' )
 				: '';
@@ -93,9 +93,7 @@ final class Ajax_Token {
 
 		$result['expires_in'] = max( 1, $expires_at - time() - 5 );
 
-		if ( ! empty( $ip ) ) {
-			Token::increment_rate_limit( $ip );
-		}
+		Token::increment_rate_limit( $ip );
 
 		wp_send_json_success( $result );
 	}

@@ -8,6 +8,7 @@
 namespace SimpleHoneypotCF7\Frontend;
 
 use SimpleHoneypotCF7\Settings;
+use SimpleHoneypotCF7\Support\Request;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -629,7 +630,35 @@ final class Token {
 	}
 
 	/**
-	 * Check whether the IP is within the token generation rate limit.
+	 * Build the transient key used for an IP's rate limit bucket.
+	 *
+	 * When the client IP is unavailable (for example behind a proxy that
+	 * strips REMOTE_ADDR), fall back to the user agent so anonymous
+	 * visitors do not all share the single empty-IP bucket. When neither
+	 * value exists, return an empty string so rate limiting is skipped
+	 * rather than collapsing every request into one counter.
+	 *
+	 * @param string $ip Client IP address.
+	 * @return string Transient key, or an empty string when unidentified.
+	 */
+	private static function rate_limit_key( $ip ) {
+		$ip = trim( (string) $ip );
+
+		if ( '' === $ip ) {
+			$user_agent = trim( Request::user_agent() );
+
+			if ( '' === $user_agent ) {
+				return '';
+			}
+
+			$ip = 'ua:' . $user_agent;
+		}
+
+		return self::RATE_LIMIT_OPTION_PREFIX . sha1( $ip );
+	}
+
+	/**
+	 * Check whether the client is within the token generation rate limit.
 	 *
 	 * Returns true when the request may proceed. When the limit is reached,
 	 * returns false without incrementing — the caller should reject the request.
@@ -643,26 +672,37 @@ final class Token {
 			return true;
 		}
 
-		$count = (int) get_transient( self::RATE_LIMIT_OPTION_PREFIX . sha1( $ip ) );
+		$key = self::rate_limit_key( $ip );
+
+		if ( '' === $key ) {
+			return true;
+		}
+
+		$count = (int) get_transient( $key );
 
 		return $count < $limit;
 	}
 
 	/**
-	 * Increment the token generation counter for an IP.
+	 * Increment the token generation counter for a client.
 	 *
 	 * @param string $ip Client IP address.
 	 * @return void
 	 */
 	public static function increment_rate_limit( $ip ) {
-		$key   = self::RATE_LIMIT_OPTION_PREFIX . sha1( $ip );
+		$key = self::rate_limit_key( $ip );
+
+		if ( '' === $key ) {
+			return;
+		}
+
 		$count = (int) get_transient( $key );
 
 		set_transient( $key, $count + 1, self::RATE_LIMIT_WINDOW );
 	}
 
 	/**
-	 * Decrement the token generation counter for an IP after successful consumption.
+	 * Decrement the token generation counter for a client after successful consumption.
 	 *
 	 * Reclaims a slot when a token is actually used, so legitimate users who
 	 * submit forms are not penalised by the rate limit.
@@ -671,7 +711,12 @@ final class Token {
 	 * @return void
 	 */
 	public static function decrement_rate_limit( $ip ) {
-		$key   = self::RATE_LIMIT_OPTION_PREFIX . sha1( $ip );
+		$key = self::rate_limit_key( $ip );
+
+		if ( '' === $key ) {
+			return;
+		}
+
 		$count = (int) get_transient( $key );
 
 		if ( $count <= 1 ) {

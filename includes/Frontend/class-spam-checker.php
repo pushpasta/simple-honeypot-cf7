@@ -421,11 +421,7 @@ final class Spam_Checker {
 
 		Token::consume( $this->pending_consumption[0], $this->pending_consumption[1] );
 
-		$ip = Request::remote_ip();
-
-		if ( ! empty( $ip ) ) {
-			Token::decrement_rate_limit( $ip );
-		}
+		Token::decrement_rate_limit( Request::remote_ip() );
 
 		$this->pending_consumption = null;
 	}
