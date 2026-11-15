@@ -848,13 +848,14 @@ final class Settings {
 	/**
 	 * Remove plugin from the auto_update_plugins option.
 	 *
+	 * Uses the site-option API for consistency with activation and the
+	 * plugin list toggle. WordPress maps site options to regular options
+	 * on single-site installs, so the same code handles both cases.
+	 *
 	 * @return void
 	 */
 	private static function remove_auto_update_opt_in() {
-		$is_multisite = is_multisite();
-		$auto_updates = $is_multisite
-			? get_site_option( 'auto_update_plugins', array() )
-			: get_option( 'auto_update_plugins', array() );
+		$auto_updates = get_site_option( 'auto_update_plugins', array() );
 
 		if ( ! in_array( SIMPLE_HONEYPOT_CF7_PLUGIN_BASENAME, $auto_updates, true ) ) {
 			return;
@@ -865,9 +866,9 @@ final class Settings {
 		);
 
 		if ( empty( $auto_updates ) ) {
-			$is_multisite ? delete_site_option( 'auto_update_plugins' ) : delete_option( 'auto_update_plugins' );
+			delete_site_option( 'auto_update_plugins' );
 		} else {
-			$is_multisite ? update_site_option( 'auto_update_plugins', $auto_updates ) : update_option( 'auto_update_plugins', $auto_updates );
+			update_site_option( 'auto_update_plugins', $auto_updates );
 		}
 	}
 
