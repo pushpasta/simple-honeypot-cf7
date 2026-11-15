@@ -29,6 +29,9 @@ final class Token {
 	private static $validate_cache = array();
 
 	const SIGN_PREFIX               = SIMPLE_HONEYPOT_CF7_BASE . '|token|sign|';
+	const SIGN_PREFIX_V2            = SIMPLE_HONEYPOT_CF7_BASE . '|token|sign|v2|';
+	const TOKEN_VERSION             = '2';
+	const IV_LENGTH                 = 16;
 	const NAME_PREFIX               = SIMPLE_HONEYPOT_CF7_BASE . '|token|dname|';
 	const TICK_SECONDS              = HOUR_IN_SECONDS;
 	const FIELD_TYPES               = array( 'text', 'email', 'tel', 'url', 'number', 'date', 'textarea' );
@@ -60,14 +63,24 @@ final class Token {
 	}
 
 	/**
-	 * Encrypt a payload using AES-128-CTR.
+	 * Encrypt a payload using AES-128-CTR with a fresh random IV.
+	 *
+	 * The IV is prepended to the ciphertext so every token gets a unique
+	 * keystream. Reusing a fixed IV with CTR mode leaks the XOR of
+	 * plaintexts, which would expose the dynamic honeypot field names.
 	 *
 	 * @param string $plaintext Data to encrypt.
-	 * @return string Base64url-encoded ciphertext.
+	 * @return string Base64url-encoded IV + ciphertext.
 	 */
 	private static function encrypt( $plaintext ) {
-		$key       = self::encryption_key();
-		$iv        = substr( wp_hash( $key . '|iv' ), 0, 16 );
+		$key = self::encryption_key();
+
+		try {
+			$iv = random_bytes( self::IV_LENGTH );
+		} catch ( \Throwable $e ) {
+			return '';
+		}
+
 		$encrypted = openssl_encrypt( $plaintext, 'aes-128-ctr', $key, OPENSSL_RAW_DATA, $iv );
 
 		if ( false === $encrypted ) {
@@ -75,16 +88,41 @@ final class Token {
 		}
 
 		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Used to encode encrypted ciphertext for transport.
-		return rtrim( base64_encode( $encrypted ), '=' );
+		return rtrim( base64_encode( $iv . $encrypted ), '=' );
 	}
 
 	/**
 	 * Decrypt a payload encrypted with encrypt().
 	 *
-	 * @param string $ciphertext Base64url-encoded ciphertext.
+	 * @param string $ciphertext Base64url-encoded IV + ciphertext.
 	 * @return string|false Decrypted plaintext, or false on failure.
 	 */
 	private static function decrypt( $ciphertext ) {
+		$key = self::encryption_key();
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Used to decode encrypted ciphertext for decryption.
+		$decoded = base64_decode( strtr( $ciphertext, '-_', '+/' ), true );
+
+		if ( false === $decoded || strlen( $decoded ) <= self::IV_LENGTH ) {
+			return false;
+		}
+
+		$iv         = substr( $decoded, 0, self::IV_LENGTH );
+		$ciphertext = substr( $decoded, self::IV_LENGTH );
+
+		return openssl_decrypt( $ciphertext, 'aes-128-ctr', $key, OPENSSL_RAW_DATA, $iv );
+	}
+
+	/**
+	 * Decrypt a legacy token encrypted with a fixed IV.
+	 *
+	 * Kept only for the transition window so tokens minted before the
+	 * upgrade keep working until they expire. Remove once the previous
+	 * token format can no longer be present (max token lifetime).
+	 *
+	 * @param string $ciphertext Base64url-encoded ciphertext.
+	 * @return string|false Decrypted plaintext, or false on failure.
+	 */
+	private static function decrypt_legacy( $ciphertext ) {
 		$key = self::encryption_key();
 		$iv  = substr( wp_hash( $key . '|iv' ), 0, 16 );
 		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Used to decode encrypted ciphertext for decryption.
@@ -100,7 +138,8 @@ final class Token {
 	/**
 	 * Generate a single form-level token that encodes timing data and all dynamic names.
 	 *
-	 * Token format: {created_at}.{form_id}.{dynamic_names_csv}.{max_age}.{hmac_signature}
+	 * Token format: {version}.{iv_and_ciphertext}.{hmac_signature}
+	 * The HMAC covers the encoded payload (encrypt-then-MAC).
 	 *
 	 * @param int   $form_id       Contact Form 7 form ID.
 	 * @param array $dynamic_names List of dynamic field names for honeypot fields.
@@ -115,7 +154,7 @@ final class Token {
 			return '';
 		}
 
-		return $encrypted . '.' . wp_hash( self::SIGN_PREFIX . $payload );
+		return self::TOKEN_VERSION . '.' . $encrypted . '.' . wp_hash( self::SIGN_PREFIX_V2 . $encrypted );
 	}
 
 	/**
@@ -133,24 +172,43 @@ final class Token {
 		}
 
 		$parts = explode( '.', $token );
+		$count = count( $parts );
 
-		if ( 2 !== count( $parts ) ) {
+		if ( 3 === $count && self::TOKEN_VERSION === $parts[0] ) {
+			// Current format: sign the ciphertext, then decrypt it.
+			list( , $encoded_payload, $signature ) = $parts;
+
+			$expected = wp_hash( self::SIGN_PREFIX_V2 . $encoded_payload );
+
+			if ( ! hash_equals( $expected, $signature ) ) {
+				self::$validate_cache[ $cache_key ] = array();
+				return array();
+			}
+
+			$payload = self::decrypt( $encoded_payload );
+		} elseif ( 2 === $count ) {
+			// Legacy format: sign the plaintext after decryption.
+			list( $encoded_payload, $signature ) = $parts;
+
+			$payload = self::decrypt_legacy( $encoded_payload );
+
+			if ( false === $payload ) {
+				self::$validate_cache[ $cache_key ] = array();
+				return array();
+			}
+
+			$expected = wp_hash( self::SIGN_PREFIX . $payload );
+
+			if ( ! hash_equals( $expected, $signature ) ) {
+				self::$validate_cache[ $cache_key ] = array();
+				return array();
+			}
+		} else {
 			self::$validate_cache[ $cache_key ] = array();
 			return array();
 		}
-
-		list( $encoded_payload, $signature ) = $parts;
-
-		$payload = self::decrypt( $encoded_payload );
 
 		if ( false === $payload ) {
-			self::$validate_cache[ $cache_key ] = array();
-			return array();
-		}
-
-		$expected = wp_hash( self::SIGN_PREFIX . $payload );
-
-		if ( ! hash_equals( $expected, $signature ) ) {
 			self::$validate_cache[ $cache_key ] = array();
 			return array();
 		}
