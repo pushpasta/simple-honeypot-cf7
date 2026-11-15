@@ -24,10 +24,7 @@ final class Deactivator {
 	 * @return void
 	 */
 	public static function deactivate() {
-		$timestamp = wp_next_scheduled( Cron_Handler::HOOK );
-
-		if ( $timestamp ) {
-			wp_unschedule_event( $timestamp, Cron_Handler::HOOK );
-		}
+		wp_clear_scheduled_hook( Cron_Handler::HOOK );
+		wp_clear_scheduled_hook( Cron_Handler::STATS_HOOK );
 	}
 }
