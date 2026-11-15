@@ -684,6 +684,37 @@ final class Token {
 	}
 
 	/**
+	 * Run a callback while holding a cross-process lock for a rate-limit key.
+	 *
+	 * WordPress transients have no atomic increment or decrement API, so
+	 * concurrent requests can lose updates. A short database advisory
+	 * lock serialises the read-modify-write pair. If the lock cannot be
+	 * acquired, the callback still runs so a submission is never blocked
+	 * by lock contention.
+	 *
+	 * @param string   $key      Transient key.
+	 * @param callable $callback Callback to run.
+	 * @return void
+	 */
+	private static function with_rate_limit_lock( $key, callable $callback ) {
+		global $wpdb;
+
+		$lock = 'shp4cf7_rl_' . md5( $key );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$acquired = $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 1)', $lock ) );
+
+		try {
+			$callback();
+		} finally {
+			if ( '1' === (string) $acquired ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->query( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) );
+			}
+		}
+	}
+
+	/**
 	 * Increment the token generation counter for a client.
 	 *
 	 * @param string $ip Client IP address.
@@ -696,9 +727,14 @@ final class Token {
 			return;
 		}
 
-		$count = (int) get_transient( $key );
+		self::with_rate_limit_lock(
+			$key,
+			static function () use ( $key ) {
+				$count = (int) get_transient( $key );
 
-		set_transient( $key, $count + 1, self::RATE_LIMIT_WINDOW );
+				set_transient( $key, $count + 1, self::RATE_LIMIT_WINDOW );
+			}
+		);
 	}
 
 	/**
@@ -717,13 +753,18 @@ final class Token {
 			return;
 		}
 
-		$count = (int) get_transient( $key );
+		self::with_rate_limit_lock(
+			$key,
+			static function () use ( $key ) {
+				$count = (int) get_transient( $key );
 
-		if ( $count <= 1 ) {
-			delete_transient( $key );
-			return;
-		}
+				if ( $count <= 1 ) {
+					delete_transient( $key );
+					return;
+				}
 
-		set_transient( $key, $count - 1, self::RATE_LIMIT_WINDOW );
+				set_transient( $key, $count - 1, self::RATE_LIMIT_WINDOW );
+			}
+		);
 	}
 }
