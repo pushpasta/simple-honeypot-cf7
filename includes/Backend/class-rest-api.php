@@ -92,6 +92,16 @@ final class Rest_Api {
 				$days    = max( 1, $days );
 				$removed = Event_Logger::purge_aged_events( $days );
 
+				if ( false === $removed ) {
+					return new \WP_REST_Response(
+						array(
+							'success' => false,
+							'error'   => __( 'The event log could not be purged. Please try again.', 'simple-honeypot-cf7' ),
+						),
+						500
+					);
+				}
+
 				set_transient(
 					SIMPLE_HONEYPOT_CF7_BASE . '_purge_notice_' . get_current_user_id(),
 					array(
