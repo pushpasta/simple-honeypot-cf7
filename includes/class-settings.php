@@ -711,8 +711,11 @@ final class Settings {
 	/**
 	 * Validate an integer setting against a step pattern and range, returning the default on failure.
 	 *
-	 * Non-numeric, negative, and non-integer (float/scientific) values fall
-	 * back to the recommended default rather than being silently coerced.
+	 * Non-numeric, out-of-range, off-step, and non-integer (float or
+	 * scientific notation) values fall back to the recommended default
+	 * rather than being silently coerced. Whole numbers with leading
+	 * zeros are accepted and normalized so values that passed the import
+	 * path's integer check are not silently reset.
 	 *
 	 * @param mixed      $value    Raw value to validate.
 	 * @param int        $fallback Fallback when the value is invalid.
@@ -726,14 +729,15 @@ final class Settings {
 			return $fallback;
 		}
 
-		// Reject floats and scientific notation — only whole numbers pass.
-		$int_value = filter_var( $value, FILTER_VALIDATE_INT );
+		// Accept whole numbers, including leading zeros, and reject floats
+		// and scientific notation before casting.
+		$value = trim( (string) $value );
 
-		if ( false === $int_value ) {
+		if ( ! preg_match( '/^[+-]?\d+$/', $value ) ) {
 			return $fallback;
 		}
 
-		$value = $int_value;
+		$value = (int) $value;
 
 		// Guard against division by zero.
 		if ( 1 > $step ) {
