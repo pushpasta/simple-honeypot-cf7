@@ -616,7 +616,7 @@ final class Token {
 	 * @return void
 	 */
 	public static function consume( $token, $max_age ) {
-		set_transient( self::CONSUMED_TRANSIENT_PREFIX . wp_hash( $token ), 1, $max_age );
+		set_transient( self::CONSUMED_TRANSIENT_PREFIX . self::token_digest( $token ), 1, $max_age );
 	}
 
 	/**
@@ -626,7 +626,26 @@ final class Token {
 	 * @return bool
 	 */
 	public static function is_consumed( $token ) {
-		return (bool) get_transient( self::CONSUMED_TRANSIENT_PREFIX . wp_hash( $token ) );
+		// Also check the legacy MD5 key so a token consumed just before the
+		// upgrade cannot be replayed during its remaining lifetime. Remove
+		// once tokens created before the upgrade have expired.
+		return (bool) get_transient( self::CONSUMED_TRANSIENT_PREFIX . self::token_digest( $token ) )
+			|| (bool) get_transient( self::CONSUMED_TRANSIENT_PREFIX . wp_hash( $token ) );
+	}
+
+	/**
+	 * Return a stable digest for a raw token, used in transient keys.
+	 *
+	 * The token is already signed and single-use, so the digest only needs
+	 * to be fixed-length and collision-resistant. SHA-256 is deliberate
+	 * here: wp_hash() is MD5-based and is not the right primitive for a
+	 * lookup key that must not collide across distinct tokens.
+	 *
+	 * @param string $token Raw token string.
+	 * @return string Hex-encoded SHA-256 digest.
+	 */
+	private static function token_digest( $token ) {
+		return hash( 'sha256', (string) $token );
 	}
 
 	/**
